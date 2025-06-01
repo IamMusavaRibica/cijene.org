@@ -26,16 +26,19 @@ def fetch_ribola_prices(ribola: Store):
 
     # one file = one request so we can use concurrency
     all_products = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=min(25, len(hrefs)), thread_name_prefix='Ribola') as executor:
-        futures = [executor.submit(process_single, BASE_URL + h, ribola) for h in hrefs]
-        for fut in concurrent.futures.as_completed(futures):
-            try:
-                if result := fut.result():
-                    all_products.extend(result)
-            except Exception as e:
-                logger.error(f'Error processing href: {e!r}')
-                logger.exception(e)
-
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=min(25, len(hrefs)), thread_name_prefix='Ribola') as executor:
+    #     futures = [executor.submit(process_single, BASE_URL + h, ribola) for h in hrefs]
+    #     for fut in concurrent.futures.as_completed(futures):
+    #         try:
+    #             if result := fut.result():
+    #                 all_products.extend(result)
+    #         except Exception as e:
+    #             logger.error(f'Error processing ribola href: {e!r}')
+    for h in hrefs:
+        try:
+            all_products.extend(process_single(BASE_URL + h, ribola))
+        except Exception as e:
+            logger.error(f'error processing ribola href {h}: {e!r}')
     return all_products
 
 
