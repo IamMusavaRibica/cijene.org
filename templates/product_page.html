@@ -1,0 +1,86 @@
+{% extends '_base.html' %}
+{% block extra_head %}
+    <link rel="stylesheet" href="/static/css/product_page.css">
+    <script src="/static/js/product_page.js" defer></script>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ product.name }}</h1>
+
+    <p class="only-wide">Postavljanjem miša preko naziva trgovine prikazat će se popis pojedinih prodavaonica.</p>
+    <p class="only-narrow">Postavljanjem miša preko ili pritiskom na ikonu trgovine prikazat će se njen naziv, kao i popis pojedinih prodavaonica.</p>
+    {# labels for specific products #}
+    {% if product.has_labels %}
+    <div class="labels">
+        {% if product.govt_controlled_price %}
+        <div>
+            <img src="/static/img/9451_smaller.png" alt="Ograničena cijena">
+            <span>Cijena ovog proizvoda ograničena je odlukom Vlade RH:
+                <a style="color: whitesmoke" target="_blank" href="https://narodne-novine.nn.hr/clanci/sluzbeni/2025_02_17_166.html">NN 17/2025</a>
+            </span>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <noscript>
+    <p style="margin-top: 0">Omogućite JavaScript za filtriranje prikazanih ponuda.</p>
+    </noscript>
+    <div id="filters" style="margin-top: 10px; display: none;">
+        <h2>Filtri:</h2>
+        <div id="filter-quantity">
+            <span>Količina:</span>
+        </div>
+    </div>
+
+
+
+    <table id="offers">
+        <tr>
+            <th class="name">Naziv</th>
+            <th class="store">Trgovina</th>
+            <th class="quantity"><span class="only-wide">Količina</span><span class="only-narrow">Kol.</span></th>
+            <th class="price">Cijena</th>
+            <th class="unit-price">Cij<span class="only-wide">ena</span><span class="only-narrow">.</span>/{% if product.baseq != 1%}{{ product.baseq }} {% endif %}{{ product.unit }}</th>
+        </tr>
+        {% for offer in offers %}
+            <tr>
+                <td class="name">
+                    <div class="name-flex">
+                        <span>{{ offer.offer_name }}</span>
+                        {% if offer.ogranicena_cijena %}<img src="/static/img/ogranicenacijena.png">{% endif %}
+                    </div>
+                </td>
+                <td class="store">
+                    <img class="store-icon" alt="{{ offer.store.name }}" src={{ "/static/icons/{}.png".format(offer.store.id) }}>
+                    <span class="only-wide">{{ offer.store.name }}</span>
+                    {% if offer.store_location_datas %}
+                        <div class="tooltip-wrapper{{ ' up' if offer.tooltip_up else '' }}">
+                            <div class="tooltip">
+                                <span class="only-narrow">{{ offer.store.name }}</span>
+                                <span>Prodavaonice ({{ offer.locations_count }}):</span>
+                                {% for prodavaonica in offer.store_location_datas[:10] %}
+                                    {% if prodavaonica[5] %}
+                                        <a target="_blank" href="{{ prodavaonica[5] }}">[{{ prodavaonica[-1] }}] {{ prodavaonica[2] }}, {{ prodavaonica[0] }}</a>
+                                    {% else %}
+                                        <a>[{{ prodavaonica[-1] }}] {{ prodavaonica[2] }}, {{ prodavaonica[0] }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if offer.locations_count > 10 %}
+                                    <span class="more">...i još {{ offer.locations_count - 10 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </td>
+                <td class="quantity">{{ offer.fmt_quantity }} {{ product.unit }}</td>
+                <td class="price"><span class="price">{{ offer.price|formatted_price }}</span></td>
+                <td class="unit-price">
+                    <span class="price" style="{{ stylize(offer, offers) }}">
+                        {{ offer.price_per_unit|formatted_price }}
+                    </span>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

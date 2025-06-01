@@ -1,0 +1,16 @@
+.venv/
+venv/
+ssl/
+cached/
+__pycache__/
+tmp/
+
+*.py[cod]
+
+.idea/
+*.iml
+
+*.db
+*.log
+*.sqlite
+*.sqlite3

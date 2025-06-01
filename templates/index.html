@@ -1,0 +1,65 @@
+{% extends '_base.html' %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="/static/css/root.css">
+{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center;">Dobrodošli!</h1>
+
+    <p>Na ovoj stranici moguć je pregled cijena raznih proizvoda kod svih trgovaca zahvaljujući novom zakonu
+        koji zahtijeva da oni objavljuju sve svoje cijene u formatu pogodnom za automatsku obradu :)</p>
+
+    <span></span>
+
+    <ul>
+    <li>
+        <a href="https://vlada.gov.hr/UserDocsImages/2016/Sjednice/2025/Veljaca/66_sjednica_VRH/66%20-%201.docx">
+        Prijedlog zakona o iznimnim mjerama kontrole cijena</a> (66. sjednica Vlade RH, 13. veljače 2025.)
+        <a href="https://esavjetovanja.gov.hr/ECon/MainScreen?entityId=29736">Savjetovanje</a>
+    </li>
+    <li>
+        <a href="https://narodne-novine.nn.hr/clanci/sluzbeni/2025_03_40_540.html">
+            Zakon o iznimnim mjerama kontrole cijena</a> (NN 40/2025, 7. ožujka 2025.)
+    </li>
+    <li>
+        <a href="https://narodne-novine.nn.hr/clanci/sluzbeni/2025_05_75_979.html">
+        Odluka o objavi cjenika i isticanju dodatne cijene kao mjera izravne kontrole cijena u trgovini na malo</a>
+            (NN 75/2025, 2. svibnja 2025.)
+    </li>
+
+    </ul>
+
+    <p>
+        <b>Trenutno dostupne trgovine</b>: Boso, Eurospin, Kaufland, Konzum, KTC, Lidl, Metro, NTL, Plodine, Ribola*, Spar, Studenac,
+        Tommy, Trgovina Krk
+        <br>
+        Trenutno nedostaju neke poslovnice Ribole, valjda imaju neku zaštitu kada zahtjeve šalje server
+    </p>
+    <p>
+        <b>Uskoro</b>: Djelo, Jadranka, Djelo Vodice, Bure, Trgocentar, Lorenco, Vrutak, Bakmaz, Diskont Stanić, Rotodinamic,
+        Brodokomerc, DM
+    </p>
+    <p>Ako znate za još neku trgovinu koja je objavila cjenike, a nije gore navedena, javite!</p>
+
+    <p>
+    Trenutno ovdje nema puno toga za vidjeti. Ako se ljudima svidi stranica, itekako ću raditi na njoj.
+    </p>
+
+{#    <p>Trenutno su prikazane lažne informacije o proizvodima i cijenama namijenjene da demonstriraju stranicu.#}
+{#        Napominjemo da će funkcionalnost u konačnici biti veća, npr. fotografije na stranicama za proizvode, izravna#}
+{#    poveznica na stranicu trgovca za proizvod, oznaka je li cijena pojedinog proizvoda ograničena, filtriranje#}
+{#    specifičnih proizvoda prema brandu, ...</p>#}
+    <!-- margins here do not collapse because we're in a flexbox -->
+
+    <div id="picker">
+        <div id="child1"><a href="/products">Pregledaj proizvode</a></div>
+        <div id="child2" style="filter: blur(3px); cursor: not-allowed; user-select: none;">
+            <a>Napravi košaricu</a>
+            <span>(uskoro)</span>
+        </div>
+{#        <div id="child2" style="filter: blur(4px); cursor: not-allowed;">Istraži trgovine</div>#}
+{#        <div id="child3" style="filter: blur(4px); cursor: not-allowed;">Pogledaj kartu</div>#}
+    </div>
+
+{% endblock %}

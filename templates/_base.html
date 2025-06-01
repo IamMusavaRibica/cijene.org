@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&family=Gaegu&family=Gamja+Flower&family=Lacquer&family=Mansalva&family=Marck+Script&family=Merienda:wght@300..900&family=Mogra&family=Mynerve&family=Nanum+Pen+Script&family=Oregano:ital@0;1&family=Playpen+Sans:wght@100..800&family=Protest+Revolution&family=Rock+Salt&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400;1,700&family=Comme:wght@100..900&family=Kufam:ital,wght@0,400..900;1,400..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Mukta:wght@200;300;400;500;600;700;800&family=Reenie+Beanie&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
+    <link rel="stylesheet" href="/static/css/banner.css">
+    <meta property="og:title" content="cijene.org" />
+    <meta property="og:description" content="Web stranica za prikaz i usporedbu cijena" />
+    <meta property="og:url" content="https://cijene.org/" />
+    <meta property="og:type" content="website" />
+
+    {% block extra_head %}{% endblock %}
+    <title>cijene.org</title>
+</head>
+<body>
+<div>
+    {% block top %}
+        <div class="banner demo-page-warning">
+            <span>STRANICA U RAZVOJU</span>
+        </div>
+        <noscript class="banner">
+            Onemogućili ste JavaScript u pregledniku. Funkcionalnost stranice je ograničena!
+        </noscript>
+    {% endblock %}
+    <div id="content">
+        {% include 'header.html' %}
+        {% block content %}
+            <div id="not-found">
+                <h1>404</h1>
+                <p>Stranica koju ste tražili ne postoji:<br><span class="url">{{ request.url|e }}</span></p>
+                <a class="go-back" href="/" >&#x2190; Povratak na početnu stranicu</a>
+            </div>
+        {% endblock %}
+        {% include 'footer.html' %}
+    </div>
+</div>
+</body>
+</html>

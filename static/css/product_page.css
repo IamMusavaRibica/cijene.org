@@ -1,0 +1,219 @@
+table#offers {
+    margin-top: 20px;
+    margin-bottom: 25px;
+    width: 100%;
+    border-collapse: collapse;
+    line-height: 140%;
+    table-layout: auto;
+}
+
+/*td:first-child { width: 50%; }*/
+td.quantity { width: 10%; }
+td.price { width: 16%; }
+td.unit-price { width: 16%; }
+td.store {
+    white-space: nowrap;
+    text-wrap: wrap;
+    width: 15%;
+}
+
+td.name div {
+    /*display: inline-flex;*/
+    /*align-items: flex-end;*/
+    /*flex-wrap: wrap;*/
+    /*justify-content: space-between;*/
+}
+td.name div img {
+    width: 20px;
+    margin-left: 5px;
+    float: right;
+    vertical-align: bottom;
+    transform: translateY(1px);
+    /*margin-left: auto;*/
+}
+td.store img.store-icon {
+    width: 16px;
+    vertical-align: -1px;  /* MRZIM OVO */
+}
+
+th.quantity, th.price, th.unit-price,
+td.quantity, td.price, td.unit-price {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.only-wide { display: inline; }
+.only-narrow { display: none; }
+
+th.store,
+td.store {
+    text-align: center;
+}
+
+th.price, th.unit-price,
+td.price, td.unit-price {
+    padding-left: 5px;
+}
+
+tr > th {
+    padding-bottom: 8px;
+}
+tr > td {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+td.name {  /* nazivi trgovina */
+    padding-left: 11px;  /* nema paddinga na width<550px */
+}
+tr:not(:first-child) {
+    border-bottom: #434343 solid 1px;
+}
+tr:not(:first-child):hover { /* svi osim headera */
+    background-color: #343447;
+}
+
+
+span.price {
+    display: inline-block;
+    min-width: 80px;
+    background: rgb(0, 141, 245);
+    border-radius: 5px;
+}
+td.unit-price > span.price {
+    color: black;
+}
+
+
+
+@media (max-width: 550px) {
+    span.price {
+        min-width: 50px;
+        letter-spacing: -1px;
+    }
+    table#offers {
+        width: calc(100% + 26px);  /* dozvoli malo preljeva */
+        transform: translateX(-13px);
+    }
+    td:first-child { padding-left: 0 }
+    td.quantity { width: 10%; }
+    td.price { width: 1%; }
+    td.unit-price { width: 1%; }
+    td.store {
+        width: 1%;
+        padding-left: 5px;
+    }
+    th.store {  /* sakrij tekst "Trgovina" na uskim rezolucijama */
+        color: transparent;
+        font-size: 0;
+    }
+
+    div.tooltip-wrapper {  /* na uskim ekranima nema pomaka teksta jer nema ni teksta */
+        left: -120px;
+        right: -120px;
+    }
+    .only-wide { display: none; }
+    .only-narrow { display: inline; }
+}
+@media (min-width: 550px) {
+    td.store {
+        transform: translateX(10px);
+        position: relative;
+        text-align: center;
+    }
+
+    td.store img.store-icon {
+        position: absolute;
+        top: 50%;
+        transform: translate(-20px, -50%);
+    }
+
+}
+
+/* "Količina" na sirokim rezolucijama, "Kol." na uskim */
+/*.th-quantity::after { content: 'Kol.' }
+@media (min-width: 550px) {
+    .th-quantity::after { content: 'Količina' }
+}*/
+
+
+.labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.labels > div {
+    display: flex;
+    align-items: center;
+    background-color: #3f9dd6; /* Light blue background */
+    border: 2px solid #114b9d; /* Slightly darker blue border */
+    border-radius: 8px;
+    padding: 10px;
+    width: 395px;
+    box-sizing: border-box;
+    height: 100px;
+    margin: 0 auto;
+}
+
+.labels > div > img {
+    height: 100%;
+    width: auto;
+    margin-right: 10px;
+}
+
+
+#offers td {
+    position: relative;
+    overflow: visible;
+}
+div.tooltip-wrapper {  /* tooltip-wrapper omogucuje da prijedemo misem iz td.store u tooltip i imamo razmak izmedu */
+    position: absolute;
+    top: 95%;
+    height: min-content;
+    pointer-events: auto;
+    display: none;
+    /*border: 1px solid yellow;*/
+}
+div.tooltip-wrapper.up {
+    top: unset;
+    bottom: 95%;
+}
+
+div.tooltip-wrapper {  /* left je uvijek za 20px manji od right */
+    left: -160px;
+    right: -140px;
+}
+
+div.tooltip {
+    padding: 5px 5px 15px 5px;  /* gore desno dolje lijevo */
+    /*height: 100%;*/
+    background: #1d1d29;
+    border: 1px solid #eb4034;
+    border-radius: 7px;
+    color: whitesmoke;
+    margin-top: 8px;  /* kada tooltip ide ispod retka */
+}
+div.tooltip-wrapper.up div.tooltip {  /* kada tooltip ide iznad retka */
+    margin-bottom: 8px;
+}
+div.tooltip span:not(.only-narrow) {
+    display: block;  /* svaki u svoj red, bez inline */
+    margin-top: 5px;
+}
+div.tooltip a {
+    display: block;
+    margin-top: 8px;
+}
+table#offers td.store:hover {
+    z-index: 10;
+}
+table#offers td.store:hover .tooltip-wrapper {
+    display: block;          /* show on hover */
+}
+
+
+#filters label {
+    margin-left: 5px;
+    white-space: nowrap;
+}

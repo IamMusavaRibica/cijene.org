@@ -1,0 +1,30 @@
+div#content footer {
+    margin-top: auto;
+    padding: 10px 0;
+    font-size: 1.2rem;
+    text-align: center;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    background: #252536;
+    border-top: 1px solid var(--amber);
+}
+
+div#content footer span.nav-footer {
+    float: right;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-evenly;
+}
+div#content footer span.nav-footer a:first-child {
+    margin-left: 0;
+}
+
+div#content footer span.nav-footer a {
+    margin-left: 80px;
+    color: lightgray;
+    font-size: 0.9em;
+}

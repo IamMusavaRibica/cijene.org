@@ -1,0 +1,158 @@
+html, body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    --amber: #FFC000;
+    position: relative;
+    color: white;
+    /*font-family: Andika, Comme, Gaegu, Nanum Pen Script, Rock Salt, Lacquer, Fuzzy Bubbles, Mansalva, sans-serif;*/
+    font-family: Nunito Sans, sans-serif;
+    font-optical-sizing: auto;
+    /*line-height: 140%;*/
+
+    /* css pattern background */
+    --s: 140px;
+    --c1: #1d140b;  /* #1b1108; */
+    --c2: #121212;
+
+    --_g: #0000 52%,var(--c1) 54% 57%,#0000 59%;
+    background:
+            radial-gradient(farthest-side at -33.33% 50%,var(--_g)) 0 calc(var(--s)/2),
+            radial-gradient(farthest-side at 50% 133.33%,var(--_g)) calc(var(--s)/2) 0,
+            radial-gradient(farthest-side at 133.33% 50%,var(--_g)),
+            radial-gradient(farthest-side at 50% -33.33%,var(--_g)),
+            var(--c2);
+    background-size: calc(var(--s)/4.667) var(--s),var(--s) calc(var(--s)/4.667);
+
+    overflow-x: hidden;
+}
+
+body > div {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+
+}
+@media (min-width: 550px) {
+    body > div {
+        /* when scrollbar appears, it pushes content to the left, this visually undoes the push */
+        transform: translateX(calc(50vw - 50%));
+    }
+}
+
+h1, h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+a {
+    color: aquamarine;
+}
+
+p {
+    margin-bottom: 0;
+}
+
+div#content {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex: 1;
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 0 15px;  /* NE SMIJE BOTTOM PADDING */
+    border-left: 1px solid var(--amber);
+    border-right: 1px solid var(--amber);
+    background: #252536;
+}
+
+/* orange glow behind the content */
+#content::after {
+    content: "";
+    position: absolute;
+    height: 150%;
+    width: 100%;
+    background: orange;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    padding: 4px;
+    border-radius: 4px;
+    filter: blur(3rem);
+    opacity: 0.38;
+}
+
+.font-sample {
+    text-align: justify;
+    margin: 15px 0 0 0;
+    padding: 8px 8px 8px 12px;
+    border-left: 3px solid var(--amber);
+    background: rgba(var(--amber), 9%);
+    font-size: 20px;
+}
+.fuzzy-bubbles { font-family: "Fuzzy Bubbles", sans-serif; }
+.gaegu { font-family: "Gaegu", sans-serif; }
+.gamja-flower { font-family: "Gamja Flower", sans-serif; font-size: 24px;}
+.lacquer { font-family: "Lacquer", sans-serif; }
+.mansalva { font-family: "Mansalva", sans-serif; }
+.marck-script { font-family: "Marck Script", cursive; }
+.merienda { font-family: "Merienda", cursive; }
+.mogra { font-family: "Mogra", sans-serif; }
+.mynerve { font-family: "Mynerve", cursive; }
+.nanum-pen-script { font-family: "Nanum Pen Script", cursive; }
+.oregano { font-family: "Oregano", sans-serif; }
+.playpen-sans { font-family: "Playpen Sans", sans-serif; }
+.protest-revolution { font-family: "Protest Revolution", sans-serif; }
+.rock-salt { font-family: "Rock Salt", cursive; line-height: 2.3rem; }
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--amber);    /* color of the scroll thumb */
+    border-radius: 7px;       /* roundness of the scroll thumb */
+    background-clip: padding-box;
+    border: 3px solid transparent;  /* creates padding around scroll thumb */
+}
+::-webkit-scrollbar-track {
+    background-color:  transparent;  /* this doesn't work?? */
+}
+::-webkit-scrollbar {
+    width: 10px;               /* width of the entire scrollbar */
+    height: 10px;              /* height of the entire scrollbar */
+}
+
+div#not-found {
+    text-align: center;
+    font-size: 1.4rem;
+}
+div#not-found h1 {
+    font-family: Lacquer, serif;
+    font-size: 6rem;
+    margin-bottom: 0.3em;
+}
+div#not-found p {
+    line-height: 120%;
+    margin-bottom: 40px;
+}
+div#not-found a.go-back {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 1.7rem;
+    color: color-mix(var(--amber), whitesmoke, 90%);
+    transition: transform 0.3s ease
+}
+div#not-found a.go-back:hover {
+    transform: scale(1.1);
+}
+div#not-found span.url {
+    font-size: 1rem;
+}
+
+a.hello::before { content: 'hello' }
+a.hello::after { content: 'cijene.org'}

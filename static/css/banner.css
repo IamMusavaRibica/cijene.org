@@ -1,0 +1,16 @@
+.banner {
+    /* width: 100% 100vw ; */
+    z-index: 2025;
+    text-align: center;
+    padding: 4px 6px 5px 6px;
+    font-size: 1.3rem;
+}
+
+.banner.demo-page-warning {
+    background: rebeccapurple;
+    font-weight: bolder;
+}
+
+noscript.banner {
+    background: #bd0202;
+}

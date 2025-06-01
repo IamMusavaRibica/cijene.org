@@ -1,0 +1,17 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+
+<h1>Svi proizvodi</h1>
+<ul>
+    {% for product in products %}
+        <li><span><a href="/product/{{ product.id }}">{{ product.name }}</a></span></li>
+    {% endfor %}
+</ul>
+
+    <br><br>
+    <h2>Nema onoga što tražiš?</h2>
+    <p>Stranica je tek otvorena, provjeri kasnije...</p>
+
+{% endblock %}
