@@ -9,6 +9,8 @@ from cijenelib.models import Store
 from lxml.etree import HTML, tostring
 import requests
 
+from cijenelib.utils import fix_city
+
 BASE_URL = 'https://www.kaufland.hr'
 def fetch_kaufland_prices(kaufland: Store):
     root0 = HTML(requests.get(BASE_URL + '/akcije-novosti/popis-mpc.html').content)

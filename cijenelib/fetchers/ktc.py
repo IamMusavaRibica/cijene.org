@@ -8,7 +8,7 @@ from cijenelib.models import Store
 from datetime import date, datetime
 import requests
 
-from cijenelib.utils import fix_address
+from cijenelib.utils import fix_address, fix_city
 
 
 def fetch_ktc_prices(ktc: Store):

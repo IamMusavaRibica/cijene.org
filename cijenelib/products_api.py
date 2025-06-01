@@ -92,6 +92,9 @@ class ProductApi:
 
 
 def demo():
+    import os
+    if not os.path.isdir('cached'):
+        os.mkdir('cached')
     provider = ProductApi(stores=[Konzum, Spar, Tommy, Studenac, Ribola, Lidl, Plodine, Kaufland, Eurospin, Metro,
                                   Boso, NTL, KTC, TrgovinaKrk])
     # provider = ProductApi(stores=[])
