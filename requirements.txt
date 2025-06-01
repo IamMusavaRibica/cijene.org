@@ -3,3 +3,5 @@ requests
 loguru
 lxml
 pydantic
+uvicorn
+jinja2
