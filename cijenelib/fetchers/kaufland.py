@@ -63,7 +63,8 @@ def fetch_kaufland_prices(kaufland: Store):
             kaufland.locations[store_id] = [city, None, addr, None, None, None]
 
 
-        rows = get_csv_rows(cached_fetch(url), delimiter='\t', encoding='cp1250')
+        rows = get_csv_rows(k := cached_fetch(url), delimiter='\t', encoding='utf8')
+
         for k in rows[1:]:
             name, _id, brand, net_qty, units, mpc, is_sale, u, units, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
             if not barcode:
