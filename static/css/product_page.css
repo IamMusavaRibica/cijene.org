@@ -8,14 +8,14 @@ table#offers {
 }
 
 /*td:first-child { width: 50%; }*/
-td.quantity { width: 10%; }
-td.price { width: 16%; }
-td.unit-price { width: 16%; }
-td.price-may2 { width: 16%; }
+td.quantity { width: 8%; }
+td.price { width: 10%; }
+td.unit-price { width: 10%; }
+td.price-may2 { width: 10%; }
 td.store {
     white-space: nowrap;
     text-wrap: wrap;
-    width: 15%;
+    width: 20%;
 }
 
 td.name div {
@@ -37,19 +37,19 @@ td.store img.store-icon {
     vertical-align: -1px;  /* MRZIM OVO */
 }
 
-th.quantity, th.price, th.unit-price, th.price-may2,
+th.quantity, th.price, th.unit-price, th.price-may2, th.store,
 td.quantity, td.price, td.unit-price, td.price-may2 {
     text-align: center;
     white-space: nowrap;
 }
+th.store {
+    padding-left: 16px;
+}
 
 .only-wide { display: inline; }
 .only-narrow { display: none; }
+td.store > span.only-wide { display: inline-block; margin-left: 18px; }
 
-th.store,
-td.store {
-    text-align: center;
-}
 
 th.price, th.unit-price, th.price-may2,
 td.price, td.unit-price, td.price-may2 {
@@ -82,12 +82,20 @@ span.price {
 td.price > span.price {
     background: rgb(0, 141, 245);
 }
-td.price-may2 > span.price {
+td.price-may2 > span.price.better {
     background: rgb(164, 89, 255);
 }
-td.price-may2 > span.price.no-price {
+td.price-may2 > span.price.equal {
+    background: #fff759;
+}
+td.price-may2 > span.price.worse {
+    background: #ff5961;
+}
+td.price-may2 > span.price {
     background: rgb(200, 200, 200);
     color: black;
+}
+td.price-may2 > span.price:not(.better):not(.equal):not(.worse) {
     font-weight: bolder;
 }
 td.unit-price > span.price {
@@ -112,6 +120,7 @@ td.unit-price > span.price {
     td.store {
         width: 1%;
         padding-left: 5px;
+        padding-right: 5px;
     }
     th.store {  /* sakrij tekst "Trgovina" na uskim rezolucijama */
         color: transparent;
@@ -122,22 +131,41 @@ td.unit-price > span.price {
         left: -120px;
         right: -120px;
     }
-    .only-wide { display: none; }
+    .only-wide { display: none !important; }
     .only-narrow { display: inline; }
 }
+
 @media (min-width: 550px) {
     td.store {
         transform: translateX(10px);
         position: relative;
-        text-align: center;
     }
 
     td.store img.store-icon {
         position: absolute;
         top: 50%;
-        transform: translate(-20px, -50%);
+        transform: translate(/*-20px*/ 0, -50%);
     }
 
+}
+@media (max-width: 800px) {
+    table#offers.show-price th.price-may2,
+    table#offers.show-price td.price-may2 {
+        display: none;
+    }
+    table#offers.show-price-may2 th.price,
+    table#offers.show-price-may2 td.price {
+        display: none;
+    }
+    div#switch-price {
+        display: block;
+    }
+    .hidden00 {
+        display: none;
+    }
+    th.price-may2 > span {
+        display: none;
+    }
 }
 
 /* "Količina" na sirokim rezolucijama, "Kol." na uskim */
@@ -227,4 +255,8 @@ table#offers td.store:hover .tooltip-wrapper {
 #filters label {
     margin-left: 5px;
     white-space: nowrap;
+}
+
+div#filters > div > span > label > input {
+    vertical-align: -1px;
 }

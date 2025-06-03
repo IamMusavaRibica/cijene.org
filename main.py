@@ -14,7 +14,7 @@ from cijenelib.products_api import demo
 from cijenelib.utils import stylize_unit_price
 
 templates = Jinja2Templates(directory='templates')
-templates.env.filters['formatted_price'] = lambda x: f'{x:.2f} €'
+templates.env.filters['formatted_price'] = lambda x: f'{x:.2f} €' if x is not None else '-'
 templates.env.globals['stylize'] = stylize_unit_price
 templates.env.globals['_'] = __import__('builtins')
 TemplateResponse = templates.TemplateResponse

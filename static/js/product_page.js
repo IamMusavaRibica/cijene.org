@@ -1,6 +1,7 @@
 const quantities = new Set();
 const rows = [];
 const filters = {quantity: new Set()};
+const TABLE = document.querySelector('#offers');
 
 // parse the offers table, extract all rows and relevant data
 document.querySelectorAll('#offers tbody tr').forEach(row => {
@@ -54,3 +55,12 @@ function updateVisibleRows() {
     // document.querySelector('#offers tbody').classList.toggle('filtered', filters.quantity.size > 0);
     console.log('Filters applied:', filters);
 }
+
+
+// option to toggle/switch between regular price and may 2 price on mobile view
+document.querySelector('input#switch-price-input').addEventListener('change', e => {
+    if (TABLE.classList.contains('show-price'))
+        TABLE.classList.replace('show-price', 'show-price-may2');
+    else
+        TABLE.classList.replace('show-price-may2', 'show-price');
+});

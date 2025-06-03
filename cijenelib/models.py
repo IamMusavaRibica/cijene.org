@@ -1,4 +1,5 @@
 import enum
+import math
 from typing import TypeVar, Any, Callable
 
 from pydantic import BaseModel, Field, model_validator
@@ -63,6 +64,14 @@ class ProductOffer(BaseModel):
         if q == int(q):
             q = int(q)
         return str(q)
+
+    @property
+    def price_cmp_extra_class(self) -> str:
+        if self.may2_price is None:
+            return ''
+        elif math.isclose(self.price, self.may2_price, rel_tol=0.00001):
+            return ' equal'
+        return ' better' if self.price < self.may2_price else ' worse'
 
 class ProductOfferParsed(ProductOffer):
     store_ids: list
