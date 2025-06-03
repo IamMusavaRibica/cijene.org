@@ -1,6 +1,7 @@
 import json
 import re
 from datetime import date
+from random import randint
 
 from loguru import logger
 
@@ -40,6 +41,7 @@ def fetch_kaufland_prices(kaufland: Store):
     if not hrefs:
         logger.warning(f'no valid kaufland files found!')
         return []
+
     hrefs.sort(reverse=True)
     today = hrefs[0][0]
     prod = []
@@ -62,8 +64,22 @@ def fetch_kaufland_prices(kaufland: Store):
         if store_id not in kaufland.locations:
             kaufland.locations[store_id] = [city, None, addr, None, None, None]
 
-
-        rows = get_csv_rows(k := cached_fetch(url), delimiter='\t', encoding='utf8')
+        raw = cached_fetch(url)
+        for enc in ('utf8', 'cp1250'):  # some are utf8, some are cp1250 as of june 2nd/3rd
+            try:
+                rows = get_csv_rows(raw, delimiter='\t', encoding=enc)
+            except:
+                pass
+            else:
+                # logger.info(f'guessed encoding {enc} for {url}')
+                break
+        else:
+            import time
+            filename = f'kaufland_{int(time.time())}_{randint(1, 1000)}.bin'
+            logger.error(f'failed to decode kaufland prices, saved to {filename}')
+            with open(f'cached/{filename}', 'wb') as f:
+                f.write(raw)
+            continue
 
         for k in rows[1:]:
             name, _id, brand, net_qty, units, mpc, is_sale, u, units, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
@@ -73,7 +89,7 @@ def fetch_kaufland_prices(kaufland: Store):
             quantity = float(net_qty.replace(',', '.'))
             price = mpc or discount_mpc
             if not price:
-                logger.warning(f'product {name}, {barcode =} has no price')
+                # logger.warning(f'product {name}, {barcode =} has no price, {url}')
                 continue
             price = float(price.replace(',', '.'))
             try:
