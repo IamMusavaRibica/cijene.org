@@ -11,6 +11,7 @@ table#offers {
 td.quantity { width: 10%; }
 td.price { width: 16%; }
 td.unit-price { width: 16%; }
+td.price-may2 { width: 16%; }
 td.store {
     white-space: nowrap;
     text-wrap: wrap;
@@ -36,8 +37,8 @@ td.store img.store-icon {
     vertical-align: -1px;  /* MRZIM OVO */
 }
 
-th.quantity, th.price, th.unit-price,
-td.quantity, td.price, td.unit-price {
+th.quantity, th.price, th.unit-price, th.price-may2,
+td.quantity, td.price, td.unit-price, td.price-may2 {
     text-align: center;
     white-space: nowrap;
 }
@@ -50,8 +51,8 @@ td.store {
     text-align: center;
 }
 
-th.price, th.unit-price,
-td.price, td.unit-price {
+th.price, th.unit-price, th.price-may2,
+td.price, td.unit-price, td.price-may2 {
     padding-left: 5px;
 }
 
@@ -76,8 +77,18 @@ tr:not(:first-child):hover { /* svi osim headera */
 span.price {
     display: inline-block;
     min-width: 80px;
-    background: rgb(0, 141, 245);
     border-radius: 5px;
+}
+td.price > span.price {
+    background: rgb(0, 141, 245);
+}
+td.price-may2 > span.price {
+    background: rgb(164, 89, 255);
+}
+td.price-may2 > span.price.no-price {
+    background: rgb(200, 200, 200);
+    color: black;
+    font-weight: bolder;
 }
 td.unit-price > span.price {
     color: black;

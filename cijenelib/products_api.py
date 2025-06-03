@@ -19,16 +19,16 @@ class ProductApi:
         with concurrent.futures.ThreadPoolExecutor(max_workers=10, thread_name_prefix='PriceFetcherThread') as executor:
             futures = {executor.submit(store.fetch_prices, store): store for store in self._stores}
             for fut in concurrent.futures.as_completed(futures):
+                store = futures[fut]
                 try:
                     offers = fut.result()
                 except Exception as e:
-                    logger.error(f'Error while fetching prices: {e}')
+                    logger.error(f'Error while fetching {store.id} prices: {e}')
                     traceback.print_exc()
                 else:
                     if not isinstance(offers, list):
                         logger.error(f'Expected list of offers, got {type(offers)}')
                         continue
-                    store = futures[fut]
                     logger.info(f'Fetched {len(offers)} offers from {store.name}')
                     self.add_offers_from_store(store, offers)
 

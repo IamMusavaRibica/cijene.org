@@ -47,7 +47,7 @@ class ProductOffer(BaseModel):
     price: float
     store: Store | str
     store_location_id: str
-    may2price: float | None  # sidrena cijena na 2.5.2025.
+    may2_price: float | None  # sidrena cijena na 2.5.2025.
     quantity: int | float = 1
     url: str | None = None
     ogranicena_cijena: bool = False

@@ -41,6 +41,7 @@
             <th class="store">Trgovina</th>
             <th class="quantity"><span class="only-wide">Količina</span><span class="only-narrow">Kol.</span></th>
             <th class="price">Cijena</th>
+            <th class="price-may2">Cijena 2.5.2025.</th>
             <th class="unit-price">Cij<span class="only-wide">ena</span><span class="only-narrow">.</span>/{% if product.baseq != 1%}{{ product.baseq }} {% endif %}{{ product.unit }}</th>
         </tr>
         {% for offer in offers %}
@@ -75,6 +76,12 @@
                 </td>
                 <td class="quantity">{{ offer.fmt_quantity }} {{ product.unit }}</td>
                 <td class="price"><span class="price">{{ offer.price|formatted_price }}</span></td>
+                <td class="price-may2">
+                    {% if offer.may2_price %}
+                        <span class="price">{{ offer.may2_price|formatted_price }}</span>
+                    {% else %}
+                        <span class="price no-price">&minus;</span>
+                    {% endif %}
                 <td class="unit-price">
                     <span class="price" style="{{ stylize(offer, offers) }}">
                         {{ offer.price_per_unit|formatted_price }}

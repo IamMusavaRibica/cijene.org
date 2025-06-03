@@ -42,7 +42,7 @@ def resolve_product(coll: list, barcode: str, store: Store, store_id: str, name:
         return False
     product: Product
     product, qty = AllProducts[barcode]
-    p = product.instance(store=store, store_location_id=store_id, offer_name=name, price=price, quantity=qty, may2price=may2_price)
+    p = product.instance(store=store, store_location_id=store_id, offer_name=name, price=price, quantity=qty, may2_price=may2_price)
     coll.append(p)
     return True
 
