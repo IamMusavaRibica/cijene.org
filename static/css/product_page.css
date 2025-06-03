@@ -167,6 +167,9 @@ td.unit-price > span.price {
         display: none;
     }
 }
+div#switch-price {
+    display: none;
+}
 
 /* "Količina" na sirokim rezolucijama, "Kol." na uskim */
 /*.th-quantity::after { content: 'Kol.' }

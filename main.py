@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from loguru import logger
 from starlette.responses import JSONResponse
+from starlette.types import Scope
 
 from cijenelib.products_api import demo
 from cijenelib.utils import stylize_unit_price
@@ -35,6 +36,12 @@ async def fastapi_lifespan(_app: FastAPI):
     yield
     logger.info('Stopped')
 
+class CacheControl(StaticFiles):
+    async def get_response(self, path: str, scope: Scope) -> Response:
+        response = await super().get_response(path, scope)
+        if path.endswith('.js') or path.endswith('.css'):
+            response.headers['Cache-Control'] = 'public, max-age=600'  #, immutable'
+        return response
 
 app = FastAPI(docs_url=None, exception_handlers={404: _404handler})
 app.provider = None
