@@ -6,7 +6,7 @@ div#header {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    font-family: Gaegu, sans-serif;
+    font-family: Mansalva, Gaegu, sans-serif;
 }
 div#header a.homepage {
     color: var(--amber);

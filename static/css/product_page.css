@@ -48,7 +48,7 @@ th.store {
 
 .only-wide { display: inline; }
 .only-narrow { display: none; }
-td.store > span.only-wide { display: inline-block; margin-left: 18px; }
+td.store > span.only-wide { display: inline-block; margin-left: 22px; }
 
 
 th.price, th.unit-price, th.price-may2,
