@@ -4,6 +4,7 @@ ssl/
 cached/
 __pycache__/
 tmp/
+archive/
 
 *.py[cod]
 

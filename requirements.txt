@@ -5,3 +5,4 @@ lxml
 pydantic
 uvicorn
 jinja2
+validators

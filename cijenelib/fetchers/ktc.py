@@ -3,7 +3,7 @@ from linecache import cache
 from loguru import logger
 from lxml.etree import HTML
 
-from cijenelib.fetchers.common import get_csv_rows, cached_fetch, resolve_product
+from cijenelib.fetchers._common import get_csv_rows, cached_fetch, resolve_product
 from cijenelib.models import Store
 from datetime import date, datetime
 import requests

@@ -1,3 +1,4 @@
+from .bakmaz import fetch_bakmaz_prices
 from .boso import fetch_boso_prices
 from .eurospin import fetch_eurospin_prices
 from .kaufland import fetch_kaufland_prices

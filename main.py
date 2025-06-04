@@ -11,6 +11,7 @@ from loguru import logger
 from starlette.responses import JSONResponse
 from starlette.types import Scope
 
+from cijenelib.fetchers._archiver import LocalArchiver, WaybackArchiver
 from cijenelib.products_api import demo
 from cijenelib.utils import stylize_unit_price
 
@@ -32,9 +33,12 @@ async def _404handler(request: Request, exc: HTTPException):
 
 @asynccontextmanager
 async def fastapi_lifespan(_app: FastAPI):
+    logger.info('Wayback machine api keys: {}, {}'.format(os.getenv('WAYBACK_ACCESS_KEY'), os.getenv('WAYBACK_SECRET_KEY')))
     logger.info('Starting FastAPI application')
     yield
-    logger.info('Stopped')
+    logger.info('Stopping...')
+    LocalArchiver.shutdown()
+    WaybackArchiver.shutdown()
 
 class CacheControl(StaticFiles):
     async def get_response(self, path: str, scope: Scope) -> Response:
@@ -43,7 +47,7 @@ class CacheControl(StaticFiles):
             response.headers['Cache-Control'] = 'public, max-age=600'  #, immutable'
         return response
 
-app = FastAPI(docs_url=None, exception_handlers={404: _404handler})
+app = FastAPI(docs_url=None, lifespan=fastapi_lifespan, exception_handlers={404: _404handler})
 app.provider = None
 app.mount('/static', StaticFiles(directory='static'), name='static')
 provider = demo()

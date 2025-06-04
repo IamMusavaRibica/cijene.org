@@ -8,7 +8,7 @@ from loguru import logger
 from lxml.etree import XML, HTML, tostring
 
 from cijenelib.models import Store
-from .common import cached_fetch, resolve_product
+from ._common import cached_fetch, resolve_product
 from ..products import AllProducts
 
 pattern = re.compile(r"PROIZVODI-(\d{4})-(\d{2})-(\d{2})\.zip")

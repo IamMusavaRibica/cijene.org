@@ -7,7 +7,7 @@ from lxml.etree import HTML
 
 from cijenelib.models import Store
 from cijenelib.utils import fix_address, DDMMYYYY_dots, fix_city
-from .common import cached_fetch, get_csv_rows, resolve_product
+from ._common import cached_fetch, get_csv_rows, resolve_product
 
 
 def fetch_konzum_prices(konzum: Store):

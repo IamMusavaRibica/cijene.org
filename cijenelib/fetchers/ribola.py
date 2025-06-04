@@ -4,7 +4,7 @@ import requests
 from loguru import logger
 from lxml.etree import HTML, XML, tostring
 
-from cijenelib.fetchers.common import cached_fetch, resolve_product
+from cijenelib.fetchers._common import cached_fetch, resolve_product
 from cijenelib.models import Store
 from cijenelib.products import AllProducts
 

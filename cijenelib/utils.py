@@ -35,6 +35,41 @@ def stylize_unit_price(offer: ProductOffer, offers):
         return f'background: hsla(0 100% {20+30*t/.3:.0f}/0.99); font-weight: {500+100*(t<.15)+100*(t<.75)}'
     return f'background: hsla({120*(t-0.3)/0.7:.0f} 100% 50%/0.99)'
 
+
+def remove_extra_spaces(s: str) -> str:
+    while '  ' in s:
+        s = s.replace('  ', ' ')
+    return s.strip()
+
+
+def fix_price(price: str | float | None) -> float | None:
+    if isinstance(price, str):
+        price = price.strip()
+    if price is None or price == '':  # avoid catching 0.0 here
+        return None
+    if isinstance(price, str):
+        price = float('0' + price.replace(',', '.').replace('€', ''))
+    return price
+
+
+def most_occuring(s: str, *candidates: str) -> str:
+    counts = {c: s.count(c) for c in candidates}
+    return max(counts.items(), key=lambda x: x[1])[0]
+
+
+def split_by_lengths(s: str, *lengths: int) -> list[str]:
+    if sum(lengths) > len(s):
+        raise ValueError('sum of lengths is greater than string length')
+    parts = []
+    for l in lengths:
+        parts.append(s[:l])
+        s = s[l:]
+    if s:
+        parts.append(s)
+    return parts
+
+
+
 def fix_address(address: str) -> str:
     address = address.strip().title()
 
@@ -46,6 +81,7 @@ def fix_address(address: str) -> str:
                .replace('3.Gardijske', '3. gardijske')  # bivša Gacka ulica u Osijeku
                .replace('rigade Kune', 'rigade „Kune“')
                .replace('Sporova', 'Šporova')
+               .replace('Veliki Sor ', 'Veliki Šor ')
                )
 
     for i in range(10):
@@ -58,13 +94,13 @@ def fix_address(address: str) -> str:
               'eliki Kraj', 'eliko Brdo', 'Dalmatinskih', 'Brigada', 'Magistrala', 'Vezna', 'I',
               'Inženjerijske Bojne', 'Avenija', 'Pape', 'Dr', 'Rata', 'Bana', 'Šetalište', 'Iz',
               'Preporoda', 'Odvojak', 'Pristanište', 'Zajednice', 'Kneza', 'Kralja', 'Jama',
-              'U', }:
+              'U', 'Šor'}:
         t += ' '
         address = address.replace(t, t.lower())
     for t in {'Fkk', ' Hv', ' Ii', ' Ik', 'Vi ', 'Iii ', 'Ii ', 'Iv ', 'Viii ', 'Vii ', 'Ix ', 'Xii ', 'Xi '}:
         address = address.replace(t, t.upper())
 
-    address = address.replace('hrvatske Republike', 'Hrvatske Republike')
+    address = address.replace('hrvatske Republike', 'Hrvatske Republike')  # kad pise samo Republike onda je veliko R
     address = address.replace(' Bb', ' bb')
     if address.endswith('Iv'): address = address[:-2] + 'IV'
     if address[0].islower():

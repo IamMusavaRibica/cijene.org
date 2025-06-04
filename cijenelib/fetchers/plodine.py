@@ -7,7 +7,7 @@ import requests
 from loguru import logger
 from lxml.etree import HTML, tostring
 
-from cijenelib.fetchers.common import cached_fetch, get_csv_rows, resolve_product
+from cijenelib.fetchers._common import cached_fetch, get_csv_rows, resolve_product
 from cijenelib.models import Store
 from cijenelib.utils import DDMMYYYY_dots, fix_address, fix_city
 

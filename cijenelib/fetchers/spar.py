@@ -4,7 +4,7 @@ import io
 
 from loguru import logger
 
-from .common import cached_fetch, resolve_product, get_csv_rows
+from ._common import cached_fetch, resolve_product, get_csv_rows
 from ..models import ProductOffer, Store
 from datetime import date
 from cijenelib.utils import ONE_DAY, fix_address, fix_city

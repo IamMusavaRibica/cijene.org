@@ -4,6 +4,7 @@ from typing import TypeVar, Any, Callable
 
 from pydantic import BaseModel, Field, model_validator
 
+
 P = TypeVar('P', bound='ProductOffer')
 
 
@@ -41,6 +42,7 @@ class Store(BaseModel):
 
     def __call__(self, product: Product, quantity: int|float|None, **kwargs) -> 'ProductOffer':
         return ProductOffer(product=product, store=self, quantity=quantity, **kwargs)
+
 
 class ProductOffer(BaseModel):
     product: Product

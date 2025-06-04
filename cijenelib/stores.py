@@ -102,3 +102,4 @@ Boso        = Store(name='Boso',            url='https://www.boso.hr/',     loca
 NTL         = Store(name='NTL',             url='https://www.ntl.hr/',      locations={}, fetch_prices=fetch_ntl_prices)
 KTC         = Store(name='KTC',             url='https://www.ktc.hr/',      locations={}, fetch_prices=fetch_ktc_prices)
 TrgovinaKrk = Store(name='Trgovina Krk',    url='https://trgovina-krk.hr/', locations={}, fetch_prices=fetch_trgovina_krk_prices)
+Bakmaz      = Store(name='Bakmaz',          url='https://www.bakmaz.hr/',   locations={}, fetch_prices=fetch_bakmaz_prices)

@@ -1,6 +1,6 @@
 from loguru import logger
 
-from cijenelib.fetchers.common import get_csv_rows, cached_fetch, resolve_product
+from cijenelib.fetchers._common import get_csv_rows, cached_fetch, resolve_product
 from cijenelib.models import Store
 import requests
 import re

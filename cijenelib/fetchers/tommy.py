@@ -1,7 +1,7 @@
 import concurrent.futures
 import json
 
-from cijenelib.fetchers.common import cached_fetch, get_csv_rows, resolve_product
+from cijenelib.fetchers._common import cached_fetch, get_csv_rows, resolve_product
 from cijenelib.models import Store
 
 from loguru import logger
