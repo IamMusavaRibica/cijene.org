@@ -14,11 +14,12 @@ def fetch_djelo_vodice_prices(djelo_vodice: Store):
     # 'PUT GAÄ\x86ELEZA'.encode('latin-1').decode('utf8') == 'PUT GAĆELEZA'
     coll = []
     for url in xpath('https://dv10.djelo-vodice.hr/', '//a[contains(@href, ".xlsx")]/@href'):
+        full_url = 'https://dv10.djelo-vodice.hr/' + url
         try:
             filename = unquote(url).replace('GA?ELEZA', 'GAĆELEZA')
             market_type, address, city, location_id, file_id, dtstr = filename.split('#')
             dt = datetime.strptime(dtstr, '%Y-%m-%dT%H%M%S.xlsx')
-            coll.append(Pricelist(url, fix_address(address), fix_city(city), djelo_vodice.id, location_id, dt, filename))
+            coll.append(Pricelist(full_url, fix_address(address), fix_city(city), djelo_vodice.id, location_id, dt, filename))
         except Exception as e:
             logger.warning(f'error {e!r} while parsing metadata for djelo vodice pricelist {url}')
             logger.exception(e)

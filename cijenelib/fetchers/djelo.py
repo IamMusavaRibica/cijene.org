@@ -11,14 +11,15 @@ from cijenelib.utils import fix_address, fix_city
 
 def fetch_djelo_prices(djelo: Store):
     coll = []
-    for url in xpath('https://dv10.djelo-vodice.hr/', '//a[contains(@href, ".xlsx")]/@href'):
+    for url in xpath('https://cjenik.djelo.hr/', '//a[contains(@href, ".xlsx")]/@href'):
+        full_url = 'https://cjenik.djelo.hr/' + url
         try:
             filename = (unquote(url).replace('JELA?I?A', 'JELAČIĆA')
                         .replace('?IBENIK', 'ŠIBENIK')
                         .replace('RA?INE', 'RAŽINE'))
             market_type, address, city, location_id, file_id, dtstr = filename.split('#')
             dt = datetime.strptime(dtstr, '%Y-%m-%dT%H%M%S.xlsx')
-            coll.append(Pricelist(url, fix_address(address), fix_city(city), djelo.id, location_id, dt, filename))
+            coll.append(Pricelist(full_url, fix_address(address), fix_city(city), djelo.id, location_id, dt, filename))
         except Exception as e:
             logger.warning(f'error {e!r} while parsing metadata for djelo vodice pricelist {url}')
             logger.exception(e)
