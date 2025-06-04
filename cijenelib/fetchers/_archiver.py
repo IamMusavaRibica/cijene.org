@@ -63,10 +63,13 @@ class _WaybackArchiverImpl:
                 break
             logger.debug(f'Save Page Now: {url}')
             try:
+                data = {'url': url, **self.options}
+                if 'zabac' in url:  # zabac is weird, better archive everything for now
+                    del data['if_not_archived_within']
                 r = requests.post(
                     'https://web.archive.org/save',
                     headers=self._headers,
-                    data={'url': url, **self.options}
+                    data=data
                 )
                 r.raise_for_status()
             except Exception as e:
@@ -182,7 +185,6 @@ class _LocalArchiverImpl:
             try:
                 row = self._fetch_local_file(task.url)
                 path_exists = row and (self.archive_dir / row[0]).exists()
-                logger.debug(f'{path_exists=} for {task.filename}')
                 # if we already fetched this in the last 6 hours
                 if path_exists and row[2] - self.now_ts() < 60 * 60 * 6:
                     # logger.debug(f'file for {task.url} already exists and is recent enough, skipping download')
