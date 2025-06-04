@@ -130,7 +130,7 @@ class _LocalArchiverImpl:
         # return time.time_ns() // 100000000 - 17489851440
 
     def safe_filename(self, filename: str) -> str:
-        return ''.join(c for c in filename if c.isalnum() or c in ' -_,.').rstrip()
+        return ''.join(c for c in filename if c.isalnum() or c in ' -_,.#').rstrip()
 
     def _download_file(self, url: str) -> bytes:
         logger.debug(f'downloading {url[-40:]}')
@@ -182,15 +182,18 @@ class _LocalArchiverImpl:
             try:
                 row = self._fetch_local_file(task.url)
                 path_exists = row and (self.archive_dir / row[0]).exists()
+                logger.debug(f'{path_exists=} for {task.filename}')
                 # if we already fetched this in the last 6 hours
                 if path_exists and row[2] - self.now_ts() < 60 * 60 * 6:
                     # logger.debug(f'file for {task.url} already exists and is recent enough, skipping download')
                     continue
                 # otherwise, download the file and then store it if it's new or different sha256
-                # TODO: check local sha256 against tampering archive files?
+                # TODO: maybe use this? self.fetch(task, return_it=False)
                 raw_data = self._download_file(task.url)
-                if not row or row[1] != hashlib.sha256(raw_data).hexdigest():
-                    if row:
+                if not path_exists or not row or row[1] != hashlib.sha256(raw_data).hexdigest():
+                    if not path_exists:
+                        logger.warning(f'adding deleted file {task.filename}')
+                    elif row:
                         logger.warning(f'got different sha256 for {task.url}, updating archive')
                     self._save_new_file(task, raw_data)
             except Exception as e:
@@ -207,6 +210,7 @@ class _LocalArchiverImpl:
             return None
         if row := self._fetch_local_file(pricelist.url):
             local_file = self.archive_dir / row[0]
+            logger.debug(f'checking local file {local_file} for {pricelist.url}')
             if local_file.exists() and hashlib.sha256(t := local_file.read_bytes()).hexdigest() == row[1]:
                 return t
             logger.warning(f'local file {local_file} does not exist (deleted/changed?), re-downloading and updating index.db')
