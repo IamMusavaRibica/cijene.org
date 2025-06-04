@@ -103,4 +103,5 @@ NTL         = Store(name='NTL',             url='https://www.ntl.hr/',      loca
 KTC         = Store(name='KTC',             url='https://www.ktc.hr/',      locations={}, fetch_prices=fetch_ktc_prices)
 TrgovinaKrk = Store(name='Trgovina Krk',    url='https://trgovina-krk.hr/', locations={}, fetch_prices=fetch_trgovina_krk_prices)
 Bakmaz      = Store(name='Bakmaz',          url='https://www.bakmaz.hr/',   locations={}, fetch_prices=fetch_bakmaz_prices)
-DjeloVodice = Store(name='Djelo Vodice',   url='https://djelo-vodice.hr/',  locations={}, fetch_prices=fetch_djelo_vodice_prices)
+DjeloVodice = Store(name='Djelo Vodice',    url='https://djelo-vodice.hr/', locations={}, fetch_prices=fetch_djelo_vodice_prices)
+Djelo       = Store(name='Djelo',           url='https://djelo.hr/',        locations={}, fetch_prices=fetch_djelo_prices)

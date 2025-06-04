@@ -97,7 +97,7 @@ def demo():
         os.mkdir('cached')
     provider = ProductApi(stores=[Konzum, Spar, Tommy, Studenac, Ribola, Lidl, Plodine, Kaufland, Eurospin, Metro,
                                   Boso, NTL, KTC, TrgovinaKrk])
-    provider = ProductApi(stores=[DjeloVodice, Bakmaz, Studenac])
+    provider = ProductApi(stores=[Djelo, DjeloVodice, Bakmaz, Studenac])
     provider.update_prices()
     return provider
 
