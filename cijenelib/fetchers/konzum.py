@@ -88,7 +88,8 @@ def fetch_konzum_prices(konzum: Store):
 
 
     all_products = []
-    # TODO: different threads will access the sqlite database, is it safe?
+
+    # different threads will access the sqlite database, is it safe?
     with concurrent.futures.ThreadPoolExecutor(max_workers=32, thread_name_prefix='Konzum') as executor:
         futures = []
         for p in today_coll:
