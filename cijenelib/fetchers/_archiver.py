@@ -1,13 +1,12 @@
 import hashlib
 import sqlite3
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from os import getenv
 from pathlib import Path
 from queue import Queue
 from threading import Thread
-from collections import namedtuple
 
 import requests
 from loguru import logger
@@ -16,12 +15,13 @@ from loguru import logger
 @dataclass
 class Pricelist:
     url: str
-    address: str
-    city: str
+    address: str | None
+    city: str | None
     store_id: str
-    location_id: str
+    location_id: str | None
     dt: datetime
     filename: str
+    request_kwargs: dict = field(default_factory=dict)
 
 
 class _WaybackArchiverImpl:
@@ -29,11 +29,12 @@ class _WaybackArchiverImpl:
         'capture_all': 'on',
         'capture_outlinks': '1',
         'skip_first_archive': '1',
-        'if_not_archived_within': '6h'
+        'if_not_archived_within': '6h',
+        'delay_wb_availability': '1',
     }
     _headers: dict
     _thread: Thread
-    _queue: Queue[str]
+    _queue: Queue[str | None]
     _ready: bool = False
 
     def initialize(self, access_key: str, secret_key: str):
@@ -46,7 +47,7 @@ class _WaybackArchiverImpl:
         self._ready = True
         self._thread = Thread(target=self._worker, daemon=True, name='WaybackArchiverThread')
         self._thread.start()
-        logger.info(f'WaybackArchiver initialized, worker thread started (id: {self._thread.native_id})')
+        logger.info(f'WaybackArchiver initialized, worker thread id: {self._thread.native_id}')
 
     def archive(self, url: str):
         if not self._ready:
@@ -61,6 +62,7 @@ class _WaybackArchiverImpl:
             if url is None:
                 logger.debug('WaybackArchiver worker received shutdown signal')
                 break
+            time.sleep(21)  # put the sleep here so we don't have to wait for shutdown
             logger.debug(f'Save Page Now: {url}')
             try:
                 data = {'url': url, **self.options}
@@ -74,9 +76,9 @@ class _WaybackArchiverImpl:
                 r.raise_for_status()
             except Exception as e:
                 logger.warning(f'error while archiving {url}: {e!r}')
+                self._queue.put(url)  # re-queue the URL for later processing
             finally:
                 self._queue.task_done()
-                time.sleep(60)
 
     def shutdown(self):
         if self._ready:
@@ -109,7 +111,7 @@ class _LocalArchiverImpl:
                     url         TEXT    NOT NULL,
                     filename    TEXT    NOT NULL,
                     store_id    TEXT    NOT NULL,
-                    location_id TEXT    NOT NULL,
+                    location_id TEXT,
                     year        INTEGER NOT NULL,
                     month       INTEGER NOT NULL,
                     day         INTEGER NOT NULL,
@@ -126,6 +128,7 @@ class _LocalArchiverImpl:
             conn.commit()
         self._thread = Thread(target=self._worker, daemon=True, name='LocalArchiverThread')
         self._thread.start()
+        self._initialized = True
         logger.info(f'Local archive initialized at {self.archive_dir}, worker thread id: {self._thread.native_id}')
 
     def now_ts(self) -> int:
@@ -135,9 +138,17 @@ class _LocalArchiverImpl:
     def safe_filename(self, filename: str) -> str:
         return ''.join(c for c in filename if c.isalnum() or c in ' -_,.#').rstrip()
 
-    def _download_file(self, url: str) -> bytes:
-        logger.debug(f'downloading {url[-40:]}')
-        response = self.session.get(url, timeout=60)
+    def _download_file(self, url: str, **kwargs) -> bytes:
+        logger.debug(f'downloading {url} with {kwargs = }')
+        try:
+            response = self.session.get(url, timeout=60, **kwargs)
+        except requests.exceptions.SSLError as e:
+            logger.warning(f'SSLError while downloading {url}: {e!r}')
+            logger.warning('retrying with verify=False')
+            return self._download_file(url, **kwargs, verify=False)
+        except requests.exceptions.ChunkedEncodingError as e:
+            logger.error(f'ChunkedEncodingError while downloading {url}: {e!r}')
+            raise e
         response.raise_for_status()
         return response.content
 
@@ -190,14 +201,14 @@ class _LocalArchiverImpl:
                     # logger.debug(f'file for {task.url} already exists and is recent enough, skipping download')
                     continue
                 # otherwise, download the file and then store it if it's new or different sha256
-                # TODO: maybe use this? self.fetch(task, return_it=False)
-                raw_data = self._download_file(task.url)
-                if not path_exists or not row or row[1] != hashlib.sha256(raw_data).hexdigest():
-                    if not path_exists:
-                        logger.warning(f'adding deleted file {task.filename}')
-                    elif row:
-                        logger.warning(f'got different sha256 for {task.url}, updating archive')
-                    self._save_new_file(task, raw_data)
+                raw_data = self.fetch(task, return_it=True, force_download=True)
+                # raw_data = self._download_file(task.url)
+                # if not path_exists or not row or row[1] != hashlib.sha256(raw_data).hexdigest():
+                #     if not path_exists and row:
+                #         logger.warning(f'adding deleted file {task.filename}')
+                #     elif row:
+                #         logger.warning(f'got different sha256 for {task.url}, updating archive')
+                #     self._save_new_file(task, raw_data)
             except Exception as e:
                 logger.error(f'Error while processing task {task}: {e!r}')
                 logger.exception(e)
@@ -205,14 +216,18 @@ class _LocalArchiverImpl:
                 self._queue.task_done()
                 time.sleep(.01)
 
-    def fetch(self, pricelist: Pricelist, return_it: bool = False) -> bytes | None:
-        # logger.debug(f'fetching ...{pricelist.url[-40:]} for store {store_id} with filename `{filename}`')
+    def fetch(self, pricelist: Pricelist, return_it: bool = False, force_download: bool = False) -> bytes | None:
+        # logger.debug(f'fetching {pricelist.url} with kwargs={pricelist.request_kwargs}')
+        if 'plodine.hr/' in pricelist.url.lower():
+            if 'headers' not in pricelist.request_kwargs:
+                pricelist.request_kwargs['headers'] = {}
+            pricelist.request_kwargs['headers']['verify'] = 'certs/www.plodine.hr.crt'
         if not return_it:
             self._queue.put(pricelist)
             return None
-        if row := self._fetch_local_file(pricelist.url):
+        if not force_download and (row := self._fetch_local_file(pricelist.url)):
             local_file = self.archive_dir / row[0]
-            logger.debug(f'checking local file {local_file} for {pricelist.url}')
+            # logger.debug(f'checking local file {local_file} for {pricelist.url}')
             if local_file.exists() and hashlib.sha256(t := local_file.read_bytes()).hexdigest() == row[1]:
                 return t
             logger.warning(f'local file {local_file} does not exist (deleted/changed?), re-downloading and updating index.db')
@@ -220,7 +235,7 @@ class _LocalArchiverImpl:
                 cursor = conn.cursor()
                 cursor.execute('DELETE FROM pricelists WHERE id = ?;', (row[3],))
                 conn.commit()
-        raw_data = self._download_file(pricelist.url)
+        raw_data = self._download_file(pricelist.url, **pricelist.request_kwargs)
         self._save_new_file(pricelist, raw_data)
         return raw_data
 

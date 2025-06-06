@@ -64,6 +64,8 @@ StoreLocations = {
         '004': ['Kaštel Stari', None, 'Put Blata 2', 43.55201716806334, 16.339595022987805, 'https://maps.app.goo.gl/85rT6o8sQASnKSqSA'],
         '039': ['Kaštel Novi', None, 'Put sv. Jurja 115???', 43.56600985347082, 16.309372658337654, '/NE_MOGU_NAC_RIBOLU_039'],                          # TODO
         '095': ['Ražanj', None, 'Ražanj 95a', None, None, None],
+        '010': ['Okrug Gornji', None, 'Stjepana Radića 51', None, None, None],
+        '060': ['Nečujam', None, 'Nečujam bb', None, None, 'https://maps.app.goo.gl/uDFwJdhv2J41j1Rh6'],
         '052': ['Split', None, 'Ul. Ruđera Boškovića 10', 43.50559388745281, 16.466005794663978, 'https://maps.app.goo.gl/N8gwyPpM32JHPWxk7'],
         '074': ['Primošten', None, 'Splitska 22', 43.572051513860245, 15.940717834648607, 'https://maps.app.goo.gl/a9V4uh1Y3E9rfXRp8'],  # https://maps.app.goo.gl/B84dYT7stCfE5bK17 KAD POPRAVE
         '021': ['Split', None, 'Šibenska 59', 43.51926188772818, 16.45831167124054, 'https://maps.app.goo.gl/ZwBFnmTheqD75Y5F8'],

@@ -33,7 +33,6 @@ async def _404handler(request: Request, exc: HTTPException):
 
 @asynccontextmanager
 async def fastapi_lifespan(_app: FastAPI):
-    logger.info('Wayback machine api keys: {}, {}'.format(os.getenv('WAYBACK_ACCESS_KEY'), os.getenv('WAYBACK_SECRET_KEY')))
     logger.info('Starting FastAPI application')
     yield
     logger.info('Stopping...')

@@ -1,59 +1,80 @@
-import concurrent.futures
+import re
+from datetime import datetime
 
 import requests
 from loguru import logger
 from lxml.etree import HTML, XML, tostring
 
-from cijenelib.fetchers._common import cached_fetch, resolve_product
+from cijenelib.fetchers._archiver import WaybackArchiver, Pricelist
+from cijenelib.fetchers._common import cached_fetch, resolve_product, xpath, ensure_archived
 from cijenelib.models import Store
 from cijenelib.products import AllProducts
+from cijenelib.utils import remove_extra_spaces
 
 BASE_URL = 'https://ribola.hr/ribola-cjenici/'
 def fetch_ribola_prices(ribola: Store):
-    today_url = BASE_URL + HTML(requests.get(BASE_URL).content) \
-                            .xpath('//tr[2]/td/a/@href')[0]
+    WaybackArchiver.archive(BASE_URL)
+    coll = []
 
-    # scrape the webpage to find download links
-    root0 = HTML(requests.get(today_url).content)
-    hrefs = []
-    for tr in root0.xpath('//tr'):
-        if tr.find('th') is not None:  # skip header rows
-            continue
-        if anchor := tr.xpath('.//a[@download]'):
-            hrefs.append(anchor[0].get('href'))
+    hrefs = set()
+    for date_url in xpath(BASE_URL, '//a[starts-with(@href, "?date=")]/@href'):
+        WaybackArchiver.archive(full_url := BASE_URL + date_url)
+        for href in xpath(full_url, '//a[@download]/@href'):
+            if href not in hrefs:  # avoid duplicates
+                hrefs.add(href)
+                # market_type, full_addr, location_id, _ = href.split('-', 3)
+                m = re.search(r'-(\d\d\d)-\d+-(20\d\d-[01]\d-[0123]\d-[012]\d-\d\d-\d\d)-', href)
+                if not m:
+                    m = re.search(r'-(\d\d\d)-\d+-(20\d\d[01]\d[0123]\d[012]\d\d\d\d\d)', href)
+                    dt = m and datetime.strptime(m.group(2), '%Y%m%d%H%M%S')
+                else:
+                    dt = datetime.strptime(m.group(2), '%Y-%m-%d-%H-%M-%S')
+
+                if m:
+                    location_id = m.group(1)
+                    if location_id in ribola.locations:
+                        city, _, address, lat, lon, gmaps_url = ribola.locations[location_id]
+                        filename = href.rsplit('/')[-1]
+                        coll.append(Pricelist(BASE_URL + href, address, city, ribola.id, location_id, dt, filename))
+                        continue
+                    else:
+                        logger.warning(f'unknown ribola location id: {location_id} from {href}')
+                logger.warning(f'failed to parse ribola href: {href}')
+
+
+    if not coll:
+        logger.error('no ribola pricelists found')
+        return []
+
+    logger.info(f'found {len(coll)} ribola pricelists')
+    coll.sort(key=lambda x: x.dt, reverse=True)
+    today = coll[0].dt.date()
+    today_coll = []
+    for p in coll:
+        if p.dt.date() == today:
+            today_coll.append(p)
         else:
-            logger.warning(f'No download link found in row: {tostring(tr, pretty_print=True)}')
+            ensure_archived(p)
 
-    # one file = one request so we can use concurrency
-    all_products = []
-    # with concurrent.futures.ThreadPoolExecutor(max_workers=min(25, len(hrefs)), thread_name_prefix='Ribola') as executor:
-    #     futures = [executor.submit(process_single, BASE_URL + h, ribola) for h in hrefs]
-    #     for fut in concurrent.futures.as_completed(futures):
-    #         try:
-    #             if result := fut.result():
-    #                 all_products.extend(result)
-    #         except Exception as e:
-    #             logger.error(f'Error processing ribola href: {e!r}')
-    for h in hrefs:
+    prod = []
+    for p in today_coll:
         try:
-            all_products.extend(process_single(BASE_URL + h, ribola))
+            prod.extend(process_single(p, ribola))
         except Exception as e:
-            logger.error(f'error processing ribola href {h}: {e!r}')
-    return all_products
+            logger.error(f'error processing ribola pricelist {p.url}: {e!r}')
+    return prod
 
 
-def process_single(full_url: str, ribola: Store):
-    root = XML(cached_fetch(full_url)
-               .replace(b'MaloprmdajnaCijenaAkcija', b'MaloprodajnaCijenaAkcija'))
+def process_single(p: Pricelist, ribola: Store):
+    root = XML(ensure_archived(p, True).replace(b'MaloprmdajnaCijenaAkcija', b'MaloprodajnaCijenaAkcija'))
     coll = []
     for prodajni_objekt in root.findall('ProdajniObjekt'):
         location_id = prodajni_objekt.findtext('Oznaka')
-        logger.debug(f'processing store {location_id} from {full_url}')
         for k in prodajni_objekt.find('Proizvodi').findall('Proizvod'):
             name: str = k.findtext('NazivProizvoda')
             _id = k.findtext('SifraProizvoda')
             brand = k.findtext('MarkaProizvoda')
-            total_qty = k.findtext('NetoKolicina')
+            _qty = k.findtext('NetoKolicina')
             unit = k.findtext('JedinicaMjere')
             mpc = k.findtext('MaloprodajnaCijena')
             ppu = k.findtext('CijenaZaJedinicuMjere')
@@ -63,44 +84,34 @@ def process_single(full_url: str, ribola: Store):
             barcode = k.findtext('Barkod')
             category = k.findtext('KategorijeProizvoda')
 
-            if not barcode:
-                continue
-
             while '  ' in name:
                 name = name.replace('  ', ' ')
 
-            name = name.strip().replace('GA ZIRANI', 'GAZIRANI') \
-                .replace('G AZIRANI', 'GAZIRANI') \
-                .replace(' P ET', ' PET') \
-                .replace(' PE T', ' PET') \
-                .replace('lE T GAZIRANI SOK', 'l PET GAZIRANI SOK') \
-                .replace('lE T', 'l PET') \
-                .replace('0, 5', '0,5') \
+            name = (remove_extra_spaces(name).strip()
+                    .replace('GA ZIRANI', 'GAZIRANI')
+                    .replace('G AZIRANI', 'GAZIRANI')
+                    .replace(' P ET', ' PET')
+                    .replace(' PE T', ' PET')
+                    .replace('lE T GAZIRANI SOK', 'l PET GAZIRANI SOK')
+                    .replace('lE T', 'l PET')
+                    .replace('0, 5', '0,5'))
 
             if name.endswith('l P'):
                 name = name[:-3] + 'l PET'
 
-            fixed_name = name.replace(' PET GAZIRANI SOK', '') \
-                .replace(' PET GAZIRANI S', '') \
-                .replace(' l PET', ' l') \
-                .replace(' l P', ' l') \
-                .replace(' 5+1 GRATIS LIM.', '') \
-                .replace(' GAZIRANI SOK', '') \
+            name = (name.replace(' PET GAZIRANI SOK', '')
+                .replace(' PET GAZIRANI S', '')
+                .replace(' l PET', ' l')
+                .replace(' l P', ' l')
+                .replace(' 5+1 GRATIS LIM.', '')
+                .replace(' GAZIRANI SOK', ''))
 
             try:
-                *_, total_qty, unit = fixed_name.rsplit(maxsplit=2)
-                quantity = float(total_qty.replace(',', '.'))
+                *_, _qty, unit = name.rsplit(maxsplit=2)
+                quantity = float(_qty.replace(',', '.'))
             except ValueError:  # can be thrown when unpacking or converting to float fails
                 if barcode in AllProducts:
-                    logger.warning(f'didnt parse product {barcode} `{name}` = `{fixed_name}` {total_qty =}')
-                continue
+                    logger.warning(f'didnt parse product {barcode} `{name}` {_qty =}')
 
-            price = mpc or discount_mpc
-            if not price:
-                logger.warning(f'product {name}, barcode {barcode} has no current price')
-                continue
-            price = float(price)
-            may2_price = float(may2_price) if may2_price else None
-
-            resolve_product(coll, barcode, ribola, location_id, name, price, quantity, may2_price)
+            resolve_product(coll, barcode, ribola, location_id, name, discount_mpc or mpc, _qty, may2_price)
     return coll

@@ -48,7 +48,7 @@ def fetch_boso_prices(boso: Store):
                 if market_id.isdigit() and len(market_id) == 4:
                     url, = td_anchor.xpath('./a/@href')
                     dt = datetime.strptime(datetime0, datefmt)
-                    coll.append(Pricelist(url, fix_address(address), fix_city(city), market_id, dt, td_filename.text))
+                    coll.append(Pricelist(url, fix_address(address), fix_city(city), boso.id, market_id, dt, td_filename.text))
                 else:
                     logger.warning(f'failed to parse store id from {td_filename.text}')
 
@@ -68,7 +68,7 @@ def fetch_boso_prices(boso: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p.url, boso, p.location_id, p.dt, p.filename)
+            ensure_archived(p)
 
     prod = []
     for t in today_coll:

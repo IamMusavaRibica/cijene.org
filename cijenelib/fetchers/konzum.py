@@ -1,5 +1,6 @@
 import concurrent.futures
 import re
+from datetime import datetime
 
 import requests
 from loguru import logger
@@ -7,43 +8,57 @@ from lxml.etree import HTML
 
 from cijenelib.models import Store
 from cijenelib.utils import fix_address, DDMMYYYY_dots, fix_city
-from ._common import cached_fetch, get_csv_rows, resolve_product
+from ._archiver import Pricelist, WaybackArchiver
+from ._common import get_csv_rows, resolve_product, ensure_archived
 
 
 def fetch_konzum_prices(konzum: Store):
     index_url = 'https://www.konzum.hr/cjenici/'
+    WaybackArchiver.archive(index_url)
 
     root0 = HTML(requests.get(index_url).content)
     max_page = 0
+    available_dates_urls = []
     for page in root0.xpath('//a[starts-with(@href, "/cjenici?page=")]'):
         if page.text.isnumeric():
             max_page = max(max_page, int(page.text))
+    for date in root0.xpath('//a[starts-with(@href, "/cjenici?date=")]/@href'):
+        available_dates_urls.append(date.removeprefix('/cjenici?date='))
 
     # fetch every page
     pages = [root0]
-    for i in range(2, max_page+1):
-        pages.append(HTML(requests.get(f'{index_url}?page={i}').content))
+    for d in available_dates_urls:
+        logger.info(f'parsing konzum pages for date {d}')
+        for i in range(2, max_page+1):
+            page_url = f'{index_url}?date={d}&page={i}'
+            WaybackArchiver.archive(page_url)
+            pages.append(HTML(requests.get(page_url).content))
+
 
     # extract all pricelists from the pages
-    hrefs: list[tuple[str, str]] = []
+    coll = []
     for root in pages:
         for a in root.xpath('//h5/a[starts-with(@href, "/cjenici/download")]'):
-            href = 'https://www.konzum.hr' + a.get('href')
+            url = 'https://www.konzum.hr' + a.get('href')
 
-            store_type, *full_addr, location_id, broj_pohrane, date, _ = a.text.strip().split(',')
-            hrefs.append((href, location_id))
-            # print([store_type, full_addr, location_id, broj_pohrane, date])
+            s = a.text.strip()
+            if s[-18:-4].isnumeric():  # SUPERMARKET,adresa,0901,465,20250516081939.CSV
+                store_type, *full_addr, location_id, file_id, datestr = s.split(',')
+                dt = datetime.strptime(datestr.lower(), '%Y%m%d%H%M%S.csv')
+            else:
+                store_type, *full_addr, location_id, file_id, date, _ = a.text.strip().split(',')
+                if not (m := DDMMYYYY_dots.match(date)):
+                    logger.warning(f'unexpected date format (failed to parse?) {a.text.strip()}')
+                    continue
+                day, month, year = map(int, m.groups())
+                dt = datetime(year, month, day)
 
             if not (len(location_id) == 4 and location_id.isnumeric()):
                 logger.warning(f'unexpected location id (failed to parse?) {a.text.strip()}')
                 continue
-            if not (m := DDMMYYYY_dots.match(date)):
-                logger.warning(f'unexpected date format (failed to parse?) {a.text.strip()}')
-                continue
-            day, month, year = m.groups()
 
+            full_addr = ' '.join(full_addr).replace(',', ' ').replace('_', ' ')
             # parse the address to extract street and city
-            full_addr = ' '.join(full_addr)
             five_digit_nums = list(re.finditer(r'\b\d{5}\b', full_addr))
             if not five_digit_nums:
                 logger.warning(f'unexpected address format (failed to parse?) {a.text.strip()}')
@@ -52,20 +67,32 @@ def fetch_konzum_prices(konzum: Store):
             postal_match = five_digit_nums[-1]
             address = full_addr[:postal_match.start()].strip()
             postal_code = postal_match.group(0)
+
             city = fix_city(full_addr[postal_match.end():])
-
             address = fix_address(address)
+            coll.append(Pricelist(url, address, city, konzum.id, location_id, dt, a.text.strip()))
 
-            if location_id not in konzum.locations:
-                konzum.locations[location_id] = [city, None, address, None, None, None]
+    if not coll:
+        logger.warning('no konzum prices found')
+        return []
 
-    logger.debug(f'found {len(hrefs)} price lists for konzum')
+    logger.debug(f'found {len(coll)} konzum pricelists')
+    coll.sort(key=lambda x: x.dt, reverse=True)
+    today = coll[0].dt.date()
+    today_coll = []
+    for p in coll:
+        if p.dt.date() == today:
+            today_coll.append(p)
+        else:
+            ensure_archived(p)
+
+
     all_products = []
-
+    # TODO: different threads will access the sqlite database, is it safe?
     with concurrent.futures.ThreadPoolExecutor(max_workers=32, thread_name_prefix='Konzum') as executor:
         futures = []
-        for href, location_id in hrefs:
-            futures.append(executor.submit(process_single, href, konzum, location_id))
+        for p in today_coll:
+            futures.append(executor.submit(process_single, konzum, p))
 
         for future in concurrent.futures.as_completed(futures):
             try:
@@ -76,25 +103,12 @@ def fetch_konzum_prices(konzum: Store):
 
     return all_products
 
-def process_single(full_url: str, konzum: Store, location_id: str):
-    logger.debug(f'processing store {location_id} from {full_url}')
-    raw = cached_fetch(full_url)
-    rows = get_csv_rows(raw, delimiter=',', encoding='utf8')
+def process_single(konzum: Store, p: Pricelist):
+    rows = get_csv_rows(ensure_archived(p, True))
     coll = []
     for k in rows[1:]:
         # za konzum, unit == 'ko' za pakirane proizvode, 'kg' za proizvode u rinfuzi
         name, _id, brand, total_qty, _, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-        if not barcode:
-            continue
         quantity, unit = total_qty.split()
-        quantity = float(quantity)
-        price = mpc or discount_mpc
-        if not price:
-            logger.warning(f'product {name}, barcode {barcode} has no current price')
-            continue
-        price = float(price)
-        may2_price = float(may2_price) if may2_price else None
-
-        resolve_product(coll, barcode, konzum, location_id, name, price, quantity, may2_price)
-
+        resolve_product(coll, barcode, konzum, p.location_id, name, discount_mpc or mpc, quantity, may2_price)
     return coll

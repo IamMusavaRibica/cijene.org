@@ -16,33 +16,24 @@ from cijenelib.utils import most_occuring, remove_extra_spaces, fix_price
 
 session = requests.Session()
 session.headers.update({'User-Agent': 'cijene.org scraper (kontakt email: darac[at]ribica.dev)'})
-CACHE_DIR = Path('cached')
 ARCHIVE = Path('archive')
 
-def cached_fetch(url: str) -> bytes:
-    checksum = hashlib.sha1(url.strip().encode()).hexdigest()
-    filepath = CACHE_DIR / checksum
-    if not filepath.exists():
-        r = session.get(url)
-        r.raise_for_status()
-        filepath.write_bytes(r.content)
-        return r.content
-    return filepath.read_bytes()
-
-def xpath(w: str | bytes, query: str, extra_headers = None):
-    if isinstance(w, str) and validators.url(w):
-        w = session.get(w, headers=extra_headers or {}).content
+def xpath(w: str | bytes, query: str, extra_headers = None, return_root: bool = False, verify: bool | str = True) -> list | tuple[list, HTML]:
+    # NOTE: validators.url() is wrong for "https://www.ktc.hr/cjenici?poslovnica=SAMOPOSLUGA KOPRIVNICA PJ-88"
+    if isinstance(w, str) and w.startswith('http'):
+        w = session.get(w, headers=extra_headers or {}, verify=verify).text
     root = HTML(w)
-    return root.xpath(query)
+    res = root.xpath(query)
+    if return_root:
+        return res, root
+    return res
 
 
 def ensure_archived(pricelist: Pricelist, return_it: bool = False):
+    logger.debug(f'ensure_archived: {pricelist.url}')
     WaybackArchiver.archive(pricelist.url)
     return LocalArchiver.fetch(pricelist, return_it)
 
-
-def ensure_archived_file_data():
-    ...
 
 def get_csv_rows(raw: bytes, delimiter: str = None, encoding: str = None, transtable: dict = None) -> list[list[str]]:
     for enc in ('utf-8', 'cp1250'):
@@ -65,10 +56,12 @@ def resolve_product(coll: list, barcode: str, store: Store, store_id: str, name:
         return False
     price = fix_price(price)
     may2_price = fix_price(may2_price)
-    if not price:
+    if not price and price != 0:
         return False
-    name = remove_extra_spaces(name)
-    name = name.removeprefix('--')  # Bakmaz
+    name = (remove_extra_spaces(name)
+            .removeprefix('--')  # Bakmaz
+            .replace('0 ,5L', '0,5L')  # NTL ponekad
+            )
     if not name:
         logger.warning(f'[{store.name}] product with {barcode = } has no name')
         return False

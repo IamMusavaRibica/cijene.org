@@ -3,60 +3,57 @@ from urllib.parse import unquote
 
 from loguru import logger
 
-from cijenelib.fetchers._common import get_csv_rows, cached_fetch, resolve_product
+from cijenelib.fetchers._archiver import WaybackArchiver, Pricelist
+from cijenelib.fetchers._common import get_csv_rows, cached_fetch, resolve_product, xpath, ensure_archived
 from cijenelib.models import Store
 import requests
 
 from lxml.etree import HTML, tostring
-from cijenelib.utils import UA_HEADER, fix_city
+from cijenelib.utils import UA_HEADER, fix_city, fix_address
 
 
 def fetch_trgovina_krk_prices(trgovina_krk: Store):
+    WaybackArchiver.archive('https://trgovina-krk.hr/objava-cjenika/')
+    coll = []
     # returns 403 forbidden if we don't use a user-agent. is this legal?
-    root0 = HTML(requests.get('https://trgovina-krk.hr/objava-cjenika/', headers=UA_HEADER).content)
-    hrefs = []
-    for href in root0.xpath('//a[contains(@href, ".csv")]/@href'):
+    for href in xpath('https://trgovina-krk.hr/objava-cjenika/', '//a[contains(@href, ".csv")]/@href', extra_headers=UA_HEADER):
         filename = unquote(href).removeprefix('https://trgovina-krk.hr/csv/').removesuffix('.csv')
-        *prefix, city, store_id, _id, datestr, h, m, s = filename.split('_')
-        day, month, year = map(int, (datestr[:2], datestr[2:4], datestr[4:]))
-        h, m, s = map(int, (h, m, s))
-        dt = datetime(year, month, day, h, m, s)
-        # print([prefix, city, store_id, dt])
-        market_type = prefix[0]
-        address = ' '.join(prefix[1:]).replace('  ', ' ').strip()
+        fixed = filename.replace('11_A', '11A')
+        market_type, address, city, location_id, file_id, datestr = fixed.split('_', 5)
+        dt = datetime.strptime(datestr, '%d%m%Y_%H_%M_%S')
+        address = fix_address(address)
         city = fix_city(city)
-        hrefs.append((dt, href, store_id, address, city))
+        coll.append(p := Pricelist(href, address, city, trgovina_krk.id, location_id, dt, filename))
+        p.request_kwargs = {'headers': UA_HEADER}
 
-    if not hrefs:
-        logger.warning(f'no prices found for trgovina krk')
+    if not coll:
+        logger.warning('no trgovina krk pricelists found')
         return []
-    prod = []
-    hrefs.sort(reverse=True)
-    today = hrefs[0][0].date()
-    for d, url, store_id, address, city in hrefs:
-        if d.date() != today:
-            break
-        if store_id not in trgovina_krk.locations:
-            trgovina_krk.locations[store_id] = [city, None, address, None, None, None]
-        logger.debug(f'fetching {url} for trgovina krk {store_id}, {address}, {city}')
 
-        rows = get_csv_rows(cached_fetch(url), delimiter=';', encoding='cp1250')
+    logger.info(f'found {len(coll)} trgovina krk pricelists')
+    coll.sort(key=lambda x: x.dt, reverse=True)
+    today = coll[0].dt.date()
+    today_coll = []
+    for p in coll:
+        if p.dt.date() == today:
+            today_coll.append(p)
+        else:
+            ensure_archived(p)
+
+    prod = []
+    for p in today_coll:
+        rows = get_csv_rows(ensure_archived(p, True))
         parsed_barcodes = set()
         for row in rows[1:]:
             try:
                 name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = row
             except ValueError:
-                logger.warning(f'{url}, {row}')
+                logger.warning(f'unable to unpack row {row} in {p.url}')
                 continue
-            # print([name, discount_mpc or mpc, barcode])
-            if not barcode or barcode in parsed_barcodes:
+            if barcode in parsed_barcodes or not barcode:
                 continue
             parsed_barcodes.add(barcode)
-
             name = name.removesuffix(' COCA-COLA').removesuffix(' COCA COLA').removesuffix(' COCA')
-            price = float('0' + (discount_mpc or mpc).replace(',', '.'))
-            may2_price = float('0' + may2_price.replace(',', '.')) or None
-            resolve_product(prod, barcode, trgovina_krk, store_id, name, price, None, may2_price)
-
+            resolve_product(prod, barcode, trgovina_krk, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
 
     return prod
