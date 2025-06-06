@@ -1,16 +1,14 @@
 import io
 import re
 import zipfile
-from datetime import date, datetime
+from datetime import datetime
 
-import requests
 from loguru import logger
-from lxml.etree import XML, HTML, tostring
+from lxml.etree import XML
 
 from cijenelib.models import Store
 from ._archiver import WaybackArchiver, Pricelist
-from ._common import cached_fetch, resolve_product, xpath, ensure_archived
-from ..products import AllProducts
+from ._common import resolve_product, xpath, ensure_archived
 from ..utils import remove_extra_spaces
 
 pattern = re.compile(r"PROIZVODI-(\d{4})-(\d{2})-(\d{2})\.zip")

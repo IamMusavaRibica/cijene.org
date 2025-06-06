@@ -1,12 +1,11 @@
 import re
 from datetime import datetime
 
-import requests
 from loguru import logger
-from lxml.etree import HTML, XML, tostring
+from lxml.etree import XML
 
 from cijenelib.fetchers._archiver import WaybackArchiver, Pricelist
-from cijenelib.fetchers._common import cached_fetch, resolve_product, xpath, ensure_archived
+from cijenelib.fetchers._common import resolve_product, xpath, ensure_archived
 from cijenelib.models import Store
 from cijenelib.products import AllProducts
 from cijenelib.utils import remove_extra_spaces

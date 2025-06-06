@@ -13,8 +13,7 @@ from ._common import get_csv_rows, resolve_product, ensure_archived
 
 
 def fetch_konzum_prices(konzum: Store):
-    index_url = 'https://www.konzum.hr/cjenici/'
-    WaybackArchiver.archive(index_url)
+    WaybackArchiver.archive(index_url := 'https://www.konzum.hr/cjenici/')
 
     root0 = HTML(requests.get(index_url).content)
     max_page = 0

@@ -1,11 +1,8 @@
 import csv
-import hashlib
 import io
-from datetime import datetime
 from pathlib import Path
 
 import requests
-import validators
 from loguru import logger
 from lxml.etree import HTML
 

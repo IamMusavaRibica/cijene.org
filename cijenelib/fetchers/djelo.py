@@ -3,16 +3,17 @@ from urllib.parse import unquote
 
 from loguru import logger
 
-from cijenelib.fetchers._archiver import Pricelist
+from cijenelib.fetchers._archiver import Pricelist, WaybackArchiver
 from cijenelib.fetchers._common import xpath, ensure_archived
 from cijenelib.models import Store
 from cijenelib.utils import fix_address, fix_city
 
 
 def fetch_djelo_prices(djelo: Store):
+    WaybackArchiver.archive(index_url := 'https://cjenik.djelo.hr/')
     coll = []
-    for url in xpath('https://cjenik.djelo.hr/', '//a[contains(@href, ".xlsx")]/@href'):
-        full_url = 'https://cjenik.djelo.hr/' + url
+    for url in xpath(index_url, '//a[contains(@href, ".xlsx")]/@href'):
+        full_url = index_url + url
         try:
             filename = (unquote(url).replace('JELA?I?A', 'JELAČIĆA')
                         .replace('?IBENIK', 'ŠIBENIK')

@@ -1,15 +1,11 @@
 import re
-from linecache import cache
+from datetime import datetime
 
 from loguru import logger
-from lxml.etree import HTML
 
 from cijenelib.fetchers._archiver import Pricelist, WaybackArchiver
-from cijenelib.fetchers._common import get_csv_rows, cached_fetch, resolve_product, xpath, ensure_archived
+from cijenelib.fetchers._common import get_csv_rows, resolve_product, xpath, ensure_archived
 from cijenelib.models import Store
-from datetime import date, datetime
-import requests
-
 from cijenelib.utils import fix_address, fix_city
 
 

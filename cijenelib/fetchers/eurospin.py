@@ -4,15 +4,16 @@ from datetime import datetime
 
 from loguru import logger
 
-from cijenelib.fetchers._archiver import Pricelist
+from cijenelib.fetchers._archiver import Pricelist, WaybackArchiver
 from cijenelib.fetchers._common import get_csv_rows, resolve_product, xpath, ensure_archived
 from cijenelib.models import Store
 from cijenelib.utils import DDMMYYYY_dots, fix_city
 
 
 def fetch_eurospin_prices(eurospin: Store):
+    WaybackArchiver.archive(index_url := 'https://www.eurospin.hr/cjenik/')
     coll = []
-    for option in xpath('https://www.eurospin.hr/cjenik/', '//option[contains(@value, "cjenik")]'):
+    for option in xpath(index_url, '//option[contains(@value, "cjenik")]'):
         if m := DDMMYYYY_dots.findall(filename := option.text.strip()):
             day, month, year = map(int, *m)
             dd = datetime(year, month, day)

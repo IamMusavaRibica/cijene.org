@@ -1,16 +1,14 @@
 import io
 import re
 import zipfile
-from datetime import date, datetime
+from datetime import datetime
 
-import requests
 from loguru import logger
-from lxml.etree import HTML, tostring
 
 from cijenelib.fetchers._archiver import WaybackArchiver, Pricelist
-from cijenelib.fetchers._common import cached_fetch, get_csv_rows, resolve_product, xpath, ensure_archived
+from cijenelib.fetchers._common import get_csv_rows, resolve_product, xpath, ensure_archived
 from cijenelib.models import Store
-from cijenelib.utils import DDMMYYYY_dots, fix_address, fix_city
+from cijenelib.utils import fix_address, fix_city
 
 
 def fetch_plodine_prices(plodine: Store):

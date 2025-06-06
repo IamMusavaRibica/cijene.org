@@ -1,16 +1,13 @@
 import concurrent.futures
-import csv
-import io
+from datetime import date, datetime
 
+import requests
 from loguru import logger
 
+from cijenelib.utils import ONE_DAY, fix_address, fix_city
 from ._archiver import WaybackArchiver, Pricelist
-from ._common import cached_fetch, resolve_product, get_csv_rows, ensure_archived
+from ._common import resolve_product, get_csv_rows, ensure_archived
 from ..models import ProductOffer, Store
-from datetime import date, datetime
-from cijenelib.utils import ONE_DAY, fix_address, fix_city, split_by_lengths
-import requests
-
 
 # https://www.spar.hr/usluge/cjenici
 INDEX_URL = 'https://www.spar.hr/datoteke_cjenici/Cjenik{:%Y%m%d}.json'

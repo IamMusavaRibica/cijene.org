@@ -1,15 +1,12 @@
 import concurrent.futures
-import json
-
-from cijenelib.fetchers._archiver import WaybackArchiver, Pricelist
-from cijenelib.fetchers._common import cached_fetch, get_csv_rows, resolve_product, ensure_archived
-from cijenelib.models import Store
-
-from loguru import logger
-import requests
-
 from datetime import date, datetime
 
+import requests
+from loguru import logger
+
+from cijenelib.fetchers._archiver import WaybackArchiver, Pricelist
+from cijenelib.fetchers._common import get_csv_rows, resolve_product, ensure_archived
+from cijenelib.models import Store
 from cijenelib.utils import ONE_DAY, fix_address, fix_city
 
 BASE_URL = 'https://spiza.tommy.hr'

@@ -1,25 +1,19 @@
 import json
 import re
-from datetime import date, datetime
-from pydoc import resolve
-from random import randint
+from datetime import datetime
 
+import requests
 from loguru import logger
 
-from cijenelib.fetchers._archiver import Pricelist
-from cijenelib.fetchers._common import get_csv_rows, cached_fetch, resolve_product, xpath, ensure_archived
+from cijenelib.fetchers._archiver import Pricelist, WaybackArchiver
+from cijenelib.fetchers._common import get_csv_rows, resolve_product, xpath, ensure_archived
 from cijenelib.models import Store
-from lxml.etree import HTML, tostring
-import requests
-
 from cijenelib.utils import fix_city, split_by_lengths
 
 HOST = 'https://www.kaufland.hr'
 def fetch_kaufland_prices(kaufland: Store):
-    x ,= xpath(
-        'https://www.kaufland.hr/akcije-novosti/popis-mpc.html',
-        '//div[contains(@data-props, "/akcije-novosti/popis-mpc")]/@data-props'
-    )
+    WaybackArchiver.archive(index_url := 'https://www.kaufland.hr/akcije-novosti/popis-mpc.html')
+    x ,= xpath(index_url,'//div[contains(@data-props, "/akcije-novosti/popis-mpc")]/@data-props')
     data_url = HOST + json.loads(x)['settings']['dataUrlAssets']
     files = requests.get(data_url).json()
 

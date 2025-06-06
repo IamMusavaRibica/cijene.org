@@ -2,15 +2,16 @@ from datetime import datetime
 
 from loguru import logger
 
-from cijenelib.fetchers._archiver import Pricelist
+from cijenelib.fetchers._archiver import Pricelist, WaybackArchiver
 from cijenelib.fetchers._common import xpath, ensure_archived, get_csv_rows, resolve_product
 from cijenelib.models import Store
 from cijenelib.utils import fix_city
 
 
 def fetch_bakmaz_prices(bakmaz: Store):
+    WaybackArchiver.archive(index_url := 'https://www.bakmaz.hr/o-nama/')
     coll = []
-    for url in xpath('https://www.bakmaz.hr/o-nama/', '//a[@class="btn-preuzmi"]/@href'):
+    for url in xpath(index_url, '//a[@class="btn-preuzmi"]/@href'):
 
         filename = url.rsplit('/', 1)[-1]
         if not filename.endswith('.csv'):

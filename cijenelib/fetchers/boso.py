@@ -1,20 +1,20 @@
 import re
 import time
-from collections import namedtuple
 from datetime import datetime
 from urllib.parse import urlencode
 
 import requests
 from loguru import logger
 
+from cijenelib.fetchers._archiver import WaybackArchiver
 from cijenelib.fetchers._common import get_csv_rows, resolve_product, xpath, ensure_archived, Pricelist
 from cijenelib.models import Store
 from cijenelib.utils import fix_address, fix_city, most_occuring, split_by_lengths
 
 
-
 def fetch_boso_prices(boso: Store):
-    html = requests.get('https://www.boso.hr/cjenik/').content
+    WaybackArchiver.archive(index_url := 'https://www.boso.hr/cjenik/')
+    html = requests.get(index_url).content
     if not (m := re.search(br'\{"ajax_url":"(.*?)","nonce":"(.*?)","version":"(.*?)"}', html)):
         logger.warning('failed to find ajax_url')
         return []

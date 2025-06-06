@@ -4,11 +4,8 @@ from urllib.parse import unquote
 from loguru import logger
 
 from cijenelib.fetchers._archiver import WaybackArchiver, Pricelist
-from cijenelib.fetchers._common import get_csv_rows, cached_fetch, resolve_product, xpath, ensure_archived
+from cijenelib.fetchers._common import get_csv_rows, resolve_product, xpath, ensure_archived
 from cijenelib.models import Store
-import requests
-
-from lxml.etree import HTML, tostring
 from cijenelib.utils import UA_HEADER, fix_city, fix_address
 
 
