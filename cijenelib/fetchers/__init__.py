@@ -9,6 +9,7 @@ from .kaufland import fetch_kaufland_prices
 from .konzum import fetch_konzum_prices
 from .ktc import fetch_ktc_prices
 from .lidl import fetch_lidl_prices
+from .lorenco import fetch_lorenco_prices
 from .metro import fetch_metro_prices
 from .ntl import fetch_ntl_prices
 from .plodine import fetch_plodine_prices
