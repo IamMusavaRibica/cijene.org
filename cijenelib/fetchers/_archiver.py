@@ -136,7 +136,7 @@ class _LocalArchiverImpl:
         # return time.time_ns() // 100000000 - 17489851440
 
     def safe_filename(self, filename: str) -> str:
-        return ''.join(c for c in filename if c.isalnum() or c in ' -_,.#').rstrip()
+        return ''.join(c for c in filename if c.isalnum() or c in ' -_,.#&').rstrip()
 
     def _download_file(self, url: str, **kwargs) -> bytes:
         logger.debug(f'downloading {url} with {kwargs = }')
