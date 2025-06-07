@@ -26,9 +26,9 @@ def xpath(w: str | bytes, query: str, extra_headers = None, return_root: bool = 
     return res
 
 
-def ensure_archived(pricelist: Pricelist, return_it: bool = False):
-    logger.debug(f'ensure_archived: {pricelist.url}')
-    WaybackArchiver.archive(pricelist.url)
+def ensure_archived(pricelist: Pricelist, return_it: bool = False, wayback: bool = True) -> bytes | None:
+    # logger.debug(f'ensure_archived: {pricelist.url}')
+    wayback and WaybackArchiver.archive(pricelist.url)
     return LocalArchiver.fetch(pricelist, return_it)
 
 
@@ -47,7 +47,7 @@ def get_csv_rows(raw: bytes, delimiter: str = None, encoding: str = None, transt
         rows = list(csv.reader(stream, delimiter=delimiter))
     return rows
 
-def resolve_product(coll: list, barcode: str, store: Store, store_id: str, name: str, price: float | str, quantity: float, may2_price: float | None) -> bool:
+def resolve_product(coll: list, barcode: str, store: Store, location_id: str, name: str, price: float | str, quantity: float, may2_price: float | None) -> bool:
     barcode = barcode.lstrip('0')
     if barcode not in AllProducts:
         return False
@@ -64,7 +64,7 @@ def resolve_product(coll: list, barcode: str, store: Store, store_id: str, name:
         return False
     product: Product
     product, qty = AllProducts[barcode]
-    p = product.instance(store=store, store_location_id=store_id, offer_name=name, price=price, quantity=qty, may2_price=may2_price)
+    p = product.instance(store=store, store_location_id=location_id, offer_name=name, price=price, quantity=qty, may2_price=may2_price)
     coll.append(p)
     return True
 

@@ -1,7 +1,10 @@
 import concurrent.futures
+import threading
+import time
 import traceback
 from collections import defaultdict
 
+import urllib3.exceptions
 from loguru import logger
 
 from cijenelib.models import Product, ProductOffer, ProductOfferParsed
@@ -14,23 +17,43 @@ class ProductApi:
         self._products: dict[str, Product] = {}
         self._offers_by_store: dict[str, list[ProductOffer]] = defaultdict(list)
         self._offers_by_product: dict[str, list[ProductOffer]] = defaultdict(list)
+        self._updater_thread = None
 
     def update_prices(self):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10, thread_name_prefix='PriceFetcherThread') as executor:
-            futures = {executor.submit(store.fetch_prices, store): store for store in self._stores}
-            for fut in concurrent.futures.as_completed(futures):
-                store = futures[fut]
+        def work():
+            _start = time.perf_counter()
+            for store in self._stores:
                 try:
-                    offers = fut.result()
+                    logger.info(f'started fetching {store.id} prices')
+                    offers = store.fetch_prices(store)
+                except (urllib3.exceptions.HTTPError, urllib3.exceptions.ProtocolError) as e:
+                    logger.error(f'network error while fetching {store.id} prices: {e!r}')
                 except Exception as e:
-                    logger.error(f'Error while fetching {store.id} prices: {e}')
-                    traceback.print_exc()
+                    logger.error(f'unknown error while fetching {store.id} prices: {e!r}')
+                    logger.exception(e)
                 else:
-                    if not isinstance(offers, list):
-                        logger.error(f'Expected list of offers, got {type(offers)}')
-                        continue
-                    logger.info(f'Fetched {len(offers)} offers from {store.name}')
+                    logger.info(f'fetched {len(offers)} offers from {store.name}')
                     self.add_offers_from_store(store, offers)
+            logger.info(f'finished updating prices, took {time.perf_counter() - _start:.3f} s')
+
+        self._updater_thread = threading.Thread(target=work, name='PriceFetcherThread', daemon=True)
+        self._updater_thread.start()
+
+        # with concurrent.futures.ThreadPoolExecutor(max_workers=10, thread_name_prefix='PriceFetcherThread') as executor:
+        #     futures = {executor.submit(store.fetch_prices, store): store for store in self._stores}
+        #     for fut in concurrent.futures.as_completed(futures):
+        #         store = futures[fut]
+        #         try:
+        #             offers = fut.result()
+        #         except Exception as e:
+        #             logger.error(f'Error while fetching {store.id} prices: {e}')
+        #             traceback.print_exc()
+        #         else:
+        #             if not isinstance(offers, list):
+        #                 logger.error(f'Expected list of offers, got {type(offers)}')
+        #                 continue
+        #             logger.info(f'Fetched {len(offers)} offers from {store.name}')
+        #             self.add_offers_from_store(store, offers)
 
 
     def add_product(self, product: Product):
@@ -95,9 +118,9 @@ def demo():
     import os
     if not os.path.isdir('cached'):
         os.mkdir('cached')
-    provider = ProductApi(stores=[Konzum, Spar, Tommy, Studenac, Ribola, Lidl, Plodine, Kaufland, Eurospin, Metro,
-                                  Boso, NTL, KTC, TrgovinaKrk, Bakmaz, Djelo, DjeloVodice, Zabac])
-    # provider = ProductApi(stores=[TrgovinaKrk])
+    provider = ProductApi(stores=[Spar, Zabac, Tommy, Studenac, Ribola, Lidl, Plodine, Eurospin, Metro,
+                                  Boso, NTL, KTC, TrgovinaKrk, Bakmaz, Djelo, DjeloVodice, Vrutak, Konzum, Kaufland])
+    # provider = ProductApi(stores=[Vrutak])
     provider.update_prices()
     return provider
 

@@ -10,10 +10,10 @@ from cijenelib.utils import UA_HEADER, fix_city, fix_address
 
 
 def fetch_trgovina_krk_prices(trgovina_krk: Store):
-    WaybackArchiver.archive('https://trgovina-krk.hr/objava-cjenika/')
+    WaybackArchiver.archive(index_url := 'https://trgovina-krk.hr/objava-cjenika/')
     coll = []
     # returns 403 forbidden if we don't use a user-agent. is this legal?
-    for href in xpath('https://trgovina-krk.hr/objava-cjenika/', '//a[contains(@href, ".csv")]/@href', extra_headers=UA_HEADER):
+    for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href', extra_headers=UA_HEADER):
         filename = unquote(href).removeprefix('https://trgovina-krk.hr/csv/').removesuffix('.csv')
         fixed = filename.replace('11_A', '11A')
         market_type, address, city, location_id, file_id, datestr = fixed.split('_', 5)
@@ -35,11 +35,11 @@ def fetch_trgovina_krk_prices(trgovina_krk: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p, wayback=False)
 
     prod = []
     for p in today_coll:
-        rows = get_csv_rows(ensure_archived(p, True))
+        rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         parsed_barcodes = set()
         for row in rows[1:]:
             try:

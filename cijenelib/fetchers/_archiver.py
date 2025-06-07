@@ -209,6 +209,8 @@ class _LocalArchiverImpl:
                 #     elif row:
                 #         logger.warning(f'got different sha256 for {task.url}, updating archive')
                 #     self._save_new_file(task, raw_data)
+            except requests.exceptions.HTTPError as e:
+                logger.warning(f'got {e.response.status_code} for {task.url}: {e!r}')
             except Exception as e:
                 logger.error(f'Error while processing task {task}: {e!r}')
                 logger.exception(e)

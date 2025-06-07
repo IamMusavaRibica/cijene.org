@@ -108,3 +108,4 @@ Bakmaz      = Store(name='Bakmaz',          url='https://www.bakmaz.hr/',   loca
 DjeloVodice = Store(name='Djelo Vodice',    url='https://djelo-vodice.hr/', locations={}, fetch_prices=fetch_djelo_vodice_prices)
 Djelo       = Store(name='Djelo',           url='https://djelo.hr/',        locations={}, fetch_prices=fetch_djelo_prices)
 Zabac       = Store(name='Žabac Food Outlet', url='https://zabacfoodoutlet.hr/', locations={}, fetch_prices=fetch_zabac_prices, id='zabac')
+Vrutak = Store(name='Vrutak', url='https://www.vrutak.hr/', locations={}, fetch_prices=fetch_vrutak_prices)

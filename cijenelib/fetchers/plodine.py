@@ -38,7 +38,7 @@ def fetch_plodine_prices(plodine: Store):
 
     prod = []
     for p in today_coll:
-        zip_data = ensure_archived(p, True)
+        zip_data = ensure_archived(p, True, wayback=False)
         with zipfile.ZipFile(io.BytesIO(zip_data)) as zf:
             for filename in zf.namelist():
                 if not filename.endswith('.csv'):

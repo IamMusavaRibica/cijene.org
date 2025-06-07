@@ -41,11 +41,11 @@ def fetch_metro_prices(metro: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p, wayback=False)
 
     prod = []
     for p in today_coll:
-        rows = get_csv_rows(ensure_archived(p, True))
+        rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
             resolve_product(prod, barcode, metro, p.location_id, name, discount_mpc or mpc, _qty, may2_price)

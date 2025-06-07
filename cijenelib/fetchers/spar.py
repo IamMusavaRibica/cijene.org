@@ -22,7 +22,6 @@ def fetch_spar_prices(spar: Store) -> list[ProductOffer]:
     while d.toordinal() > 739385:  # date(2025, 5, 14)
         WaybackArchiver.archive(url := INDEX_URL.format(d))
         r = requests.get(url)
-        logger.debug(f'fetching spar pricelist index at {url} - status: {r.status_code}')
         if r.status_code == 200:
             try:
                 files.extend(r.json()['files'])
@@ -70,7 +69,7 @@ def fetch_spar_prices(spar: Store) -> list[ProductOffer]:
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p, wayback=False)
 
     results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=30, thread_name_prefix='Spar') as executor:
@@ -87,7 +86,7 @@ def fetch_spar_prices(spar: Store) -> list[ProductOffer]:
 
 
 def fetch_single(p: Pricelist, spar: Store) -> list[ProductOffer]:
-    rows = get_csv_rows(ensure_archived(p, True))
+    rows = get_csv_rows(ensure_archived(p, True, wayback=False))
     prod = []
     for k in rows[1:]:
         name, _id, brand, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k

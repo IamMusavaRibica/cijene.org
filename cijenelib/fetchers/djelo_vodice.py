@@ -37,11 +37,11 @@ def fetch_djelo_vodice_prices(djelo_vodice: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p, wayback=False)
 
     prod = []
     for t in today_coll:
-        raw_xlsx = ensure_archived(t, True)
+        raw_xlsx = ensure_archived(t, True, wayback=False)
         # TODO: implement parsing xlsx files!
 
     return prod

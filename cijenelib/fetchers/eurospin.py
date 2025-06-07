@@ -31,7 +31,7 @@ def fetch_eurospin_prices(eurospin: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p)  # Wayback Machine 'Capture outlinks' does not capture these .zip files
 
     prod = []
     for p in today_coll:

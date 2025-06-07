@@ -18,7 +18,6 @@ def fetch_tommy_prices(tommy: Store):
     while d.toordinal() > 739385:  # date(2025, 5, 14)
         WaybackArchiver.archive(url := API_URL.format(d))
         r = requests.get(url)
-        logger.debug(f'fetching Tommy pricelist index at {url} - status: {r.status_code}')
         if r.status_code == 200:
             try:
                 files.extend(r.json()['hydra:member'])

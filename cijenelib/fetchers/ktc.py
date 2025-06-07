@@ -20,7 +20,7 @@ def fetch_ktc_prices(ktc: Store):
             logger.warning(f'failed to extract location id from {href0}')
             continue
         for href1 in xpath(HOST + href0.removeprefix('/'), '//a[contains(@href, ".csv")]/@href'):
-            full_url = HOST + href1.removeprefix('/')
+            WaybackArchiver.archive(full_url := HOST + href1.removeprefix('/'))
             filename = href1.rsplit('/', 1)[-1]
             market_type, _addr_city, _, file_id, datestr = filename.split('-', 4)
             dt = datetime.strptime(datestr, '%Y%m%d-%H%M%S.csv')
@@ -50,11 +50,11 @@ def fetch_ktc_prices(ktc: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p, wayback=False)
 
     prod = []
     for p in today_coll:
-        rows = get_csv_rows(ensure_archived(p, True))
+        rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             # KTC does not have 2.5.2025. price
             name, _id, brand, _qty, units, mpc, ppu, barcode, category, last_30d_mpc, discount_mpc = k

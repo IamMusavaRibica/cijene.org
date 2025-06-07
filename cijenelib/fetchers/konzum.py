@@ -1,5 +1,6 @@
 import concurrent.futures
 import re
+import time
 from datetime import datetime
 
 import requests
@@ -25,14 +26,20 @@ def fetch_konzum_prices(konzum: Store):
         available_dates_urls.append(date.removeprefix('/cjenici?date='))
 
     # fetch every page
+    _start = time.perf_counter()
     pages = [root0]
-    for d in available_dates_urls:
-        logger.info(f'parsing konzum pages for date {d}')
-        for i in range(2, max_page+1):
-            page_url = f'{index_url}?date={d}&page={i}'
-            WaybackArchiver.archive(page_url)
-            pages.append(HTML(requests.get(page_url).content))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=16, thread_name_prefix='Konzum_Pages') as executor:
+        futures = []
+        for d in available_dates_urls:
+            for i in range(2, max_page + 1):
+                page_url = f'{index_url}?date={d}&page={i}'
+                WaybackArchiver.archive(page_url)
+                futures.append(executor.submit(lambda _url: HTML(requests.get(_url).content), page_url))
 
+        for future in concurrent.futures.as_completed(futures):
+            pages.append(future.result())
+
+    logger.info(f'fetched {len(pages)} konzum pages, took {time.perf_counter() - _start:.3f} s')
 
     # extract all pricelists from the pages
     coll = []
@@ -75,7 +82,7 @@ def fetch_konzum_prices(konzum: Store):
         logger.warning('no konzum prices found')
         return []
 
-    logger.debug(f'found {len(coll)} konzum pricelists')
+    logger.info(f'found {len(coll)} konzum pricelists')
     coll.sort(key=lambda x: x.dt, reverse=True)
     today = coll[0].dt.date()
     today_coll = []
@@ -83,7 +90,7 @@ def fetch_konzum_prices(konzum: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p, wayback=False)
 
 
     all_products = []
@@ -104,7 +111,7 @@ def fetch_konzum_prices(konzum: Store):
     return all_products
 
 def process_single(konzum: Store, p: Pricelist):
-    rows = get_csv_rows(ensure_archived(p, True))
+    rows = get_csv_rows(ensure_archived(p, True, wayback=False))
     coll = []
     for k in rows[1:]:
         # za konzum, unit == 'ko' za pakirane proizvode, 'kg' za proizvode u rinfuzi

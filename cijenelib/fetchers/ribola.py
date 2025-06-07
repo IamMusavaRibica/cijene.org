@@ -53,7 +53,7 @@ def fetch_ribola_prices(ribola: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p, wayback=False)
 
     prod = []
     for p in today_coll:
@@ -65,7 +65,8 @@ def fetch_ribola_prices(ribola: Store):
 
 
 def process_single(p: Pricelist, ribola: Store):
-    root = XML(ensure_archived(p, True).replace(b'MaloprmdajnaCijenaAkcija', b'MaloprodajnaCijenaAkcija'))
+    root = XML(ensure_archived(p, True, wayback=False)
+               .replace(b'MaloprmdajnaCijenaAkcija', b'MaloprodajnaCijenaAkcija'))
     coll = []
     for prodajni_objekt in root.findall('ProdajniObjekt'):
         location_id = prodajni_objekt.findtext('Oznaka')
