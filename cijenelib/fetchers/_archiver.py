@@ -50,9 +50,10 @@ class _WaybackArchiverImpl:
         logger.info(f'WaybackArchiver initialized, worker thread id: {self._thread.native_id}')
 
     def archive(self, url: str):
-        if not self._ready:
-            raise RuntimeError('WaybackArchiver.archive(url) called before initialize()')
-        self._queue.put(url)
+        self._ready and self._queue.put(url)
+        # if not self._ready:
+        #     raise RuntimeError('WaybackArchiver.archive(url) called before initialize()')
+        # self._queue.put(url)
 
     def _worker(self):
         if not self._ready:
