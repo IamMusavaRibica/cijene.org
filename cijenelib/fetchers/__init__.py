@@ -4,6 +4,7 @@ from .bure import fetch_bure_prices
 from .djelo import fetch_djelo_prices
 from .djelo_vodice import fetch_djelo_vodice_prices
 from .eurospin import fetch_eurospin_prices
+from .jadranka import fetch_jadranka_prices
 from .kaufland import fetch_kaufland_prices
 from .konzum import fetch_konzum_prices
 from .ktc import fetch_ktc_prices

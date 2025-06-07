@@ -220,10 +220,13 @@ class _LocalArchiverImpl:
 
     def fetch(self, pricelist: Pricelist, return_it: bool = False, force_download: bool = False) -> bytes | None:
         # logger.debug(f'fetching {pricelist.url} with kwargs={pricelist.request_kwargs}')
+
         if 'plodine.hr/' in pricelist.url.lower():
-            if 'headers' not in pricelist.request_kwargs:
-                pricelist.request_kwargs['headers'] = {}
-            pricelist.request_kwargs['headers']['verify'] = 'certs/www.plodine.hr.crt'
+            pricelist.request_kwargs['verify'] = 'certs/www.plodine.hr.crt'
+        if 'jadranka-trgovina.com/' in pricelist.url.lower():
+            pricelist.request_kwargs['verify'] = 'certs/jadranka-trgovina-com-chain.pem'
+
+
         if not return_it:
             self._queue.put(pricelist)
             return None
