@@ -82,6 +82,10 @@ def fix_address(address: str) -> str:
                .replace('rigade Kune', 'rigade „Kune“')
                .replace('Sporova', 'Šporova')
                .replace('Veliki Sor ', 'Veliki Šor ')
+               .replace('Jelacica', 'Jelačića')
+               .replace('Varazdinska', 'Varaždinska')
+               .replace('Vl Nazora', 'Vladimira Nazora')
+               .replace('103 brigade', '103. brigade')
                )
 
     for i in range(10):
@@ -152,6 +156,8 @@ CITIES = {
     'Starigrad Paklenica': 'Starigrad',
     'Sukosan': 'Sukošan',
     'Sv. Ivan Zelina': 'Sveti Ivan Zelina',
+    'Sv Ivan Zelina': 'Sveti Ivan Zelina',
+    'Sv Kriz Zacretje': 'Sveti Križ Začretje',
     'Sveti Filip I Jakov': 'Sveti Filip i Jakov',
     'Trnovec Bartolovečki': 'Trnovec',
     'Umag-Umago': 'Umag',

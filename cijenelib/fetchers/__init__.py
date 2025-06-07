@@ -16,6 +16,7 @@ from .ribola import fetch_ribola_prices
 from .spar import fetch_spar_prices
 from .studenac import fetch_studenac_prices
 from .tommy import fetch_tommy_prices
+from .trgocentar import fetch_trgocentar_prices
 from .trgovina_krk import fetch_trgovina_krk_prices
 from .vrutak import fetch_vrutak_prices
 from .zabac import fetch_zabac_prices

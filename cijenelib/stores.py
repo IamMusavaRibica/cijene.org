@@ -111,3 +111,4 @@ Zabac       = Store(name='Žabac Food Outlet', url='https://zabacfoodoutlet.hr/'
 Vrutak      = Store(name='Vrutak', url='https://www.vrutak.hr/', locations={}, fetch_prices=fetch_vrutak_prices)
 Bure        = Store(name='Bure', url='https://www.bure.hr/', locations={}, fetch_prices=fetch_bure_prices)
 Jadranka    = Store(name='Jadranka', url='https://jadranka-trgovina.com/', locations={}, fetch_prices=fetch_jadranka_prices)
+Trgocentar  = Store(name='Trgocentar', url='https://trgocentar.com/', locations={}, fetch_prices=fetch_trgocentar_prices)
