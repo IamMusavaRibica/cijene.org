@@ -68,7 +68,7 @@ def fetch_boso_prices(boso: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p, wayback=False)
 
     prod = []
     for t in today_coll:

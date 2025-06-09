@@ -31,11 +31,11 @@ def fetch_eurospin_prices(eurospin: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)  # Wayback Machine 'Capture outlinks' does not capture these .zip files
+            ensure_archived(p, wayback=False)
 
     prod = []
     for p in today_coll:
-        zip_data = ensure_archived(p, True)
+        zip_data = ensure_archived(p, True)  # Wayback Machine 'Capture outlinks' does not capture these .zip files
         with zipfile.ZipFile(io.BytesIO(zip_data)) as zf:
             for filename in zf.namelist():
                 if not filename.endswith('.csv'):

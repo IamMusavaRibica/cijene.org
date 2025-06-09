@@ -34,7 +34,7 @@ def fetch_plodine_prices(plodine: Store):
         if p.dt.date() == today:
             today_coll.append(p)
         else:
-            ensure_archived(p)
+            ensure_archived(p, wayback=False)
 
     prod = []
     for p in today_coll:
