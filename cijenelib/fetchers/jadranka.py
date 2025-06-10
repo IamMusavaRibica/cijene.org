@@ -39,6 +39,8 @@ def fetch_jadranka_prices(jadranka: Store):
         for row in rows:  # no header here
             _id, *name, _, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = row
             name = ' '.join(name)
+            if name.isnumeric():
+                name, _id = _id, name
             if barcode.isnumeric():
                 resolve_product(prod, barcode, jadranka, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
             elif barcode != '':
