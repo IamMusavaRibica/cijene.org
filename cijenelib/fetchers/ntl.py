@@ -33,8 +33,8 @@ def fetch_ntl_prices(ntl: Store):
         address = fix_address(address).replace('Galoviaa', 'Galovića')
         coll.append(Pricelist(href, address, city, ntl.id, location_id, dt, filename))
 
-    for p in coll:
-        print(p)
+    # for p in coll:
+    #     print(p)
 
     if not coll:
         logger.warning(f'no prices found for ntl')

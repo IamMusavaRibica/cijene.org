@@ -18,9 +18,12 @@ MULTIPLE_WORD_CITIES = {'dugo_selo', 'donja_stubica', 'grubisno_polje', 'slavons
 def fetch_spar_prices(spar: Store) -> list[ProductOffer]:
     WaybackArchiver.archive('https://www.spar.hr/datoteke_cjenici/index.html')
     d = date.today() + ONE_DAY
+    yesterday = date.today() - ONE_DAY
     files = []
     while d.toordinal() > 739385:  # date(2025, 5, 14)
-        WaybackArchiver.archive(url := INDEX_URL.format(d))
+        url = INDEX_URL.format(d)
+        if d >= yesterday:
+            WaybackArchiver.archive(url)
         r = requests.get(url)
         if r.status_code == 200:
             try:

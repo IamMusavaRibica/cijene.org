@@ -14,9 +14,12 @@ API_URL = 'https://spiza.tommy.hr/api/v2/shop/store-prices-tables?itemsPerPage=7
 def fetch_tommy_prices(tommy: Store):
     WaybackArchiver.archive('https://www.tommy.hr/objava-cjenika')
     d = date.today() + ONE_DAY
+    yesterday = date.today() - ONE_DAY
     files = []
     while d.toordinal() > 739385:  # date(2025, 5, 14)
-        WaybackArchiver.archive(url := API_URL.format(d))
+        url = API_URL.format(d)
+        if d >= yesterday:
+            WaybackArchiver.archive(url)
         r = requests.get(url)
         if r.status_code == 200:
             try:
