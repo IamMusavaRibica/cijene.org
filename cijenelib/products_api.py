@@ -122,16 +122,6 @@ def demo():
                                   Trgocentar, Lorenco,
                                   Spar, Zabac, Tommy, Studenac, Ribola, Lidl, Plodine, Eurospin, Metro, Jadranka, NTL,
                                   Boso, KTC, TrgovinaKrk, Bakmaz, Djelo, DjeloVodice])
-    # provider = ProductApi(stores=[Lorenco])
+    provider = ProductApi(stores=[Rotodinamic])
     provider.update_prices()
     return provider
-
-
-# Provider = ProductApi()
-# Provider.add_product(CocaCola_1L)
-# Provider.add_product(Jabuka)
-# Provider.add_product(Mrkva)
-# Provider.add_product(Sampon)
-# Provider.add_product(Tjestenina)
-# Provider.add_product(Pasteta)
-# Provider.add_product(Kajzerica)

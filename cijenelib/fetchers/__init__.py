@@ -14,6 +14,7 @@ from .metro import fetch_metro_prices
 from .ntl import fetch_ntl_prices
 from .plodine import fetch_plodine_prices
 from .ribola import fetch_ribola_prices
+from .rotodinamic import fetch_rotodinamic_prices
 from .spar import fetch_spar_prices
 from .studenac import fetch_studenac_prices
 from .tommy import fetch_tommy_prices

@@ -11,6 +11,7 @@ from cijenelib.utils import fix_address, fix_city, UA_HEADER
 
 
 def fetch_bure_prices(bure: Store):
+    # what's the difference between this and https://www.bure.hr/index.php/cjenici-arhiva ?
     WaybackArchiver.archive(index_url := 'https://www.bure.hr/cjenici-arhiva')
     coll = []
     for href in xpath(index_url, '//a[contains(@href, ".xml")]/@href', extra_headers=UA_HEADER):
