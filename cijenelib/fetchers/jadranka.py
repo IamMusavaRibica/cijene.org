@@ -11,7 +11,7 @@ def fetch_jadranka_prices(jadranka: Store):
     WaybackArchiver.archive(index_url := 'https://jadranka-trgovina.com/cjenici/')
     coll = []
     pr = 'MARKET_MAXI_DRAZICA5_MALILOSINJ_607_'
-    for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href', verify='certs/jadranka-trgovina-com-chain.pem'):
+    for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href'):
         filename = href.rsplit('/')[-1]
         if not filename.startswith(pr):
             logger.warning(f'unexpected filename: {filename}')
