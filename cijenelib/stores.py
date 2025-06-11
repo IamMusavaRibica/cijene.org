@@ -114,3 +114,4 @@ Jadranka    = Store(name='Jadranka',        url='https://jadranka-trgovina.com/'
 Trgocentar  = Store(name='Trgocentar',      url='https://trgocentar.com/',  locations={},       fetch_prices=fetch_trgocentar_prices)
 Lorenco     = Store(name='Lorenco',         url='https://lorenco.hr/',      locations={},       fetch_prices=fetch_lorenco_prices)
 Rotodinamic = Store(name='Roto dinamic',    url='https://www.rotodinamic.hr/', locations={},    fetch_prices=fetch_rotodinamic_prices)
+Brodokomerc = Store(name='Brodokomerc',     url='http://brodokomerc.hr/', locations={},    fetch_prices=fetch_brodokomerc_prices)
