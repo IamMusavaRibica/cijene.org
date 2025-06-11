@@ -224,8 +224,8 @@ class _LocalArchiverImpl:
 
         if 'plodine.hr/' in pricelist.url.lower():
             pricelist.request_kwargs['verify'] = 'certs/www.plodine.hr.crt'
-        if 'jadranka-trgovina.com/' in pricelist.url.lower():
-            pricelist.request_kwargs['verify'] = 'certs/jadranka-trgovina-com-chain.pem'
+        # if 'jadranka-trgovina.com/' in pricelist.url.lower():
+        #     pricelist.request_kwargs['verify'] = 'certs/jadranka-trgovina-com-chain.pem'
 
 
         if not return_it:
