@@ -118,10 +118,10 @@ def demo():
     import os
     if not os.path.isdir('cached'):
         os.mkdir('cached')
-    provider = ProductApi(stores=[Vrutak, Konzum, Kaufland,
-                                  Trgocentar, Lorenco,
-                                  Spar, Zabac, Tommy, Studenac, Ribola, Lidl, Plodine, Eurospin, Metro, Jadranka, NTL,
-                                  Boso, KTC, TrgovinaKrk, Bakmaz, Djelo, DjeloVodice])
-    provider = ProductApi(stores=[Radenska])
+    provider = ProductApi(stores=[Zabac, Djelo, DjeloVodice,
+        Bakmaz, Boso, Brodokomerc, Bure, Eurospin, Jadranka, Kaufland, Konzum, KTC, Lidl,
+                                  Lorenco, Metro, NTL, Plodine, Radenska, Ribola, Rotodinamic, Spar, Studenac,
+                                  Tommy, Trgocentar, TrgovinaKrk, Vrutak])
+    # provider = ProductApi(stores=[Bure])
     provider.update_prices()
     return provider
