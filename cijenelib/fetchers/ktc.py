@@ -26,7 +26,7 @@ def fetch_ktc_prices(ktc: Store):
             market_type, _addr_city, _, file_id, datestr = filename.split('-', 4)
             dt = datetime.strptime(datestr, '%Y%m%d-%H%M%S.csv')
 
-            if dt >= yesterday:
+            if dt.date() >= yesterday:
                 WaybackArchiver.archive(full_url)
 
             # cities with two word names
