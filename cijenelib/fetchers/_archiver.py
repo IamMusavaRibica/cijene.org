@@ -63,7 +63,7 @@ class _WaybackArchiverImpl:
             if url is None:
                 logger.debug('WaybackArchiver worker received shutdown signal')
                 break
-            time.sleep(21)  # put the sleep here so we don't have to wait for shutdown
+            time.sleep(31)
             logger.debug(f'Save Page Now: {url}')
             try:
                 data = {'url': url, **self.options}
