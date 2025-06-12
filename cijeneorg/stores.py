@@ -118,3 +118,4 @@ Brodokomerc = Store(name='Brodokomerc',     url='http://brodokomerc.hr/', locati
 Radenska    = Store(name='Radenska',        url='https://www.radenska.hr/', locations={},  fetch_prices=fetch_radenska_prices)
 JedinstvoLabin = Store(name='Jedinstvo Labin', url='https://www.jedinstvo-labin.hr/', locations={}, fetch_prices=fetch_jedinstvo_labin_prices)
 Croma       = Store(name='Croma-Varaždin',  url='https://croma.com.hr/', locations={}, fetch_prices=fetch_croma_prices, id='croma')
+Travelfree  = Store(name='Travel FREE', url='https://travelfree.hr/', locations={}, fetch_prices=fetch_travelfree_prices, id='travelfree')
