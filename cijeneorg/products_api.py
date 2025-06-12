@@ -119,7 +119,7 @@ def demo():
     provider = ProductApi(stores=[Travelfree, Jadranka, Zabac, Djelo, DjeloVodice,
         Bakmaz, Boso, Brodokomerc, Bure, Eurospin, Kaufland, Konzum, KTC, Lidl,
                                   Lorenco, Metro, NTL, Plodine, Radenska, Ribola, Rotodinamic, Spar, Studenac,
-                                  Tommy, Trgocentar, TrgovinaKrk, Vrutak, JedinstvoLabin, Croma])
-    # provider = ProductApi(stores=[Travelfree])
+                                  Tommy, Trgocentar, TrgovinaKrk, Vrutak, JedinstvoLabin, Croma, Tobylex])
+    # provider = ProductApi(stores=[Tobylex])
     provider.update_prices()
     return provider

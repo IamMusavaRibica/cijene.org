@@ -1,3 +1,5 @@
+from numba.cuda import local
+
 from cijeneorg.fetchers import *
 from cijeneorg.models import Store
 
@@ -119,3 +121,4 @@ Radenska    = Store(name='Radenska',        url='https://www.radenska.hr/', loca
 JedinstvoLabin = Store(name='Jedinstvo Labin', url='https://www.jedinstvo-labin.hr/', locations={}, fetch_prices=fetch_jedinstvo_labin_prices)
 Croma       = Store(name='Croma-Varaždin',  url='https://croma.com.hr/', locations={}, fetch_prices=fetch_croma_prices, id='croma')
 Travelfree  = Store(name='Travel FREE', url='https://travelfree.hr/', locations={}, fetch_prices=fetch_travelfree_prices, id='travelfree')
+Tobylex     = Store(name='Tobylex', url='https://tobylex.net/', locations={}, fetch_prices=fetch_tobylex_prices)

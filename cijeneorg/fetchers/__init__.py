@@ -21,6 +21,7 @@ from .ribola import fetch_ribola_prices
 from .rotodinamic import fetch_rotodinamic_prices
 from .spar import fetch_spar_prices
 from .studenac import fetch_studenac_prices
+from .tobylex import fetch_tobylex_prices
 from .tommy import fetch_tommy_prices
 from .travelfree import fetch_travelfree_prices
 from .trgocentar import fetch_trgocentar_prices
