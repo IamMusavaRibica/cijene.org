@@ -2,6 +2,7 @@ from .bakmaz import fetch_bakmaz_prices
 from .boso import fetch_boso_prices
 from .brodokomerc import fetch_brodokomerc_prices
 from .bure import fetch_bure_prices
+from .croma import fetch_croma_prices
 from .djelo import fetch_djelo_prices
 from .djelo_vodice import fetch_djelo_vodice_prices
 from .eurospin import fetch_eurospin_prices

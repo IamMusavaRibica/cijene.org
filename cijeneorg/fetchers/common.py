@@ -69,7 +69,7 @@ def resolve_product(coll: list, barcode: str, store: Store, location_id: str, na
     coll.append(p)
     return True
 
-def extract_offers_from_today(store: Store, plist: list[PriceList], wayback: bool = False):
+def extract_offers_from_today(store: Store, plist: list[PriceList], wayback: bool = False) -> list[PriceList]:
     if not plist:
         logger.warning(f'no {store.id} price lists found')
         return []

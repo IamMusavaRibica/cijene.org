@@ -117,3 +117,4 @@ Rotodinamic = Store(name='Roto dinamic',    url='https://www.rotodinamic.hr/', l
 Brodokomerc = Store(name='Brodokomerc',     url='http://brodokomerc.hr/', locations={},    fetch_prices=fetch_brodokomerc_prices)
 Radenska    = Store(name='Radenska',        url='https://www.radenska.hr/', locations={},  fetch_prices=fetch_radenska_prices)
 JedinstvoLabin = Store(name='Jedinstvo Labin', url='https://www.jedinstvo-labin.hr/', locations={}, fetch_prices=fetch_jedinstvo_labin_prices)
+Croma       = Store(name='Croma-Varaždin',  url='https://croma.com.hr/', locations={}, fetch_prices=fetch_croma_prices, id='croma')
