@@ -5,7 +5,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
@@ -20,7 +20,7 @@ def fetch_plodine_prices(plodine: Store):
             logger.warning(f'unexpected file href in Plodine prices page: {href}')
             continue
         dt = datetime.strptime(filename, 'cjenici_%d_%m_%Y_%H_%M_%S.zip')
-        coll.append(Pricelist(href, None, None, plodine.id, None, dt, filename))
+        coll.append(PriceList(href, None, None, plodine.id, None, dt, filename))
 
     today_coll = extract_offers_from_today(plodine, coll)
 

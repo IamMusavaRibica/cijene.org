@@ -3,7 +3,7 @@ from urllib.parse import unquote
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import UA_HEADER, fix_city, fix_address
@@ -20,7 +20,7 @@ def fetch_trgovina_krk_prices(trgovina_krk: Store):
         dt = datetime.strptime(datestr, '%d%m%Y_%H_%M_%S')
         address = fix_address(address)
         city = fix_city(city)
-        coll.append(p := Pricelist(href, address, city, trgovina_krk.id, location_id, dt, filename))
+        coll.append(p := PriceList(href, address, city, trgovina_krk.id, location_id, dt, filename))
         p.request_kwargs = {'headers': UA_HEADER}
 
     today_coll = extract_offers_from_today(trgovina_krk, coll)

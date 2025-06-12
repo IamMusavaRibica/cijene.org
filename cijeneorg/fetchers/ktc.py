@@ -3,7 +3,7 @@ from datetime import datetime, date
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import Pricelist, WaybackArchiver
+from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city, ONE_DAY
@@ -40,7 +40,7 @@ def fetch_ktc_prices(ktc: Store):
                 addr = ' '.join(a)
             addr = fix_address(addr)
             city = fix_city(city)
-            coll.append(Pricelist(full_url, addr, city, ktc.id, location_id, dt, filename))
+            coll.append(PriceList(full_url, addr, city, ktc.id, location_id, dt, filename))
 
     today_coll = extract_offers_from_today(ktc, coll)
 

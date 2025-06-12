@@ -6,7 +6,7 @@ import requests
 from loguru import logger
 from lxml.etree import HTML
 
-from cijeneorg.fetchers.archiver import LocalArchiver, WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import LocalArchiver, WaybackArchiver, PriceList
 from cijeneorg.models import ProductOffer, Product, Store
 from cijeneorg.products import AllProducts
 from cijeneorg.utils import most_occuring, remove_extra_spaces, fix_price
@@ -27,7 +27,7 @@ def xpath(w: str | bytes, query: str, extra_headers = None, return_root: bool = 
     return res
 
 
-def ensure_archived(pricelist: Pricelist, return_it: bool = False, wayback: bool = True) -> bytes | None:
+def ensure_archived(pricelist: PriceList, return_it: bool = False, wayback: bool = True) -> bytes | None:
     # logger.debug(f'ensure_archived: {pricelist.url}')
     wayback and WaybackArchiver.archive(pricelist.url)
     return LocalArchiver.fetch(pricelist, return_it)
@@ -41,7 +41,7 @@ def get_csv_rows(raw: bytes) -> list[list[str]]:
         except UnicodeDecodeError:
             pass
     else:
-        logger.warning(f'failed to find suitable encoding for CSV data!')
+        logger.error(f'failed to find suitable encoding for CSV data!')
         return []
     delimiter = most_occuring(raw_str, ',', ';', '\t')
     with io.StringIO(raw_str) as stream:
@@ -69,7 +69,7 @@ def resolve_product(coll: list, barcode: str, store: Store, location_id: str, na
     coll.append(p)
     return True
 
-def extract_offers_from_today(store: Store, plist: list[Pricelist], wayback: bool = False):
+def extract_offers_from_today(store: Store, plist: list[PriceList], wayback: bool = False):
     if not plist:
         logger.warning(f'no {store.id} price lists found')
         return []

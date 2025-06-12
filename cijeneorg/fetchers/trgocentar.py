@@ -3,7 +3,7 @@ from datetime import datetime
 from loguru import logger
 from lxml.etree import XML
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
@@ -23,7 +23,7 @@ def fetch_trgocentar_prices(trgocentar: Store):
         address = fix_address(' '.join(address))
         city = fix_city(' '.join(city))
         dt = datetime.strptime(date_str, '%d%m%Y%H%M.xml')
-        coll.append(Pricelist(full_url, address, city, trgocentar.id, location_id, dt, filename))
+        coll.append(PriceList(full_url, address, city, trgocentar.id, location_id, dt, filename))
 
     today_coll = extract_offers_from_today(trgocentar, coll)
 

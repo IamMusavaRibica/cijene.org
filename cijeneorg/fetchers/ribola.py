@@ -4,7 +4,7 @@ from datetime import datetime
 from loguru import logger
 from lxml.etree import XML
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.products import AllProducts
@@ -34,7 +34,7 @@ def fetch_ribola_prices(ribola: Store):
                     if location_id in ribola.locations:
                         city, _, address, lat, lon, gmaps_url = ribola.locations[location_id]
                         filename = href.rsplit('/')[-1]
-                        coll.append(Pricelist(BASE_URL + href, address, city, ribola.id, location_id, dt, filename))
+                        coll.append(PriceList(BASE_URL + href, address, city, ribola.id, location_id, dt, filename))
                         continue
                     else:
                         logger.warning(f'unknown ribola location id: {location_id} from {href}')
@@ -52,7 +52,7 @@ def fetch_ribola_prices(ribola: Store):
     return prod
 
 
-def process_single(p: Pricelist, ribola: Store):
+def process_single(p: PriceList, ribola: Store):
     root = XML(ensure_archived(p, True, wayback=False)
                .replace(b'MaloprmdajnaCijenaAkcija', b'MaloprodajnaCijenaAkcija'))
     coll = []

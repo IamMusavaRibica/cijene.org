@@ -2,7 +2,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 
@@ -14,7 +14,7 @@ def fetch_rotodinamic_prices(rotodinamic: Store):
         filename = href.rsplit('/', 1)[-1]
         *_, date_str, time_str = href.rsplit(', ')
         dt = datetime.strptime(f'{date_str} {time_str}', '%d.%m.%Y %H.%M.csv')
-        coll.append(Pricelist(href, '(sve poslovnice)', None, rotodinamic.id, None, dt, filename))
+        coll.append(PriceList(href, '(sve poslovnice)', None, rotodinamic.id, None, dt, filename))
 
     today_coll = extract_offers_from_today(rotodinamic, coll, wayback=True)
 

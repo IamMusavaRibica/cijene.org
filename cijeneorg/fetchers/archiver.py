@@ -13,7 +13,7 @@ from loguru import logger
 
 
 @dataclass
-class Pricelist:
+class PriceList:
     url: str
     address: str | None
     city: str | None
@@ -99,7 +99,7 @@ class _LocalArchiverImpl:
     db_path = archive_dir / 'index.db'
     session = requests.Session()
     _initialized: bool = False
-    _queue: Queue[Pricelist | None] = Queue()
+    _queue: Queue[PriceList | None] = Queue()
     _thread: Thread
 
     def initialize(self):
@@ -153,7 +153,7 @@ class _LocalArchiverImpl:
         response.raise_for_status()
         return response.content
 
-    def _save_new_file(self, pricelist: Pricelist, raw_data: bytes) -> Path:
+    def _save_new_file(self, pricelist: PriceList, raw_data: bytes) -> Path:
         # logger.debug(f'saving {task}')
         sha256 = hashlib.sha256(raw_data).hexdigest()
         local_file = self.archive_dir / pricelist.store_id / pricelist.dt.strftime('%Y-%m-%d') \
@@ -219,7 +219,7 @@ class _LocalArchiverImpl:
                 self._queue.task_done()
                 time.sleep(.01)
 
-    def fetch(self, pricelist: Pricelist, return_it: bool = False, force_download: bool = False) -> bytes | None:
+    def fetch(self, pricelist: PriceList, return_it: bool = False, force_download: bool = False) -> bytes | None:
         # logger.debug(f'fetching {pricelist.url} with kwargs={pricelist.request_kwargs}')
 
         if 'plodine.hr/' in pricelist.url.lower():

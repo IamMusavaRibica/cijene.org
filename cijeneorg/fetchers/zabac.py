@@ -2,7 +2,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address
@@ -26,7 +26,7 @@ def fetch_zabac_prices(zabac: Store):
             address, datestr = filename.removeprefix('Cjenik-').rsplit('-', 1)
             address = fix_address(address.replace('-', ' '))
             dt = datetime.strptime(datestr, '%d%m%Y.csv')
-            coll.append(Pricelist(url, address, 'Zagreb', zabac.id, 'PJ-?', dt, filename))
+            coll.append(PriceList(url, address, 'Zagreb', zabac.id, 'PJ-?', dt, filename))
         except Exception as e:
             logger.warning(f'failed to parse zabac pricelists: {url}')
             logger.exception(e)
@@ -36,7 +36,7 @@ def fetch_zabac_prices(zabac: Store):
         filename = u.rsplit('/', 1)[-1]
         n, address = filename.removeprefix('Cjenik-Zabac-Food-Outlet-PJ-').removesuffix('.csv').split('-', 1)
         address = fix_address(address.replace('-', ' '))
-        coll.append(Pricelist(u, address, 'Zagreb', zabac.id, f'PJ-{n}', datetime(2025, 5, 20), filename))
+        coll.append(PriceList(u, address, 'Zagreb', zabac.id, f'PJ-{n}', datetime(2025, 5, 20), filename))
 
     if not coll:
         logger.warning('no zabac pricelists found!')

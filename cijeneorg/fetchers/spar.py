@@ -5,7 +5,7 @@ import requests
 from loguru import logger
 
 from cijeneorg.utils import ONE_DAY, fix_address, fix_city
-from .archiver import WaybackArchiver, Pricelist
+from .archiver import WaybackArchiver, PriceList
 from .common import resolve_product, get_csv_rows, ensure_archived, extract_offers_from_today
 from ..models import ProductOffer, Store
 
@@ -58,7 +58,7 @@ def fetch_spar_prices(spar: Store) -> list[ProductOffer]:
 
         address = fix_address(' '.join(full_addr))
         dt = datetime.strptime(datestr + timestr, '%Y%m%d%H%M%S')
-        coll.append(Pricelist(url, address, city, spar.id, location_id, dt, filename))
+        coll.append(PriceList(url, address, city, spar.id, location_id, dt, filename))
 
     today_coll = extract_offers_from_today(spar, coll)
 
@@ -76,7 +76,7 @@ def fetch_spar_prices(spar: Store) -> list[ProductOffer]:
     return results
 
 
-def fetch_single(p: Pricelist, spar: Store) -> list[ProductOffer]:
+def fetch_single(p: PriceList, spar: Store) -> list[ProductOffer]:
     rows = get_csv_rows(ensure_archived(p, True, wayback=False))
     prod = []
     for k in rows[1:]:

@@ -7,7 +7,7 @@ from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.models import Store
-from .archiver import WaybackArchiver, Pricelist
+from .archiver import WaybackArchiver, PriceList
 from .common import resolve_product, xpath, ensure_archived, extract_offers_from_today
 from ..utils import remove_extra_spaces
 
@@ -20,7 +20,7 @@ def fetch_studenac_prices(studenac: Store):
     for href in xpath(BASE_URL, f'//a[starts-with(@href, "{PREFIX}")]/@href'):
         filename = href.removeprefix(PREFIX)
         dt = datetime.strptime(filename, 'PROIZVODI-%Y-%m-%d.zip')
-        coll.append(Pricelist(href, None, None, studenac.id, None, dt, filename))
+        coll.append(PriceList(href, None, None, studenac.id, None, dt, filename))
 
     today_coll = extract_offers_from_today(studenac, coll, wayback=True)
 

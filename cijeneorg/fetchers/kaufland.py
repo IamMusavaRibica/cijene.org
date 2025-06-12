@@ -5,7 +5,7 @@ from datetime import datetime
 import requests
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import Pricelist, WaybackArchiver
+from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_city, split_by_lengths
@@ -40,7 +40,7 @@ def fetch_kaufland_prices(kaufland: Store):
                 *a, city = full_addr.rsplit(maxsplit=1)
                 address = ' '.join(a).strip()
             city = fix_city(city)
-            coll.append(Pricelist(url, address, city, kaufland.id, location_id, dt, filename))
+            coll.append(PriceList(url, address, city, kaufland.id, location_id, dt, filename))
 
         else:
             logger.warning(f'failed to parse kaufland pricelist {filename}')

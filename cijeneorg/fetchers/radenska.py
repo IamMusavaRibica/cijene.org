@@ -2,7 +2,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 
@@ -13,7 +13,7 @@ def fetch_radenska_prices(radenska: Store):
     for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href'):
         filename = href.rsplit('/', 1)[-1]
         dt = datetime.strptime(filename, '%Y%m%d.csv')
-        coll.append(Pricelist(href, 'Ulica Matije Gupca 120', 'Lipik', radenska.id, '0', dt, filename))
+        coll.append(PriceList(href, 'Ulica Matije Gupca 120', 'Lipik', radenska.id, '0', dt, filename))
 
     today_coll = extract_offers_from_today(radenska, coll)
 

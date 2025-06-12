@@ -6,7 +6,7 @@ from urllib.parse import unquote
 from loguru import logger
 from lxml.etree import XML
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city, UA_HEADER
@@ -26,7 +26,7 @@ def fetch_bure_prices(bure: Store):
         city = fix_city(' '.join(city))
         dt = datetime.strptime(rest.replace('-', '')[:14], '%Y%m%d%H%M%S')
 
-        p = Pricelist(href, address, city, bure.id, location_id, dt, filename)
+        p = PriceList(href, address, city, bure.id, location_id, dt, filename)
         p.request_kwargs = {'headers': UA_HEADER}
         ensure_archived(p, wayback=False)
         # coll.append(p)
@@ -35,7 +35,7 @@ def fetch_bure_prices(bure: Store):
         zip_href = tr.xpath('.//a[contains(@href, "preuzmi-zip")]/@href')[0]
         dt = datetime.strptime(tr.get('data-date'), '%d.%m.%Y')
         filename = f'bure_price_file_{dt:%Y-%m-%d}.zip'
-        p = Pricelist(zip_href, None, None, bure.id, None, dt, filename)
+        p = PriceList(zip_href, None, None, bure.id, None, dt, filename)
         p.request_kwargs = {'headers': UA_HEADER}
         coll.append(p)
 

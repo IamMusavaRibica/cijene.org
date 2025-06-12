@@ -4,7 +4,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import Pricelist, WaybackArchiver
+from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import DDMMYYYY_dots, fix_city
@@ -19,7 +19,7 @@ def fetch_lidl_prices(lidl: Store):
             dt = datetime(year, month, day)
             href ,= p.xpath('a/@href')
             filename = href.rsplit('/', 1)[-1]
-            coll.append(Pricelist(href, None, None, lidl.id, None, dt, filename))
+            coll.append(PriceList(href, None, None, lidl.id, None, dt, filename))
 
     today_coll = extract_offers_from_today(lidl, coll, wayback=True)
 

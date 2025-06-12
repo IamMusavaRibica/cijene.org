@@ -7,7 +7,7 @@ import requests
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, Pricelist, \
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, PriceList, \
     extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city, most_occuring, split_by_lengths
@@ -49,7 +49,7 @@ def fetch_boso_prices(boso: Store):
                 if market_id.isdigit() and len(market_id) == 4:
                     url, = td_anchor.xpath('./a/@href')
                     dt = datetime.strptime(datetime0, datefmt)
-                    coll.append(Pricelist(url, fix_address(address), fix_city(city), boso.id, market_id, dt, td_filename.text))
+                    coll.append(PriceList(url, fix_address(address), fix_city(city), boso.id, market_id, dt, td_filename.text))
                 else:
                     logger.warning(f'failed to parse store id from {td_filename.text}')
 

@@ -4,7 +4,7 @@ from datetime import date, datetime
 import requests
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import ONE_DAY, fix_address, fix_city
@@ -42,7 +42,7 @@ def fetch_tommy_prices(tommy: Store):
             logger.warning(f'failed to parse tommy filename {filename}')
             continue
         dt = datetime.strptime(dt_str, '%Y%m%d %H%M')
-        coll.append(Pricelist(url, address, city, tommy.id, location_id, dt, filename))
+        coll.append(PriceList(url, address, city, tommy.id, location_id, dt, filename))
 
     today_coll = extract_offers_from_today(tommy, coll)
 
@@ -59,7 +59,7 @@ def fetch_tommy_prices(tommy: Store):
     return prod
 
 
-def fetch_single(p: Pricelist, tommy: Store):
+def fetch_single(p: PriceList, tommy: Store):
     rows = get_csv_rows(ensure_archived(p, True))
 
     coll = []

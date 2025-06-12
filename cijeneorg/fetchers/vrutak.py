@@ -4,7 +4,7 @@ import requests.exceptions
 from loguru import logger
 from lxml.etree import XML
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 
@@ -22,7 +22,7 @@ def fetch_vrutak_prices(vrutak: Store):
             'bulvanova20': 'Ulica Slavoljuba Bulvana 20',
         }[address]
         dt = datetime.strptime(date_str, '%Y%m%d-%H%M%S.xml')
-        coll.append(Pricelist(href, address, 'Zagreb', vrutak.id, location_id, dt, filename))
+        coll.append(PriceList(href, address, 'Zagreb', vrutak.id, location_id, dt, filename))
 
     today_coll = extract_offers_from_today(vrutak, coll, wayback=True)
 

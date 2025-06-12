@@ -4,7 +4,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import Pricelist, WaybackArchiver
+from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import DDMMYYYY_dots, fix_city
@@ -17,7 +17,7 @@ def fetch_eurospin_prices(eurospin: Store):
         if m := DDMMYYYY_dots.findall(filename := option.text.strip()):
             day, month, year = map(int, *m)
             dd = datetime(year, month, day)
-            coll.append(Pricelist(option.get('value'), None, None, eurospin.id, None, dd, filename))
+            coll.append(PriceList(option.get('value'), None, None, eurospin.id, None, dd, filename))
 
     today_coll = extract_offers_from_today(eurospin, coll)
 

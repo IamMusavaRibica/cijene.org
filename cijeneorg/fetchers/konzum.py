@@ -9,7 +9,7 @@ from lxml.etree import HTML
 
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, DDMMYYYY_dots, fix_city
-from .archiver import Pricelist, WaybackArchiver
+from .archiver import PriceList, WaybackArchiver
 from .common import get_csv_rows, resolve_product, ensure_archived, extract_offers_from_today
 
 
@@ -76,7 +76,7 @@ def fetch_konzum_prices(konzum: Store):
 
             city = fix_city(full_addr[postal_match.end():])
             address = fix_address(address)
-            coll.append(Pricelist(url, address, city, konzum.id, location_id, dt, a.text.strip()))
+            coll.append(PriceList(url, address, city, konzum.id, location_id, dt, a.text.strip()))
 
     today_coll = extract_offers_from_today(konzum, coll)
 
@@ -96,7 +96,7 @@ def fetch_konzum_prices(konzum: Store):
 
     return all_products
 
-def process_single(konzum: Store, p: Pricelist):
+def process_single(konzum: Store, p: PriceList):
     rows = get_csv_rows(ensure_archived(p, True, wayback=False))
     coll = []
     for k in rows[1:]:

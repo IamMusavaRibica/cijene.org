@@ -2,7 +2,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import Pricelist, WaybackArchiver
+from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
 from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_city
@@ -12,7 +12,6 @@ def fetch_bakmaz_prices(bakmaz: Store):
     WaybackArchiver.archive(index_url := 'https://www.bakmaz.hr/o-nama/')
     coll = []
     for url in xpath(index_url, '//a[@class="btn-preuzmi"]/@href'):
-
         filename = url.rsplit('/', 1)[-1]
         if not filename.endswith('.csv'):
             logger.warning(f'unexpected non-csv href: {url}')
@@ -22,7 +21,7 @@ def fetch_bakmaz_prices(bakmaz: Store):
             address = address.replace('-', ' ')
             city = fix_city(city)
             dt = datetime.strptime(dtstr.replace('_', ''), '%d%m%Y%H%M%S.csv')
-            coll.append(Pricelist(url, address, city, bakmaz.id, location_id, dt, filename))
+            coll.append(PriceList(url, address, city, bakmaz.id, location_id, dt, filename))
         except Exception as e:
             logger.warning(f'error {e!r} while bakmaz pricelist {filename = }')
             logger.exception(e)

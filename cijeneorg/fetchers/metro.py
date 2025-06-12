@@ -4,7 +4,7 @@ from urllib.parse import unquote
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import Pricelist, WaybackArchiver
+from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
@@ -24,7 +24,7 @@ def fetch_metro_prices(metro: Store):
             dt = datetime(*map(int, m.groups()))
             location_id, _addr_city = filename[m.end():-4].split('_', 1)
             address, city = _addr_city.replace('_', ' ').rsplit(',', 1)
-            coll.append(Pricelist(full_url, fix_address(address), fix_city(city), metro.id, location_id, dt, filename))
+            coll.append(PriceList(full_url, fix_address(address), fix_city(city), metro.id, location_id, dt, filename))
         else:
             logger.warning(f'failed to extract data from {filename}')
             continue

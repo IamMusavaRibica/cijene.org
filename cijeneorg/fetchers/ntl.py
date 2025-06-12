@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 from loguru import logger
 
-from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
+from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
@@ -31,7 +31,7 @@ def fetch_ntl_prices(ntl: Store):
         dt = datetime.strptime(rest, '%d%m%Y_%H_%M_%S.csv')
         city = fix_city(city)
         address = fix_address(address).replace('Galoviaa', 'Galovića')
-        coll.append(Pricelist(href, address, city, ntl.id, location_id, dt, filename))
+        coll.append(PriceList(href, address, city, ntl.id, location_id, dt, filename))
 
     today_coll = extract_offers_from_today(ntl, coll)
 
