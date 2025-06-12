@@ -3,7 +3,7 @@ from datetime import datetime
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
-from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product
+from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address
 
@@ -27,19 +27,7 @@ def fetch_brodokomerc_prices(brodokomerc: Store):
         dt = datetime.strptime(date_str, '%d%m%Y%H%M%S.csv')
         coll.append(Pricelist(href, address, city, brodokomerc.id, location_id, dt, filename))
 
-    if not coll:
-        logger.warning('no brodokomerc prices found')
-        return []
-
-    logger.info(f'found {len(coll)} brodokomerc pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(brodokomerc, coll)
 
     prod = []
     for p in today_coll:

@@ -3,7 +3,7 @@ from datetime import datetime
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
-from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product
+from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 
 
@@ -19,19 +19,7 @@ def fetch_jadranka_prices(jadranka: Store):
         dt = datetime.strptime(filename.removeprefix(pr), '%d%m%Y_%H%M.csv')
         coll.append(Pricelist(href, 'Dražica 5', 'Mali Lošinj', jadranka.id, '607', dt, filename))
 
-    if not coll:
-        logger.warning('no jadranka prices found')
-        return []
-
-    logger.info(f'found {len(coll)} jadranka pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(jadranka, coll)
 
     prod = []
     for p in today_coll:

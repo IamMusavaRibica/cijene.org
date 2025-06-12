@@ -7,7 +7,8 @@ import requests
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, Pricelist
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, Pricelist, \
+    extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city, most_occuring, split_by_lengths
 
@@ -57,18 +58,7 @@ def fetch_boso_prices(boso: Store):
             logger.exception(e)
             continue
 
-    if not coll:
-        logger.warning('no boso prices found')
-        return []
-    logger.info(f'found {len(coll)} boso prices')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(boso, coll)
 
     prod = []
     for t in today_coll:

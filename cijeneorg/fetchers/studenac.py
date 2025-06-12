@@ -8,7 +8,7 @@ from lxml.etree import XML
 
 from cijeneorg.models import Store
 from .archiver import WaybackArchiver, Pricelist
-from .common import resolve_product, xpath, ensure_archived
+from .common import resolve_product, xpath, ensure_archived, extract_offers_from_today
 from ..utils import remove_extra_spaces
 
 pattern = re.compile(r"PROIZVODI-(\d{4})-(\d{2})-(\d{2})\.zip")
@@ -22,19 +22,7 @@ def fetch_studenac_prices(studenac: Store):
         dt = datetime.strptime(filename, 'PROIZVODI-%Y-%m-%d.zip')
         coll.append(Pricelist(href, None, None, studenac.id, None, dt, filename))
 
-    if not coll:
-        logger.warning('no studenac pricelists found')
-        return []
-
-    logger.info(f'found {len(coll)} studenac pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p)
+    today_coll = extract_offers_from_today(studenac, coll, wayback=True)
 
     # monkey-patch the zipfile.ZipFile.open method to avoid comparing header and actual file names
     # which would raise a BadZipFile exception if they mismatch

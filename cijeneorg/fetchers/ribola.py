@@ -5,7 +5,7 @@ from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
-from cijeneorg.fetchers.common import resolve_product, xpath, ensure_archived
+from cijeneorg.fetchers.common import resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.products import AllProducts
 from cijeneorg.utils import remove_extra_spaces
@@ -41,19 +41,7 @@ def fetch_ribola_prices(ribola: Store):
                 logger.warning(f'failed to parse ribola href: {href}')
 
 
-    if not coll:
-        logger.error('no ribola pricelists found')
-        return []
-
-    logger.info(f'found {len(coll)} ribola pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(ribola, coll)
 
     prod = []
     for p in today_coll:

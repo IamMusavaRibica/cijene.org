@@ -4,7 +4,7 @@ from urllib.parse import unquote
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import Pricelist, WaybackArchiver
-from cijeneorg.fetchers.common import xpath, ensure_archived
+from cijeneorg.fetchers.common import xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
 
@@ -26,18 +26,7 @@ def fetch_djelo_vodice_prices(djelo_vodice: Store):
             logger.exception(e)
             continue
 
-    if not coll:
-        logger.warning('no djelo vodice pricelists found')
-        return []
-
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(djelo_vodice, coll)
 
     prod = []
     for t in today_coll:

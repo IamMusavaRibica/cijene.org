@@ -5,7 +5,7 @@ import requests
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, ensure_archived
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import ONE_DAY, fix_address, fix_city
 
@@ -44,19 +44,7 @@ def fetch_tommy_prices(tommy: Store):
         dt = datetime.strptime(dt_str, '%Y%m%d %H%M')
         coll.append(Pricelist(url, address, city, tommy.id, location_id, dt, filename))
 
-    if not coll:
-        logger.warning('no tommy pricelists found')
-        return []
-
-    logger.info(f'found {len(coll)} tommy pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(tommy, coll)
 
     prod = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=12, thread_name_prefix='Tommy') as executor:

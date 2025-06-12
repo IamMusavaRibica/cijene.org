@@ -10,7 +10,7 @@ from lxml.etree import HTML
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, DDMMYYYY_dots, fix_city
 from .archiver import Pricelist, WaybackArchiver
-from .common import get_csv_rows, resolve_product, ensure_archived
+from .common import get_csv_rows, resolve_product, ensure_archived, extract_offers_from_today
 
 
 def fetch_konzum_prices(konzum: Store):
@@ -78,24 +78,10 @@ def fetch_konzum_prices(konzum: Store):
             address = fix_address(address)
             coll.append(Pricelist(url, address, city, konzum.id, location_id, dt, a.text.strip()))
 
-    if not coll:
-        logger.warning('no konzum prices found')
-        return []
-
-    logger.info(f'found {len(coll)} konzum pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
-
+    today_coll = extract_offers_from_today(konzum, coll)
 
     all_products = []
-
-    # different threads will access the sqlite database, is it safe?
+    # TODO: different threads will access the sqlite database, is it safe?
     with concurrent.futures.ThreadPoolExecutor(max_workers=32, thread_name_prefix='Konzum') as executor:
         futures = []
         for p in today_coll:

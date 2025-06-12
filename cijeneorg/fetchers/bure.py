@@ -7,7 +7,7 @@ from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
-from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product
+from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city, UA_HEADER
 
@@ -39,21 +39,7 @@ def fetch_bure_prices(bure: Store):
         p.request_kwargs = {'headers': UA_HEADER}
         coll.append(p)
 
-
-    if not coll:
-        logger.warning('no bure prices found')
-        return []
-
-    logger.info(f'found {len(coll)} bure pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
-
+    today_coll = extract_offers_from_today(bure, coll)
 
     prod = []
     for p in today_coll:

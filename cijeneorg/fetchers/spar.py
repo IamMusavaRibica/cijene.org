@@ -6,7 +6,7 @@ from loguru import logger
 
 from cijeneorg.utils import ONE_DAY, fix_address, fix_city
 from .archiver import WaybackArchiver, Pricelist
-from .common import resolve_product, get_csv_rows, ensure_archived
+from .common import resolve_product, get_csv_rows, ensure_archived, extract_offers_from_today
 from ..models import ProductOffer, Store
 
 # https://www.spar.hr/usluge/cjenici
@@ -60,19 +60,7 @@ def fetch_spar_prices(spar: Store) -> list[ProductOffer]:
         dt = datetime.strptime(datestr + timestr, '%Y%m%d%H%M%S')
         coll.append(Pricelist(url, address, city, spar.id, location_id, dt, filename))
 
-    if not coll:
-        logger.warning('no spar pricelists found')
-        return []
-
-    logger.info(f'found {len(coll)} spar pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(spar, coll)
 
     results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=30, thread_name_prefix='Spar') as executor:

@@ -5,7 +5,7 @@ from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
-from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product
+from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 
 
@@ -24,19 +24,7 @@ def fetch_vrutak_prices(vrutak: Store):
         dt = datetime.strptime(date_str, '%Y%m%d-%H%M%S.xml')
         coll.append(Pricelist(href, address, 'Zagreb', vrutak.id, location_id, dt, filename))
 
-    if not coll:
-        logger.warning('no vrutak pricelists found')
-        return []
-
-    logger.info(f'found {len(coll)} vrutak pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p)
+    today_coll = extract_offers_from_today(vrutak, coll, wayback=True)
 
     prod = []
     for p in today_coll:

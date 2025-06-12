@@ -4,7 +4,7 @@ from urllib.parse import unquote
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import UA_HEADER, fix_city, fix_address
 
@@ -23,19 +23,7 @@ def fetch_trgovina_krk_prices(trgovina_krk: Store):
         coll.append(p := Pricelist(href, address, city, trgovina_krk.id, location_id, dt, filename))
         p.request_kwargs = {'headers': UA_HEADER}
 
-    if not coll:
-        logger.warning('no trgovina krk pricelists found')
-        return []
-
-    logger.info(f'found {len(coll)} trgovina krk pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(trgovina_krk, coll)
 
     prod = []
     for p in today_coll:

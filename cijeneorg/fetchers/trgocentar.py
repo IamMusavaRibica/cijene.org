@@ -4,7 +4,7 @@ from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
-from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product
+from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
 
@@ -25,19 +25,7 @@ def fetch_trgocentar_prices(trgocentar: Store):
         dt = datetime.strptime(date_str, '%d%m%Y%H%M.xml')
         coll.append(Pricelist(full_url, address, city, trgocentar.id, location_id, dt, filename))
 
-    if not coll:
-        logger.warning('no trgocentar pricelists found')
-        return []
-
-    logger.info(f'found {len(coll)} trgocentar pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(trgocentar, coll)
 
     prod = []
     for p in today_coll:

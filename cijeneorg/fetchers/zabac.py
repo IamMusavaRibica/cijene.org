@@ -44,7 +44,7 @@ def fetch_zabac_prices(zabac: Store):
 
     logger.info(f'found {len(coll)} zabac pricelists')
     # TODO: filter by date
-    # will be updated when zabac pricelists get less weird
+    # will be updated when zabac price lists get less weird
     prod = []
     for t in coll:
         rows = get_csv_rows(ensure_archived(t, True))

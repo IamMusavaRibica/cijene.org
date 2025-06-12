@@ -6,7 +6,7 @@ import requests
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import Pricelist, WaybackArchiver
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_city, split_by_lengths
 
@@ -45,19 +45,7 @@ def fetch_kaufland_prices(kaufland: Store):
         else:
             logger.warning(f'failed to parse kaufland pricelist {filename}')
 
-    if not coll:
-        logger.warning(f'no kaufland prices found')
-        return []
-
-    logger.info(f'found {len(coll)} kaufland prices')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(kaufland, coll)
 
     prod = []
     for p in today_coll:

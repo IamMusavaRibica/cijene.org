@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, Pricelist
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
 
@@ -33,22 +33,7 @@ def fetch_ntl_prices(ntl: Store):
         address = fix_address(address).replace('Galoviaa', 'Galovića')
         coll.append(Pricelist(href, address, city, ntl.id, location_id, dt, filename))
 
-    # for p in coll:
-    #     print(p)
-
-    if not coll:
-        logger.warning(f'no prices found for ntl')
-        return []
-
-    logger.info(f'found {len(coll)} ntl pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(ntl, coll)
 
     prod = []
     for p in today_coll:

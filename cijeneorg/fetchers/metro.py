@@ -5,7 +5,7 @@ from urllib.parse import unquote
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import Pricelist, WaybackArchiver
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
 
@@ -29,19 +29,7 @@ def fetch_metro_prices(metro: Store):
             logger.warning(f'failed to extract data from {filename}')
             continue
 
-    if not coll:
-        logger.warning(f'no metro pricelists found')
-        return []
-
-    logger.info(f'found {len(coll)} metro pricelists')
-    coll.sort(key=lambda x: x.dt, reverse=True)
-    today = coll[0].dt.date()
-    today_coll = []
-    for p in coll:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=False)
+    today_coll = extract_offers_from_today(metro, coll)
 
     prod = []
     for p in today_coll:

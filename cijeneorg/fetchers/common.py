@@ -14,6 +14,7 @@ from cijeneorg.utils import most_occuring, remove_extra_spaces, fix_price
 session = requests.Session()
 session.headers.update({'User-Agent': 'cijene.org scraper (kontakt email: darac[at]ribica.dev)'})
 ARCHIVE = Path('archive')
+NotGiven = object()
 
 def xpath(w: str | bytes, query: str, extra_headers = None, return_root: bool = False, verify: bool | str = True) -> list | tuple[list, HTML]:
     # NOTE: validators.url() is wrong for "https://www.ktc.hr/cjenici?poslovnica=SAMOPOSLUGA KOPRIVNICA PJ-88"
@@ -32,7 +33,7 @@ def ensure_archived(pricelist: Pricelist, return_it: bool = False, wayback: bool
     return LocalArchiver.fetch(pricelist, return_it)
 
 
-def get_csv_rows(raw: bytes, delimiter: str = None, encoding: str = None, transtable: dict = None) -> list[list[str]]:
+def get_csv_rows(raw: bytes) -> list[list[str]]:
     for enc in ('utf-8', 'cp1250'):
         try:
             raw_str = raw.decode(enc)
@@ -68,33 +69,17 @@ def resolve_product(coll: list, barcode: str, store: Store, location_id: str, na
     coll.append(p)
     return True
 
-
-NotGiven = object()
-def extract_offer_from_data(
-        store: Store,
-        *,
-        product_name: str,      # naziv proizvoda
-        product_id: str,        # sifra proizvoda koju valjda svaki proizvodac bira za sebe
-        brand: str,
-        net_quantity: float,      # neto kolicina
-        units: str,             # jedinica mjere
-        retail_price: str,      # maloprodajna cijena
-        price_per_unit: str,    # cijena za jedinicu mjere
-        barcode: str,
-        category: str,
-
-        # prema Odluci na https://narodne-novine.nn.hr/clanci/sluzbeni/full/2025_05_75_979.html
-        # nije obavezno objaviti ovu cijenu na mrežnim stranicama!
-        may2_price: float | None = NotGiven,
-) -> ProductOffer | None:
-
-    if may2_price == '' or may2_price is None:
-        logger.warning(f'[{store.name}] product {product_name}, {barcode = } has no price on May 2nd 2025')
-    elif may2_price is NotGiven:
-        may2_price = None
-
-    if not barcode:
-        return
-
-
-
+def extract_offers_from_today(store: Store, plist: list[Pricelist], wayback: bool = False):
+    if not plist:
+        logger.warning(f'no {store.id} price lists found')
+        return []
+    logger.info(f'found {len(plist)} {store.id} prices')
+    plist.sort(key=lambda x: x.dt, reverse=True)
+    today = plist[0].dt.date()
+    today_coll = []
+    for p in plist:
+        if p.dt.date() == today:
+            today_coll.append(p)
+        else:
+            ensure_archived(p, wayback=wayback)
+    return today_coll
