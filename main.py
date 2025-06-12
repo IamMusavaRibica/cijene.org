@@ -11,9 +11,9 @@ from loguru import logger
 from starlette.responses import JSONResponse
 from starlette.types import Scope
 
-from cijenelib.fetchers._archiver import LocalArchiver, WaybackArchiver
-from cijenelib.products_api import demo
-from cijenelib.utils import stylize_unit_price
+from cijeneorg.fetchers.archiver import LocalArchiver, WaybackArchiver
+from cijeneorg.products_api import demo
+from cijeneorg.utils import stylize_unit_price
 
 templates = Jinja2Templates(directory='templates')
 templates.env.filters['formatted_price'] = lambda x: f'{x:.2f} €' if x is not None else '-'
