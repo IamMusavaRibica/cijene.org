@@ -1,5 +1,3 @@
-from numba.cuda import local
-
 from cijeneorg.fetchers import *
 from cijeneorg.models import Store
 
