@@ -1,14 +1,14 @@
 import concurrent.futures
 import re
 import time
-from datetime import datetime
+from datetime import datetime, date
 
 import requests
 from loguru import logger
 from lxml.etree import HTML
 
 from cijeneorg.models import Store
-from cijeneorg.utils import fix_address, DDMMYYYY_dots, fix_city
+from cijeneorg.utils import fix_address, DDMMYYYY_dots, fix_city, ONE_DAY
 from .archiver import PriceList, WaybackArchiver
 from .common import get_csv_rows, resolve_product, ensure_archived, extract_offers_from_today
 
@@ -22,18 +22,21 @@ def fetch_konzum_prices(konzum: Store):
     for page in root0.xpath('//a[starts-with(@href, "/cjenici?page=")]'):
         if page.text.isnumeric():
             max_page = max(max_page, int(page.text))
-    for date in root0.xpath('//a[starts-with(@href, "/cjenici?date=")]/@href'):
-        available_dates_urls.append(date.removeprefix('/cjenici?date='))
+    for date0 in root0.xpath('//a[starts-with(@href, "/cjenici?date=")]/@href'):
+        available_dates_urls.append(date0.removeprefix('/cjenici?date='))
 
     # fetch every page
     _start = time.perf_counter()
     pages = [root0]
+    yesterday = date.today() - ONE_DAY
     with concurrent.futures.ThreadPoolExecutor(max_workers=16, thread_name_prefix='Konzum_Pages') as executor:
         futures = []
         for d in available_dates_urls:
             for i in range(2, max_page + 1):
                 page_url = f'{index_url}?date={d}&page={i}'
-                WaybackArchiver.archive(page_url)
+                d_date = datetime.strptime(d, '%Y-%m-%d').date()
+                if d_date >= yesterday:
+                    WaybackArchiver.archive(page_url)
                 futures.append(executor.submit(lambda _url: HTML(requests.get(_url).content), page_url))
 
         for future in concurrent.futures.as_completed(futures):
@@ -52,8 +55,8 @@ def fetch_konzum_prices(konzum: Store):
                 store_type, *full_addr, location_id, file_id, datestr = s.split(',')
                 dt = datetime.strptime(datestr.lower(), '%Y%m%d%H%M%S.csv')
             else:
-                store_type, *full_addr, location_id, file_id, date, _ = a.text.strip().split(',')
-                if not (m := DDMMYYYY_dots.match(date)):
+                store_type, *full_addr, location_id, file_id, date1, _ = a.text.strip().split(',')
+                if not (m := DDMMYYYY_dots.match(date1)):
                     logger.warning(f'unexpected date format (failed to parse?) {a.text.strip()}')
                     continue
                 day, month, year = map(int, m.groups())
