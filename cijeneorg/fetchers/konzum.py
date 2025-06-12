@@ -44,7 +44,7 @@ def fetch_konzum_prices(konzum: Store):
 
     logger.info(f'fetched {len(pages)} konzum pages, took {time.perf_counter() - _start:.3f} s')
 
-    # extract all pricelists from the pages
+    # extract all price lists from the pages
     coll = []
     for root in pages:
         for a in root.xpath('//h5/a[starts-with(@href, "/cjenici/download")]'):
