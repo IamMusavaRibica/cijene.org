@@ -1,0 +1,9 @@
+services:
+  cijeneorg:
+    build: .
+    container_name: cijeneorg
+    ports:
+      - "16163:16163"
+    volumes:
+      - .:/app  # allows live code changes (development only)
+    command: uvicorn main:app --host 0.0.0.0 --port 16163
