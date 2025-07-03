@@ -25,7 +25,10 @@ def fetch_zabac_prices(zabac: Store):
             filename = url.rsplit('/', 1)[-1]
             address, datestr = filename.removeprefix('Cjenik-').rsplit('-', 1)
             address = fix_address(address.replace('-', ' '))
-            dt = datetime.strptime(datestr, '%d%m%Y.csv')
+            if datestr.count('.') == 3:
+                dt = datetime.strptime(datestr, '%d.%m.%Y.csv')
+            else:
+                dt = datetime.strptime(datestr, '%d%m%Y.csv')
             coll.append(PriceList(url, address, 'Zagreb', zabac.id, 'PJ-?', dt, filename))
         except Exception as e:
             logger.warning(f'failed to parse zabac pricelists: {url}')
