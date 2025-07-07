@@ -1,0 +1,13 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cijeneorg
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "16163:16163"
+    volumes:
+      - ./archive:/app/archive  # 
+    user: "1000:1000"
