@@ -9,5 +9,6 @@ services:
     ports:
       - "16163:16163"
     volumes:
-      - ./archive:/app/archive  # 
-    user: "1000:1000"
+      # instead of copying the entire /archive directory (50+ GB) we just mount it
+      - ./archive:/app/archive
+    user: "1000:1000"  # uid:gid
