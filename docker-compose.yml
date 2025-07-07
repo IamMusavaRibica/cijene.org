@@ -1,9 +1,13 @@
 services:
-  cijeneorg:
-    build: .
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: cijeneorg
+    restart: unless-stopped
+    env_file: .env
     ports:
       - "16163:16163"
     volumes:
-      - .:/app  # allows live code changes (development only)
-    command: uvicorn main:app --host 0.0.0.0 --port 16163
+      - ./archive:/app/archive  # 
+    user: "1000:1000"
