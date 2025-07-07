@@ -23,7 +23,7 @@ def fetch_rotodinamic_prices(rotodinamic: Store):
         rows = get_csv_rows(ensure_archived(p, True))
         for k in rows[1:]:
             try:
-                _id, name, category, brand, barcode, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price = k
+                _id, name, category, brand, barcode, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, *_ = k
             except ValueError as e:
                 logger.error(f'Error parsing row in {p.url}: {k}')
                 logger.exception(e)
