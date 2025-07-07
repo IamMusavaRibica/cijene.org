@@ -29,7 +29,6 @@ LOGLEVEL=DEBUG
 - prekopirajte wayback machine api ključeve odavde: https://archive.org/account/s3.php  
 loglevel može biti DEBUG, INFO, ...
 5. `sudo chmod +x launch_server.sh`
-6. **promijenite direktorij u toj launch server skripti!**
 6. `./launch_server.sh`
 
 server je sada dostupan na internom portu 16163, dodajte to u nginx (ili ekvivalentan program)

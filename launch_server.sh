@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-cd /home/musava/cijeneorg2
+cd "$(dirname "$0")" || exit 1
 
 git fetch --all
 git reset --hard origin/main
