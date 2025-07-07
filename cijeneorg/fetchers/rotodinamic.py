@@ -22,7 +22,12 @@ def fetch_rotodinamic_prices(rotodinamic: Store):
     for p in today_coll:
         rows = get_csv_rows(ensure_archived(p, True))
         for k in rows[1:]:
-            _id, name, category, brand, barcode, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price = k
+            try:
+                _id, name, category, brand, barcode, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price = k
+            except ValueError as e:
+                logger.error(f'Error parsing row in {p.url}: {k}')
+                logger.exception(e)
+                continue
             # same pricelist for all those cash&carry locations
             for loc_id in 'D01 D28 D34 D18 D22 D13 D26 D11 D09'.split():
                 resolve_product(prod, barcode, rotodinamic, loc_id, name, discount_mpc or mpc, _qty, may2_price)
