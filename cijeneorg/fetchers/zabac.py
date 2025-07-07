@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 from loguru import logger
@@ -17,16 +18,21 @@ https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-P
 https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-10-Zagrebacka-Cesta-205.csv
 https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-11-Savska-Cesta-206.csv
 '''
+date_pattern = re.compile(r'Cjenik-(\d{1,2}\.?\d{1,2}\.?\d{4})')
 def fetch_zabac_prices(zabac: Store):
     coll = []
     WaybackArchiver.archive('https://zabacfoodoutlet.hr/cjenik/')  # just in case
     for url in xpath('https://zabacfoodoutlet.hr/cjenik/', '//a[contains(@href, ".csv")]/@href'):
         try:
             filename = url.rsplit('/', 1)[-1]
-            address, datestr = filename.removeprefix('Cjenik-').rsplit('-', 1)
-            address = fix_address(address.replace('-', ' '))
-            datestr = datestr.removesuffix('.csv')
-            datestr = datestr.split('-')[0]  # DDMMYYYY-1.csv (duplicate file names)
+            if not (m := date_pattern.search(filename)):
+                logger.warning(f'failed to parse zabac pricelist date from filename: {filename}')
+                continue
+            datestr = m.group(1)
+            address = '???'
+            fl = filename.lower()
+            if 'dubrava' in fl and '256l' in fl:
+                address = 'Avenija Dubrava 256L'
             if datestr.count('.') == 2:
                 dt = datetime.strptime(datestr, '%d.%m.%Y')
             else:
