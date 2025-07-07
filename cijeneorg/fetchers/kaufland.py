@@ -52,7 +52,9 @@ def fetch_kaufland_prices(kaufland: Store):
         rows = get_csv_rows(ensure_archived(p, True))
         for k in rows[1:]:
             name, _id, brand, _qty, units, mpc, is_sale, u, units, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-            may2_price = may2_price.removeprefix('MPC 2.5.2025=').removesuffix('€')
+            # may2_price = may2_price.removeprefix('MPC 2.5.2025=').removesuffix('€')
+            # TODO: kaufland has `MPC 21.5.2025=3,89` somewhere
+            may2_price = may2_price.rsplit('=')[-1].removesuffix('€')
             resolve_product(prod, barcode, kaufland, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
 
     return prod
