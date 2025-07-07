@@ -140,7 +140,7 @@ class _LocalArchiverImpl:
         return ''.join(c for c in filename if c.isalnum() or c in ' -_,.#&').rstrip()
 
     def _download_file(self, url: str, **kwargs) -> bytes:
-        logger.debug(f'downloading {url} with {kwargs = }')
+        # logger.debug(f'downloading {url} with {kwargs = }')
         try:
             response = self.session.get(url, timeout=60, **kwargs)
         except requests.exceptions.SSLError as e:
