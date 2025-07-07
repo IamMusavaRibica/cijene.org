@@ -6,4 +6,43 @@ Projekt za arhiviranje, pretraživanje i prikaz cijena NN 75/2025
 
 još ima puno ostataka dijelova koda koje sam napravio tri mjeseca prije nego što je odluka o objavi cjenika stupila na snagu, naići ćete na to ako gledate kod i pitate se "zašto je ovo tu"
 
-Nadam se da će kod nekome biti koristan za svoje istraživanje. Molim vas da ne kradete i da date adekvatan credit (poveznica na ovaj repozitorij) tamo gdje je potrebno. Ako želite pokrenuti server na svojem kompjuteru, čestitam - prvi ste koji to želi, otvorite issue pa ću uzeti vremena da napišem korake za to
+Nadam se da će kod nekome biti koristan za svoje istraživanje. Molim vas da ne kradete i da date adekvatan credit (poveznica na ovaj repozitorij) tamo gdje je potrebno.
+
+## Obična instalacija
+- definirajte environment varijable `WAYBACK_ACCESS_KEY`, `WAYBACK_SECRET_KEY` i `LOGLEVEL`
+- po želji kreirajte `.venv` naredbom `py -m venv .venv` pa ga aktivirajte s `.\.venv\Scripts\activate` (na Windows treba `".venv/scripts/activate"`)
+- instalacija svega potrebnog: `py -m pip install -r requirements.txt`
+- pokrenite server: `uvicorn --host 0.0.0.0 --port 80` (ovo je na http, za https posebno generirajte certifikate i dodajte potrebne parametre za uvicorn)
+
+## Docker instalacija
+ove upute su pisane za Linux, na drugim OS-evima treba koristiti ekvivalentne naredbe
+0. [instalirajte docker](https://docs.docker.com/engine/install/)
+1. git clone ovaj repositorij, uđite u njega (`cd`)
+2. odlučite koji user će pokretati server pa pokrenite `sudo usermod -aG docker <user>` i restartajte ssh sesiju
+3. `id -u <user>` i `id -g <user>` da dobijete UID i GID pa promijenite u `docker-compose.yml` ako nisu 1000
+4. napravite `.env` datoteku:
+```
+WAYBACK_ACCESS_KEY=AbCd
+WAYBACK_SECRET_KEY=AbCd
+LOGLEVEL=DEBUG
+```
+- prekopirajte wayback machine api ključeve odavde: https://archive.org/account/s3.php  
+loglevel može biti DEBUG, INFO, ...
+5. `sudo chmod +x launch_server.sh`
+6. `./launch_server.sh`
+
+server je sada dostupan na internom portu 16163, dodajte to u nginx (ili ekvivalentan program)
+
+za gledanje logova:
+```
+docker logs -f cijeneorg
+```
+
+za cronjob:
+1. `crontab -e`  (i dalje kao isti user!)
+2. dodajte liniju:
+```
+5 8,20 * * * /usr/bin/flock -n /tmp/cijeneorg.lock /REPOSITORY/launch_server.sh >> /REPOSITORY/cron.log 2>&1
+```
+ovo će restartati server svaki dan u 8:05 i 20:05. **sve trgovine ažuriraju cjenike do 8:00**. promijenite ovo vrijeme u cronjobu po želji  
+naravno `/REPOSITORY/` zamijenite putanjem do direktorija gdje ste klonirali repo
