@@ -12,7 +12,7 @@ Nadam se da će kod nekome biti koristan za svoje istraživanje. Molim vas da ne
 - definirajte environment varijable `WAYBACK_ACCESS_KEY`, `WAYBACK_SECRET_KEY` i `LOGLEVEL`
 - po želji kreirajte `.venv` naredbom `py -m venv .venv` pa ga aktivirajte s `.\.venv\Scripts\activate` (na Windows treba `".venv/scripts/activate"`)
 - instalacija svega potrebnog: `py -m pip install -r requirements.txt`
-- pokrenite server: `uvicorn --host 0.0.0.0 --port 80` (ovo je na http, za https posebno generirajte certifikate i dodajte potrebne parametre za uvicorn)
+- pokrenite server: `uvicorn main:app --host 0.0.0.0 --port 80` (ovo je na http, za https posebno generirajte certifikate i dodajte potrebne parametre za uvicorn)
 
 ## Docker instalacija
 ove upute su pisane za Linux, na drugim OS-evima treba koristiti ekvivalentne naredbe
@@ -29,6 +29,7 @@ LOGLEVEL=DEBUG
 - prekopirajte wayback machine api ključeve odavde: https://archive.org/account/s3.php  
 loglevel može biti DEBUG, INFO, ...
 5. `sudo chmod +x launch_server.sh`
+6. **promijenite direktorij u toj launch server skripti!**
 6. `./launch_server.sh`
 
 server je sada dostupan na internom portu 16163, dodajte to u nginx (ili ekvivalentan program)
