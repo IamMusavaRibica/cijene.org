@@ -14,11 +14,11 @@ Nadam se da će kod nekome biti koristan za svoje istraživanje. Ovaj repository
 
 ## Docker instalacija
 ove upute su pisane za Linux, na drugim OS-evima treba koristiti ekvivalentne naredbe  
-0. [instalirajte docker](https://docs.docker.com/engine/install/)
-1. git clone ovaj repositorij, uđite u njega (`cd`)
-2. odlučite koji user će pokretati server pa pokrenite `sudo usermod -aG docker <user>` i restartajte ssh sesiju
-3. `id -u <user>` i `id -g <user>` da dobijete UID i GID pa promijenite u `docker-compose.yml` ako nisu 1000
-4. napravite `.env` datoteku:
+1. [instalirajte docker](https://docs.docker.com/engine/install/)
+2. git clone ovaj repositorij, uđite u njega (`cd`)
+3. odlučite koji user će pokretati server pa pokrenite `sudo usermod -aG docker <user>` i restartajte ssh sesiju
+4. `id -u <user>` i `id -g <user>` da dobijete UID i GID pa promijenite u `docker-compose.yml` ako nisu 1000
+5. napravite `.env` datoteku:
 ```
 WAYBACK_ACCESS_KEY=AbCd
 WAYBACK_SECRET_KEY=AbCd
@@ -26,8 +26,8 @@ LOGLEVEL=DEBUG
 ```
 - prekopirajte wayback machine api ključeve odavde: https://archive.org/account/s3.php  
 loglevel može biti DEBUG, INFO, ...
-5. `sudo chmod +x launch_server.sh`
-6. `./launch_server.sh`
+6. `sudo chmod +x launch_server.sh`
+7. `./launch_server.sh`
 
 server je sada dostupan na internom portu 16163, dodajte to u nginx (ili ekvivalentan program)
 
