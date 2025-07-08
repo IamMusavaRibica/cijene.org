@@ -1,15 +1,13 @@
 # https://cijene.org/
 
-Projekt za arhiviranje, pretraživanje i prikaz cijena NN 75/2025  
+Projekt za arhiviranje, pretraživanje i prikaz cijena prema Odluci NN 75/2025. **WORK IN PROGRESS!**  
 
-**WORK IN PROGRESS - nije ni blizu pri kraju razvoja**  
+Nadam se da će kod nekome biti koristan za svoje istraživanje. Ovaj repository objavljen je pod AGPL-3.0 licencom. Molim vas da date adekvatan credit (npr. [poveznica](https://github.com/IamMusavaRibica/cijene.org/)) tamo gdje je potrebno. Ako imate neke komentare ili prijedloge, otvorite prvo issue pa ćemo diskutirati
 
-još ima puno ostataka dijelova koda koje sam napravio tri mjeseca prije nego što je odluka o objavi cjenika stupila na snagu, naići ćete na to ako gledate kod i pitate se "zašto je ovo tu"
-
-Nadam se da će kod nekome biti koristan za svoje istraživanje. Molim vas da ne kradete i da date adekvatan credit (poveznica na ovaj repozitorij) tamo gdje je potrebno.
+**Također pogledajte: https://github.com/senko/cijene-api**
 
 ## Obična instalacija
-- definirajte environment varijable `WAYBACK_ACCESS_KEY`, `WAYBACK_SECRET_KEY` i `LOGLEVEL`
+- definirajte environment varijable [`WAYBACK_ACCESS_KEY`, `WAYBACK_SECRET_KEY`](https://archive.org/account/s3.php) i `LOGLEVEL`
 - po želji kreirajte `.venv` naredbom `py -m venv .venv` pa ga aktivirajte s `.\.venv\Scripts\activate` (na Windows treba `".venv/scripts/activate"`)
 - instalacija svega potrebnog: `py -m pip install -r requirements.txt`
 - pokrenite server: `uvicorn main:app --host 0.0.0.0 --port 80` (ovo je na http, za https posebno generirajte certifikate i dodajte potrebne parametre za uvicorn)
@@ -44,5 +42,5 @@ za cronjob:
 ```
 5 8,20 * * * /usr/bin/flock -n /tmp/cijeneorg.lock /REPOSITORY/launch_server.sh >> /REPOSITORY/cron.log 2>&1
 ```
-ovo će restartati server svaki dan u 8:05 i 20:05. **sve trgovine ažuriraju cjenike do 8:00**. promijenite ovo vrijeme u cronjobu po želji  
+ovo će restartati server svaki dan u 8:05 i 20:05. **sve trgovine ažuriraju cjenike do 8:00**. promijenite ovo vrijeme u cronjobu po želji, pripazite na vremenske zone ovisno o tome gdje se vaš server nalazi    
 naravno `/REPOSITORY/` zamijenite putanjem do direktorija gdje ste klonirali repo
