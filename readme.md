@@ -1,14 +1,10 @@
 # https://cijene.org/
 
-Projekt za arhiviranje, pretraživanje i prikaz cijena NN 75/2025  
+Projekt za arhiviranje, pretraživanje i prikaz cijena prema Odluci NN 75/2025. **WORK IN PROGRESS!**  
 
-**WORK IN PROGRESS - nije ni blizu pri kraju razvoja**  
+Nadam se da će kod nekome biti koristan za svoje istraživanje. Ovaj repository objavljen je pod AGPL-3.0 licencom. Molim vas da date adekvatan credit (npr. [poveznica](https://github.com/IamMusavaRibica/cijene.org/)) tamo gdje je potrebno. Ako imate neke komentare ili prijedloge, otvorite prvo issue pa ćemo diskutirati
 
-još ima puno ostataka dijelova koda koje sam napravio tri mjeseca prije nego što je odluka o objavi cjenika stupila na snagu, naići ćete na to ako gledate kod i pitate se "zašto je ovo tu"
-
-Nadam se da će kod nekome biti koristan za svoje istraživanje. Molim vas da ne kradete i da date adekvatan credit (poveznica na ovaj repozitorij) tamo gdje je potrebno.
-
-Također pogledajte https://github.com/senko/cijene-api
+**Također pogledajte: https://github.com/senko/cijene-api**
 
 ## Obična instalacija
 - definirajte environment varijable [`WAYBACK_ACCESS_KEY`, `WAYBACK_SECRET_KEY`](https://archive.org/account/s3.php) i `LOGLEVEL`
