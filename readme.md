@@ -13,7 +13,7 @@ Nadam se da će kod nekome biti koristan za svoje istraživanje. Ovaj repository
 - pokrenite server: `uvicorn main:app --host 0.0.0.0 --port 80` (ovo je na http, za https posebno generirajte certifikate i dodajte potrebne parametre za uvicorn)
 
 ## Docker instalacija
-ove upute su pisane za Linux, na drugim OS-evima treba koristiti ekvivalentne naredbe
+ove upute su pisane za Linux, na drugim OS-evima treba koristiti ekvivalentne naredbe  
 0. [instalirajte docker](https://docs.docker.com/engine/install/)
 1. git clone ovaj repositorij, uđite u njega (`cd`)
 2. odlučite koji user će pokretati server pa pokrenite `sudo usermod -aG docker <user>` i restartajte ssh sesiju
