@@ -19,13 +19,15 @@ https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-P
 https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-11-Savska-Cesta-206.csv
 '''
 date_pattern = re.compile(r'Cjenik-(\d{1,2}\.?\d{1,2}\.?\d{4})')
+date_pattern2 = re.compile(r'10000-(\d{1,2}\.?\d{1,2}\.?\d{4})')
 def fetch_zabac_prices(zabac: Store):
     coll = []
     WaybackArchiver.archive('https://zabacfoodoutlet.hr/cjenik/')  # just in case
     for url in xpath('https://zabacfoodoutlet.hr/cjenik/', '//a[contains(@href, ".csv")]/@href'):
         try:
             filename = url.rsplit('/', 1)[-1]
-            if not (m := date_pattern.search(filename)):
+            m = date_pattern.search(filename) or date_pattern2.search(filename)
+            if not m:
                 logger.warning(f'failed to parse zabac pricelist date from filename: {filename}')
                 continue
             datestr = m.group(1)
