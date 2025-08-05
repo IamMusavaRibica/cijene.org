@@ -13,7 +13,9 @@ def fetch_lorenco_prices(lorenco: Store):
     for a in xpath(index_url, '//a[contains(@href, ".csv")]'):
         href = a.get('href')
         filename = href.split('/')[-1]
-        dt_str = a.text.removeprefix('Cijenik ').removeprefix('Cjenik ')  # in case they become literate
+        dt_str = (a.text.removeprefix('Cijenik ')
+                  .removeprefix('Cjenik ')  # in case they become literate
+                  .removeprefix('Cijene '))
         dt = datetime.strptime(dt_str.rstrip('.'), '%d.%m.%Y')
         coll.append(PriceList(href, None, None, lorenco.id, 'X', dt, filename))
 
