@@ -35,11 +35,11 @@ def fetch_ntl_prices(ntl: Store):
         address = fix_address(address).replace('Galoviaa', 'Galovića')
         coll.append(PriceList(href, address, city, ntl.id, location_id, dt, filename))
 
-    today_coll = extract_offers_from_today(ntl, coll)
+    today_coll = extract_offers_from_today(ntl, coll, wayback=True)
 
     prod = []
     for p in today_coll:
-        rows = get_csv_rows(ensure_archived(p, True, wayback=False))
+        rows = get_csv_rows(ensure_archived(p, True, wayback=True))
         for k in rows[1:]:
             name, _id, brand, _qty,  units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
             resolve_product(prod, barcode, ntl, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
