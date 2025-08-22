@@ -11,15 +11,17 @@ from cijeneorg.utils import fix_address, fix_city
 
 def fetch_ntl_prices(ntl: Store):
     # comments in the HTML suggest that someone is working on it: https://ibb.co/Vdr4LT0
-    WaybackArchiver.archive(index_url := 'https://www.ntl.hr/cjenici-za-ntl-supermarkete')
+    WaybackArchiver.archive(index_url := 'https://ntl.hr/cjenik')
 
     # extract both today's hrefs and the archive hrefs and parse them in the same way
-    hrefs, root0 = xpath(index_url, '//a[contains(@href, ".csv")]/@href', return_root=True)
-    page_name ,= root0.xpath('//input[@name="pageName"]/@value')
-    for opt in root0.xpath('//select[@name="archive_file_name"]/option[@value]/@value'):
-        _url = index_url + '?' + urlencode({'pageName': page_name, 'archive_file_name': opt})
-        WaybackArchiver.archive(_url)
-        hrefs.extend(xpath(_url,'//a[contains(@href, ".csv")]/@href'))
+    dates = xpath(index_url, '//select[@id="date"]/option/@value')
+    hrefs = []
+    for date_str in dates:
+        if not date_str:
+            continue
+        WaybackArchiver.archive(then_url := f'https://ntl.hr/cjenik?date={date_str}')
+        hrefs1 = xpath(then_url, '//a[contains(@href, ".csv")]/@href')
+        hrefs.extend(hrefs1)
 
     coll = []
     for href in hrefs:
