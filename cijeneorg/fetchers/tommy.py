@@ -60,7 +60,7 @@ def fetch_tommy_prices(tommy: Store):
 
 
 def fetch_single(p: PriceList, tommy: Store):
-    rows = get_csv_rows(ensure_archived(p, True))
+    rows = get_csv_rows(ensure_archived(p, True, wayback=False))
 
     coll = []
     for k in rows[1:]:
