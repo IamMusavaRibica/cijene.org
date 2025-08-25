@@ -1,3 +1,4 @@
+
 import os
 import sys
 from contextlib import asynccontextmanager
@@ -11,8 +12,9 @@ from loguru import logger
 from starlette.responses import JSONResponse
 from starlette.types import Scope
 
+from cijeneorg.config import load_config
 from cijeneorg.fetchers.archiver import LocalArchiver, WaybackArchiver
-from cijeneorg.products_api import demo
+from cijeneorg.products_api import get_provider
 from cijeneorg.utils import stylize_unit_price
 
 templates = Jinja2Templates(directory='templates')
@@ -49,12 +51,14 @@ class CacheControl(StaticFiles):
 app = FastAPI(docs_url=None, lifespan=fastapi_lifespan, exception_handlers={404: _404handler})
 app.provider = None
 app.mount('/static', StaticFiles(directory='static'), name='static')
-provider = demo()
+cfg = load_config()
+provider = get_provider(cfg)
 
 
 @app.get('/')
 async def read_root(request: Request):
     return TemplateResponse('index.html', {'request': request})
+
 
 @app.get('/api/storelocations')
 async def storelocs(request: Request):

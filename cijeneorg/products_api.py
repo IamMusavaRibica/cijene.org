@@ -5,6 +5,7 @@ from collections import defaultdict
 import urllib3.exceptions
 from loguru import logger
 
+from cijeneorg.config import Config
 from cijeneorg.models import Product, ProductOffer, ProductOfferParsed
 from cijeneorg.stores import *
 
@@ -112,17 +113,7 @@ class ProductApi:
         self._offers_by_product = new_dict
 
 
-def demo():
-    provider = ProductApi(stores=[Travelfree, Jadranka, Zabac, Djelo, DjeloVodice, DM,
-        Bakmaz, Boso, Brodokomerc, Bure, Eurospin, Kaufland, Konzum, KTC, Lidl,
-                                  Lorenco, Metro, NTL, Plodine, Radenska, Ribola, Rotodinamic, Spar, Studenac,
-                                  Tommy, Trgocentar, TrgovinaKrk, Vrutak, JedinstvoLabin, Croma, Tobylex])
-    provider = ProductApi(stores=[Lorenco, Metro, NTL, Plodine, Radenska, Ribola, Rotodinamic, Spar, Studenac,
-                                  Tommy, Trgocentar, TrgovinaKrk, Vrutak, JedinstvoLabin, Croma, Tobylex,
-
-                                  Travelfree, Jadranka, Zabac, Djelo, DjeloVodice, DM,
-        Bakmaz, Boso, Brodokomerc, Bure, Eurospin, Kaufland, Konzum, KTC, Lidl,
-                                  ])
-    # provider = ProductApi(stores=[DM])
+def get_provider(cfg: Config) -> ProductApi:
+    provider = ProductApi(stores=[s for s in ALL_STORES if cfg.should_fetch(s.id)])
     provider.update_prices()
     return provider

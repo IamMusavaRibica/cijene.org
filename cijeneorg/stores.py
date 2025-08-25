@@ -121,3 +121,9 @@ Croma       = Store(name='Croma-Varaždin',  url='https://croma.com.hr/', locati
 Travelfree  = Store(name='Travel FREE',     url='https://travelfree.hr/', locations={}, fetch_prices=fetch_travelfree_prices, id='travelfree')
 Tobylex     = Store(name='Tobylex',         url='https://tobylex.net/', locations={}, fetch_prices=fetch_tobylex_prices)
 DM          = Store(name="DM",              url="https://www.dm.hr/", locations={}, fetch_prices=fetch_dm_prices)
+
+ALL_STORES = [Tommy, Konzum, Spar, Studenac, Ribola, Lidl, Plodine, Eurospin, Kaufland, Metro, Boso, NTL, KTC,
+              TrgovinaKrk, Bakmaz, DjeloVodice, Djelo, Zabac, Vrutak, Bure, Jadranka, Trgocentar, Lorenco, Rotodinamic,
+              Brodokomerc, Radenska, JedinstvoLabin, Croma, Travelfree, Tobylex, DM]
+
+ALL_STORES_BY_ID = {s.id: s for s in ALL_STORES}

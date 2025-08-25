@@ -1,0 +1,6 @@
+# List of stores to fetch prices from, or "all"
+# See cijeneorg/stores.py for a list of stores
+stores = ['tommy', 'studenac', 'zabac']
+# How much in the past we fetch prices
+# 0 means just today, 1 means today and yesterday, etc.
+days_back = 0
