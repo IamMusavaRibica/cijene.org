@@ -18,8 +18,8 @@ def fetch_tommy_prices(tommy: Store):
     files = []
     while d.toordinal() > 739385:  # date(2025, 5, 14)
         url = API_URL.format(d)
-        if d >= yesterday:
-            WaybackArchiver.archive(url)
+        # if d >= yesterday:
+        #     WaybackArchiver.archive(url)
         r = requests.get(url)
         if r.status_code == 200:
             try:
