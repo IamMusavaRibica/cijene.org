@@ -6,8 +6,8 @@ import urllib3.exceptions
 from loguru import logger
 
 from cijeneorg.config import Config
-from cijeneorg.models import Product, ProductOffer, ProductOfferParsed
-from cijeneorg.stores import *
+from cijeneorg.models import Product, ProductOffer, ProductOfferParsed, Store
+from cijeneorg.stores import ALL_STORES
 
 
 class ProductApi:
@@ -22,9 +22,9 @@ class ProductApi:
         def work():
             _start = time.perf_counter()
             for store in self._stores:
+                logger.info(f'started fetching {store.id} prices')
                 try:
-                    logger.info(f'started fetching {store.id} prices')
-                    offers = store.fetch_prices(store)
+                    offers = store.fetch()
                 except (urllib3.exceptions.HTTPError, urllib3.exceptions.ProtocolError) as e:
                     logger.error(f'network error while fetching {store.id} prices: {e!r}')
                 except Exception as e:

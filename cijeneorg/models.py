@@ -39,6 +39,9 @@ class Store(BaseModel):
             values['id'] = values['name'].lower().strip().replace(' ', '_')
         return values
 
+    def fetch(self) -> list['ProductOffer']:
+        return self.fetch_prices(self)
+
     def __call__(self, product: Product, quantity: int|float|None, **kwargs) -> 'ProductOffer':
         return ProductOffer(product=product, store=self, quantity=quantity, **kwargs)
 
