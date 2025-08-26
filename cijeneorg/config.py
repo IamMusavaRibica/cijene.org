@@ -1,3 +1,4 @@
+import os
 import tomllib
 from pydantic import BaseModel, field_validator, Field
 from typing import Literal
@@ -22,4 +23,11 @@ class Config(BaseModel):
 
 def load_config(path: str = 'cijene.toml') -> Config:
     with open(path, 'rb') as f:
-        return Config.model_validate(tomllib.load(f))
+        toml = tomllib.load(f)
+    # environment variables override the config
+    if env_stores := os.getenv('CIJENEORG_STORES'):
+        toml['stores'] = env_stores.lower().strip(',')
+    if env_days_back := os.getenv('CIJENEORG_DAYS_BACK'):
+        toml['days_back'] = int(env_days_back)
+
+    return Config.model_validate(toml)
