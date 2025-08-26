@@ -17,3 +17,4 @@ archive/
 *.sqlite3
 
 .env
+cijene.sqlite3
