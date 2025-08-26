@@ -1,10 +1,10 @@
 import tomllib
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, Field
 from typing import Literal
 
 class Config(BaseModel):
     stores: Literal['all'] | list[str] = 'all'
-    days_back: int = 0
+    days_back: int = Field(0, ge=0)  # nonnegative integer
 
     # noinspection PyNestedDecorators
     @field_validator('stores', mode='before')
