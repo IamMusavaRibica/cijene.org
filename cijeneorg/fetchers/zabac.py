@@ -45,12 +45,6 @@ def fetch_zabac_prices(zabac: Store):
             logger.exception(e)
             continue
 
-    for u in extra_urls.strip().splitlines():
-        filename = u.rsplit('/', 1)[-1]
-        n, address = filename.removeprefix('Cjenik-Zabac-Food-Outlet-PJ-').removesuffix('.csv').split('-', 1)
-        address = fix_address(address.replace('-', ' '))
-        coll.append(PriceList(u, address, 'Zagreb', zabac.id, f'PJ-{n}', datetime(2025, 5, 20), filename))
-
     if not coll:
         logger.warning('no zabac pricelists found!')
         return []
