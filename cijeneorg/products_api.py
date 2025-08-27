@@ -21,9 +21,7 @@ class ProductApi:
         self._products: dict[str, Product] = {}
         self._updater_thread = None
 
-        _db_path = os.getenv('CIJENEORG_DB_PATH', 'data/cijene.sqlite3')
-        logger.info('Using sqlite db path: {}', _db_path)
-        self._db_path = Path(_db_path)
+        self._db_path = Path('data/cijene.sqlite3')
         self._db_ready = False
         self._days_back = days_back
 
