@@ -5,6 +5,7 @@ cached/
 __pycache__/
 tmp/
 archive/
+data/
 
 *.py[cod]
 

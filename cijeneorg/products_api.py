@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import threading
 import time
@@ -20,7 +21,8 @@ class ProductApi:
         self._products: dict[str, Product] = {}
         self._updater_thread = None
 
-        self._db_path = Path('cijene.sqlite3')
+
+        self._db_path = Path(os.getenv('CIJENEORG_DB_PATH', 'data/cijene.sqlite3'))
         self._db_ready = False
         self._days_back = days_back
 
