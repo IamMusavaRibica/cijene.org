@@ -150,6 +150,7 @@ CITIES = {
     'Pozega': 'Požega',
     'Razine': 'Ražine',
     'Sibenik': 'Šibenik',
+    'Slavonski brod': 'Slavonski Brod',
     'Šibenik-Ražine': 'Ražine',
     'Starigrad Paklenica': 'Starigrad',
     'Sukosan': 'Sukošan',
