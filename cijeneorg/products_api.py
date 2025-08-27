@@ -23,6 +23,7 @@ class ProductApi:
 
 
         self._db_path = Path(os.getenv('CIJENEORG_DB_PATH', 'data/cijene.sqlite3'))
+        logger.info('Using sqlite db path: {}', self._db_path)
         self._db_ready = False
         self._days_back = days_back
 
