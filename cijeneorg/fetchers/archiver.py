@@ -23,6 +23,10 @@ class PriceList:
     filename: str
     request_kwargs: dict = field(default_factory=dict)
 
+    @property
+    def date(self) -> datetime.date:
+        return self.dt.date()
+
 
 class _WaybackArchiverImpl:
     options: dict = {
@@ -94,6 +98,7 @@ class _WaybackArchiverImpl:
             self._thread.join()
 
 
+# noinspection SqlNoDataSourceInspection
 class _LocalArchiverImpl:
     archive_dir = Path('archive').resolve()
     db_path = archive_dir / 'index.db'
