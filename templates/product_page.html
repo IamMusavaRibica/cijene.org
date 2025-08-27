@@ -59,29 +59,22 @@
                 <td class="store">
                     <img class="store-icon" alt="{{ offer.store.name }}" src={{ "/static/icons/{}.png".format(offer.store.id) }}>
                     <span class="only-wide">{{ offer.store.name }}</span>
-                    {% if offer.store_location_datas %}
-                        <div class="tooltip-wrapper{{ ' up' if offer.tooltip_up else '' }}">
-                            <div class="tooltip">
-                                <span class="only-narrow">{{ offer.store.name }}</span>
-                                <span>Prodavaonice ({{ offer.locations_count }}):</span>
-                                {% for prodavaonica in offer.store_location_datas[:10] %}
-                                    {% if prodavaonica[5] %}
-                                        <a target="_blank" href="{{ prodavaonica[5] }}">[{{ prodavaonica[-1] }}] {{ prodavaonica[2] }}, {{ prodavaonica[0] }}</a>
-                                    {% else %}
-                                        <a>[{{ prodavaonica[-1] }}] {{ prodavaonica[2] }}, {{ prodavaonica[0] }}</a>
-                                    {% endif %}
-                                {% endfor %}
-                                {% if offer.locations_count > 10 %}
-                                    <span class="more">...i još {{ offer.locations_count - 10 }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endif %}
                 </td>
                 <td class="quantity">{{ offer.fmt_quantity }} {{ product.unit }}</td>
                 <td class="price"><span class="price">{{ offer.price|formatted_price }}</span></td>
                 <td class="price-may2">
-                    <span class="price{{ offer.price_cmp_extra_class }}">{{ offer.may2_price|formatted_price }}</span>
+                    {% set extra_cls = '' %}
+                    {% if offer.may2_price is not none %}
+                        {% set diff = offer.price - offer.may2_price %}
+                        {% if diff|abs <= offer.may2_price * 0.00001 %}
+                            {% set extra_cls = ' equal' %}
+                        {% elif diff > 0 %}
+                            {% set extra_cls = ' worse' %}
+                        {% else %}
+                            {% set extra_cls = ' better' %}
+                        {% endif %}
+                    {% endif %}
+                    <span class="price{{ extra_cls }}">{{ offer.may2_price|formatted_price }}</span>
                 </td>
                 <td class="unit-price">
                     <span class="price" style="{{ stylize(offer, offers) }}">
