@@ -40,7 +40,7 @@ class _WaybackArchiverImpl:
     _thread: Thread
     _queue: queue.Queue[str | None]
     _ready: bool = False
-    _stop: Event = Event()
+    _stop: Event | None = None
 
     def initialize(self, access_key: str, secret_key: str):
         self._headers = {
@@ -49,6 +49,7 @@ class _WaybackArchiverImpl:
             'Content-Type': 'application/x-www-form-urlencoded',
         }
         self._queue = queue.Queue()
+        self._stop = Event()
         self._ready = True
         self._thread = Thread(target=self._worker, daemon=True, name='WaybackArchiverThread')
         self._thread.start()
@@ -76,9 +77,10 @@ class _WaybackArchiverImpl:
 
             if url is None:
                 logger.debug('WaybackArchiver worker received shutdown signal')
+                self._queue.task_done()
                 break
 
-            if self._stop.wait(31):
+            if self._stop and self._stop.wait(31):
                 self._queue.task_done()
                 break
 
@@ -96,7 +98,7 @@ class _WaybackArchiverImpl:
                 r.raise_for_status()
             except Exception as e:
                 logger.warning(f'error while archiving {url}: {e!r}')
-                if not self._stop.is_set():
+                if not (self._stop and self._stop.is_set()):
                     self._queue.put(url)  # re-queue the URL for later processing
             finally:
                 self._queue.task_done()
@@ -104,7 +106,8 @@ class _WaybackArchiverImpl:
     def shutdown(self):
         if self._ready:
             logger.info('Shutting down WaybackArchiver worker thread')
-            self._stop.set()
+            if self._stop:
+                self._stop.set()
             while not self._queue.empty():
                 try:
                     self._queue.get_nowait()
@@ -113,6 +116,7 @@ class _WaybackArchiverImpl:
                     break
             self._queue.put(None)
             self._thread.join()
+            self._ready = False
 
 
 # noinspection SqlNoDataSourceInspection
@@ -215,13 +219,14 @@ class _LocalArchiverImpl:
             task = self._queue.get()
             if task is None:
                 logger.debug('LocalArchiver worker received shutdown signal')
+                self._queue.task_done()
                 break
             # logger.info(f'got task: {task}')
             try:
                 row = self._fetch_local_file(task.url)
                 path_exists = row and (self.archive_dir / row[0]).exists()
                 # if we already fetched this in the last 6 hours
-                if path_exists and row[2] - self.now_ts() < 60 * 60 * 6:
+                if path_exists and row and (self.now_ts() - row[2] < 60 * 60 * 6):
                     # logger.debug(f'file for {task.url} already exists and is recent enough, skipping download')
                     continue
                 # otherwise, download the file and then store it if it's new or different sha256
