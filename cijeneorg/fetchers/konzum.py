@@ -25,7 +25,7 @@ def fetch_konzum_prices(konzum: Store, min_date: date):
     for date0 in root0.xpath('//a[starts-with(@href, "/cjenici?date=")]/@href'):
         available_dates_urls.append(date0.removeprefix('/cjenici?date='))
 
-    logger.info(f'konzum available dates urls ({len(available_dates_urls)}): {available_dates_urls}')
+    # logger.info(f'konzum available dates urls ({len(available_dates_urls)}): {available_dates_urls}')
 
     # fetch every page
     _start = time.perf_counter()
