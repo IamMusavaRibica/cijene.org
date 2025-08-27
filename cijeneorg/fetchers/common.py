@@ -73,21 +73,6 @@ def resolve_product(coll: list, barcode: str, store: Store, location_id: str, na
     coll.append(p)
     return True
 
-# Deprecated
-def extract_offers_from_today(store: Store, plist: list[PriceList], wayback: bool = False) -> list[PriceList]:
-    if not plist:
-        logger.warning(f'no {store.id} price lists found')
-        return []
-    logger.info(f'found {len(plist)} {store.id} prices')
-    plist.sort(key=lambda x: x.dt, reverse=True)
-    today = plist[0].dt.date()
-    today_coll = []
-    for p in plist:
-        if p.dt.date() == today:
-            today_coll.append(p)
-        else:
-            ensure_archived(p, wayback=wayback)
-    return today_coll
 
 def extract_offers_since(store: Store, pricelists: list[PriceList], min_date: date, wayback: bool = False, wayback_past: bool = True) -> list[PriceList]:
     if not pricelists:
