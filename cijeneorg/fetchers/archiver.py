@@ -1,4 +1,5 @@
 import hashlib
+import queue
 import sqlite3
 import time
 from dataclasses import dataclass, field
@@ -6,7 +7,7 @@ from datetime import datetime
 from os import getenv
 from pathlib import Path
 from queue import Queue
-from threading import Thread
+from threading import Thread, Event
 
 import requests
 from loguru import logger
@@ -40,6 +41,7 @@ class _WaybackArchiverImpl:
     _thread: Thread
     _queue: Queue[str | None]
     _ready: bool = False
+    _stop: Event = Event()
 
     def initialize(self, access_key: str, secret_key: str):
         self._headers = {
@@ -55,6 +57,7 @@ class _WaybackArchiverImpl:
 
     def archive(self, url: str):
         self._ready and self._queue.put(url)
+        logger.debug(f'Save Page Now queued {url}')
         # if not self._ready:
         #     raise RuntimeError('WaybackArchiver.archive(url) called before initialize()')
         # self._queue.put(url)
@@ -63,11 +66,23 @@ class _WaybackArchiverImpl:
         if not self._ready:
             raise RuntimeError('wayback machine archiver ')
         while True:
-            url = self._queue.get()
+            if self._stop and self._stop.is_set():
+                logger.debug('WaybackArchiver worker stopping (event set)')
+                break
+
+            try:
+                url = self._queue.get(timeout=0.5)
+            except queue.Empty:
+                continue
+
             if url is None:
                 logger.debug('WaybackArchiver worker received shutdown signal')
                 break
-            time.sleep(31)
+
+            if self._stop.wait(31):
+                self._queue.task_done()
+                break
+
             logger.debug(f'Save Page Now: {url}')
             try:
                 data = {'url': url, **self.options}
@@ -76,18 +91,21 @@ class _WaybackArchiverImpl:
                 r = requests.post(
                     'https://web.archive.org/save',
                     headers=self._headers,
-                    data=data
+                    data=data,
+                    timeout=15
                 )
                 r.raise_for_status()
             except Exception as e:
                 logger.warning(f'error while archiving {url}: {e!r}')
-                self._queue.put(url)  # re-queue the URL for later processing
+                if not self._stop.is_set():
+                    self._queue.put(url)  # re-queue the URL for later processing
             finally:
                 self._queue.task_done()
 
     def shutdown(self):
         if self._ready:
             logger.info('Shutting down WaybackArchiver worker thread')
+            self._stop.set()
             while not self._queue.empty():
                 try:
                     self._queue.get_nowait()
