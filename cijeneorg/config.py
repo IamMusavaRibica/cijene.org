@@ -26,7 +26,7 @@ def load_config(path: str = 'cijene.toml') -> Config:
         toml = tomllib.load(f)
     # environment variables override the config
     if env_stores := os.getenv('CIJENEORG_STORES'):
-        toml['stores'] = env_stores.lower().strip(',')
+        toml['stores'] = env_stores.lower().strip().split(',')
     if env_days_back := os.getenv('CIJENEORG_DAYS_BACK'):
         toml['days_back'] = int(env_days_back)
 
