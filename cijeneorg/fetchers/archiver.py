@@ -57,7 +57,7 @@ class _WaybackArchiverImpl:
 
     def archive(self, url: str):
         self._ready and self._queue.put(url)
-        logger.debug(f'Save Page Now queued {url}')
+        # logger.debug(f'Save Page Now queued {url}')
         # if not self._ready:
         #     raise RuntimeError('WaybackArchiver.archive(url) called before initialize()')
         # self._queue.put(url)
