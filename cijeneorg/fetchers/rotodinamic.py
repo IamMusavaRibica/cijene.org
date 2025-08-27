@@ -1,13 +1,13 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product, extract_offers_from_today
+from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product, extract_offers_since
 from cijeneorg.models import Store
 
 
-def fetch_rotodinamic_prices(rotodinamic: Store):
+def fetch_rotodinamic_prices(rotodinamic: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.rotodinamic.hr/cjenici/')
     coll = []
     for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href'):
@@ -16,10 +16,10 @@ def fetch_rotodinamic_prices(rotodinamic: Store):
         dt = datetime.strptime(f'{date_str} {time_str}', '%d.%m.%Y %H.%M.csv')
         coll.append(PriceList(href, '(sve poslovnice)', None, rotodinamic.id, None, dt, filename))
 
-    today_coll = extract_offers_from_today(rotodinamic, coll, wayback=True)
+    actual = extract_offers_since(rotodinamic, coll, min_date, wayback=True)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         rows = get_csv_rows(ensure_archived(p, True))
         for k in rows[1:]:
             try:
@@ -30,6 +30,6 @@ def fetch_rotodinamic_prices(rotodinamic: Store):
                 continue
             # same pricelist for all those cash&carry locations
             for loc_id in 'D01 D28 D34 D18 D22 D13 D26 D11 D09'.split():
-                resolve_product(prod, barcode, rotodinamic, loc_id, name, discount_mpc or mpc, _qty, may2_price)
+                resolve_product(prod, barcode, rotodinamic, loc_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

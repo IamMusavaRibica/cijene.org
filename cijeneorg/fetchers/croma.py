@@ -1,16 +1,16 @@
 import io
 import zipfile
-from datetime import datetime
+from datetime import datetime, date
 
 from lxml.etree import tostring
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import xpath, extract_offers_from_today, ensure_archived, get_csv_rows, resolve_product
+from cijeneorg.fetchers.common import xpath, extract_offers_since, ensure_archived, get_csv_rows, resolve_product
 from cijeneorg.models import Store
 from cijeneorg.utils import DDMMYYYY_dots
 
 
-def fetch_croma_prices(croma: Store):
+def fetch_croma_prices(croma: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://croma.com.hr/maloprodaja/')
     coll = []
     for a in xpath(index_url, '//a[contains(@href, ".zip")]'):
@@ -22,9 +22,9 @@ def fetch_croma_prices(croma: Store):
             filename = href.rsplit('/', 1)[-1]
             coll.append(PriceList(href, 'Ulica Vilima Cecelja 6', 'Sveti Ilija', croma.id, 'MP', dt, filename))
 
-    today_coll = extract_offers_from_today(croma, coll)
+    actual = extract_offers_since(croma, coll, min_date)
     prod = []
-    for p in today_coll:
+    for p in actual:
         zip_data = ensure_archived(p, True, wayback=False)
         with zipfile.ZipFile(io.BytesIO(zip_data)) as zf:
             for filename in zf.namelist():
@@ -35,6 +35,6 @@ def fetch_croma_prices(croma: Store):
                     rows = get_csv_rows(f.read())
                     for k in rows:  # no header here
                         name, _id, _, unit, mpc, null, barcode, category = k
-                        resolve_product(prod, barcode, croma, p.location_id, name, mpc, None, None)
+                        resolve_product(prod, barcode, croma, p.location_id, name, mpc, None, None, p.date)
 
     return prod

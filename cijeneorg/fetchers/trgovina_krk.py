@@ -1,15 +1,15 @@
-from datetime import datetime
+from datetime import datetime, date
 from urllib.parse import unquote
 
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.utils import UA_HEADER, fix_city, fix_address
 
 
-def fetch_trgovina_krk_prices(trgovina_krk: Store):
+def fetch_trgovina_krk_prices(trgovina_krk: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://trgovina-krk.hr/objava-cjenika/')
     coll = []
     # returns 403 forbidden if we don't use a user-agent. is this legal?
@@ -23,10 +23,10 @@ def fetch_trgovina_krk_prices(trgovina_krk: Store):
         coll.append(p := PriceList(href, address, city, trgovina_krk.id, location_id, dt, filename))
         p.request_kwargs = {'headers': UA_HEADER}
 
-    today_coll = extract_offers_from_today(trgovina_krk, coll)
+    actual = extract_offers_since(trgovina_krk, coll, min_date)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         parsed_barcodes = set()
         for row in rows[1:]:
@@ -39,6 +39,6 @@ def fetch_trgovina_krk_prices(trgovina_krk: Store):
                 continue
             parsed_barcodes.add(barcode)
             name = name.removesuffix(' COCA-COLA').removesuffix(' COCA COLA').removesuffix(' COCA')
-            resolve_product(prod, barcode, trgovina_krk, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
+            resolve_product(prod, barcode, trgovina_krk, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

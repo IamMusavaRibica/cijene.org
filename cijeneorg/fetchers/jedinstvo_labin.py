@@ -1,11 +1,11 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import xpath, extract_offers_from_today, get_csv_rows, ensure_archived, resolve_product
+from cijeneorg.fetchers.common import xpath, extract_offers_since, get_csv_rows, ensure_archived, resolve_product
 from cijeneorg.models import Store
 
 
-def fetch_jedinstvo_labin_prices(jedinstvo_labin: Store):
+def fetch_jedinstvo_labin_prices(jedinstvo_labin: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.jedinstvo-labin.hr/hr/cjenik')
     coll = []
     for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href'):
@@ -19,13 +19,13 @@ def fetch_jedinstvo_labin_prices(jedinstvo_labin: Store):
         }.get(location_name) or ('???', '???', '???')
         coll.append(PriceList(href, address, city, jedinstvo_labin.id, location_id, dt, filename))
 
-    today_coll = extract_offers_from_today(jedinstvo_labin, coll)
+    actual = extract_offers_since(jedinstvo_labin, coll, min_date)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             name, _id, brand, _qty, unit2, mpc, ppu, barcode, category = map(str.strip, k)
-            resolve_product(prod, barcode, jedinstvo_labin, p.location_id, name, mpc, _qty, None)
+            resolve_product(prod, barcode, jedinstvo_labin, p.location_id, name, mpc, _qty, None, p.date)
 
     return prod

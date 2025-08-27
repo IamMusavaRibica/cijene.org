@@ -1,19 +1,20 @@
 import io
 import zipfile
-from datetime import datetime
+from datetime import datetime, date
 from urllib.parse import unquote
 
 from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_from_today
+from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city, UA_HEADER
 
 
-def fetch_bure_prices(bure: Store):
+def fetch_bure_prices(bure: Store, min_date: date):
     # what's the difference between this and https://www.bure.hr/index.php/cjenici-arhiva ?
+    # TODO: bure has pages now: ?page=2
     WaybackArchiver.archive(index_url := 'https://www.bure.hr/cjenici-arhiva')
     coll = []
     hrefs, root = xpath(index_url, '//a[contains(@href, ".xml")]/@href', extra_headers=UA_HEADER, return_root=True)
@@ -30,7 +31,8 @@ def fetch_bure_prices(bure: Store):
         p.request_kwargs = {'headers': UA_HEADER}
         ensure_archived(p, wayback=False)
         # coll.append(p)
-
+    # just archive the xmls  ^^
+    # but fetch the zip because sometimes xml is 404 because of weird filename
     for tr in root.xpath('//tr[@class="pricelist-row"]'):
         zip_href = tr.xpath('.//a[contains(@href, "preuzmi-zip")]/@href')[0]
         dt = datetime.strptime(tr.get('data-date'), '%d.%m.%Y')
@@ -39,10 +41,10 @@ def fetch_bure_prices(bure: Store):
         p.request_kwargs = {'headers': UA_HEADER}
         coll.append(p)
 
-    today_coll = extract_offers_from_today(bure, coll)
+    actual = extract_offers_since(bure, coll, min_date)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         zip_data = ensure_archived(p, True)
         with zipfile.ZipFile(io.BytesIO(zip_data)) as zf:
             for filename in zf.namelist():
@@ -66,6 +68,6 @@ def fetch_bure_prices(bure: Store):
                             may2_price = k.findtext('SidrenaCijena')
                             barcode = k.findtext('Barkod')
                             category = k.findtext('KategorijeProizvoda')
-                            resolve_product(prod, barcode, bure, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
+                            resolve_product(prod, barcode, bure, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

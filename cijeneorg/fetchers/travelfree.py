@@ -1,12 +1,12 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import xpath, extract_offers_from_today, get_csv_rows, ensure_archived, resolve_product
+from cijeneorg.fetchers.common import xpath, extract_offers_since, get_csv_rows, ensure_archived, resolve_product
 from cijeneorg.models import Store
 from cijeneorg.utils import DDMMYYYY_dots
 
 
-def fetch_travelfree_prices(travelfree: Store):
+def fetch_travelfree_prices(travelfree: Store, min_date: date):
     # https://travelfree.hr/vinjani-donji/objava-cjenika
     # https://travelfree.hr/modules/vtanchorprice/output/Gruda/Gruda_23052025010002.csv
     # also look at https://web.archive.org/web/20250000000000*/https://travelfree.hr/vinjani-donji/objava-cjenika
@@ -25,13 +25,13 @@ def fetch_travelfree_prices(travelfree: Store):
         }.get(city, '?? nepoznato').split(maxsplit=1)
         coll.append(PriceList(url, address, city, travelfree.id, location_id, dt, filename))
 
-    today_coll = extract_offers_from_today(travelfree, coll, wayback=True)
+    actual = extract_offers_since(travelfree, coll, min_date)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         rows = get_csv_rows(ensure_archived(p, True))
         for k in rows[1:]:
             name, _id, brand, _qty, unit, mpc, ppu, barcode, category = k
-            resolve_product(prod, barcode, travelfree, p.location_id, name, mpc, _qty, None)
+            resolve_product(prod, barcode, travelfree, p.location_id, name, mpc, _qty, None, p.date)
 
     return prod

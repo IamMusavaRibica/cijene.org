@@ -1,15 +1,12 @@
-from datetime import datetime
-from urllib.parse import urlencode
-
-from loguru import logger
+from datetime import datetime, date
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
 
 
-def fetch_ntl_prices(ntl: Store):
+def fetch_ntl_prices(ntl: Store, min_date: date):
     # comments in the HTML suggest that someone is working on it: https://ibb.co/Vdr4LT0
     WaybackArchiver.archive(index_url := 'https://ntl.hr/cjenik')
 
@@ -35,13 +32,13 @@ def fetch_ntl_prices(ntl: Store):
         address = fix_address(address).replace('Galoviaa', 'Galovića')
         coll.append(PriceList(href, address, city, ntl.id, location_id, dt, filename))
 
-    today_coll = extract_offers_from_today(ntl, coll, wayback=True)
+    actual = extract_offers_since(ntl, coll, min_date)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=True))
         for k in rows[1:]:
             name, _id, brand, _qty,  units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-            resolve_product(prod, barcode, ntl, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
+            resolve_product(prod, barcode, ntl, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

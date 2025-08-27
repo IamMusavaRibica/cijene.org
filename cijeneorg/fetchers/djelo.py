@@ -1,15 +1,15 @@
-from datetime import datetime
+from datetime import datetime, date
 from urllib.parse import unquote
 
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
-from cijeneorg.fetchers.common import xpath, ensure_archived, extract_offers_from_today
+from cijeneorg.fetchers.common import xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
 
 
-def fetch_djelo_prices(djelo: Store):
+def fetch_djelo_prices(djelo: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://cjenik.djelo.hr/')
     coll = []
     for url in xpath(index_url, '//a[contains(@href, ".xlsx")]/@href'):
@@ -26,10 +26,10 @@ def fetch_djelo_prices(djelo: Store):
             logger.exception(e)
             continue
 
-    today_coll = extract_offers_from_today(djelo, coll)
+    actual = extract_offers_since(djelo, coll, min_date)
 
     prod = []
-    for t in today_coll:
+    for t in actual:
         raw_xlsx = ensure_archived(t, True, wayback=False)
         # TODO: implement parsing xlsx files!
 

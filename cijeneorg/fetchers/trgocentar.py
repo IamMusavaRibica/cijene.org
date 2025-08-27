@@ -1,15 +1,15 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_from_today
+from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city
 
 
-def fetch_trgocentar_prices(trgocentar: Store):
+def fetch_trgocentar_prices(trgocentar: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://trgocentar.com/Trgovine-cjenik/')
     coll = []
     for filename in xpath(index_url, '//a[contains(@href, ".xml")]/@href'):
@@ -25,10 +25,10 @@ def fetch_trgocentar_prices(trgocentar: Store):
         dt = datetime.strptime(date_str, '%d%m%Y%H%M.xml')
         coll.append(PriceList(full_url, address, city, trgocentar.id, location_id, dt, filename))
 
-    today_coll = extract_offers_from_today(trgocentar, coll)
+    actual = extract_offers_since(trgocentar, coll, min_date)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         root = XML(ensure_archived(p, True, wayback=False))
         for item in root.findall('cjenik'):
             name = item.findtext('naziv_art')
@@ -43,6 +43,6 @@ def fetch_trgocentar_prices(trgocentar: Store):
             may2_price = item.findtext('c_020525')
             barcode = item.findtext('ean_kod')
             category = item.findtext('naz_kat')
-            resolve_product(prod, barcode, trgocentar, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
+            resolve_product(prod, barcode, trgocentar, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

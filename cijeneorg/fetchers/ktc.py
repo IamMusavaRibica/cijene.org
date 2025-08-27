@@ -4,12 +4,12 @@ from datetime import datetime, date
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city, ONE_DAY
 
 
-def fetch_ktc_prices(ktc: Store):
+def fetch_ktc_prices(ktc: Store, min_date: date):
     # https://www.ktc.hr/cjenici
     HOST = 'https://www.ktc.hr/'
     WaybackArchiver.archive(index_url := HOST + 'cjenici')
@@ -42,15 +42,15 @@ def fetch_ktc_prices(ktc: Store):
             city = fix_city(city)
             coll.append(PriceList(full_url, addr, city, ktc.id, location_id, dt, filename))
 
-    today_coll = extract_offers_from_today(ktc, coll)
+    actual = extract_offers_since(ktc, coll, min_date)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             # KTC does not have 2.5.2025. price
             name, _id, brand, _qty, units, mpc, ppu, barcode, category, last_30d_mpc, discount_mpc = k
             barcode = barcode.strip("'")
             price = float(discount_mpc) or float(mpc)
-            resolve_product(prod, barcode, ktc, p.location_id, name, price, _qty, None)
+            resolve_product(prod, barcode, ktc, p.location_id, name, price, _qty, None, p.date)
     return prod

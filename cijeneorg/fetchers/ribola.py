@@ -1,17 +1,17 @@
 import re
-from datetime import datetime
+from datetime import datetime, date
 
 from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import resolve_product, xpath, ensure_archived, extract_offers_from_today
+from cijeneorg.fetchers.common import resolve_product, xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.products import AllProducts
 from cijeneorg.utils import remove_extra_spaces
 
 BASE_URL = 'https://ribola.hr/ribola-cjenici/'
-def fetch_ribola_prices(ribola: Store):
+def fetch_ribola_prices(ribola: Store, min_date: date):
     WaybackArchiver.archive(BASE_URL)
     coll = []
 
@@ -41,10 +41,10 @@ def fetch_ribola_prices(ribola: Store):
                 logger.warning(f'failed to parse ribola href: {href}')
 
 
-    today_coll = extract_offers_from_today(ribola, coll)
+    actual = extract_offers_since(ribola, coll, min_date)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         try:
             prod.extend(process_single(p, ribola))
         except Exception as e:
@@ -101,5 +101,5 @@ def process_single(p: PriceList, ribola: Store):
                 if barcode in AllProducts:
                     logger.warning(f'didnt parse product {barcode} `{name}` {_qty =}')
 
-            resolve_product(coll, barcode, ribola, location_id, name, discount_mpc or mpc, _qty, may2_price)
+            resolve_product(coll, barcode, ribola, location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
     return coll

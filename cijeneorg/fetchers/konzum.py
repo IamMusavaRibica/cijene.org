@@ -10,10 +10,10 @@ from lxml.etree import HTML
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, DDMMYYYY_dots, fix_city, ONE_DAY
 from .archiver import PriceList, WaybackArchiver
-from .common import get_csv_rows, resolve_product, ensure_archived, extract_offers_from_today
+from .common import get_csv_rows, resolve_product, ensure_archived, extract_offers_since
 
 
-def fetch_konzum_prices(konzum: Store):
+def fetch_konzum_prices(konzum: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.konzum.hr/cjenici/')
 
     root0 = HTML(requests.get(index_url).content)
@@ -24,6 +24,8 @@ def fetch_konzum_prices(konzum: Store):
             max_page = max(max_page, int(page.text))
     for date0 in root0.xpath('//a[starts-with(@href, "/cjenici?date=")]/@href'):
         available_dates_urls.append(date0.removeprefix('/cjenici?date='))
+
+    logger.info(f'konzum available dates urls ({len(available_dates_urls)}): {available_dates_urls}')
 
     # fetch every page
     _start = time.perf_counter()
@@ -37,7 +39,8 @@ def fetch_konzum_prices(konzum: Store):
                 d_date = datetime.strptime(d, '%Y-%m-%d').date()
                 if d_date >= yesterday:
                     WaybackArchiver.archive(page_url)
-                futures.append(executor.submit(lambda _url: HTML(requests.get(_url).content), page_url))
+                if d_date >= min_date:
+                    futures.append(executor.submit(lambda _url: HTML(requests.get(_url).content), page_url))
 
         for future in concurrent.futures.as_completed(futures):
             pages.append(future.result())
@@ -81,13 +84,13 @@ def fetch_konzum_prices(konzum: Store):
             address = fix_address(address)
             coll.append(PriceList(url, address, city, konzum.id, location_id, dt, a.text.strip()))
 
-    today_coll = extract_offers_from_today(konzum, coll)
+    actual = extract_offers_since(konzum, coll, min_date)
 
     all_products = []
     # TODO: different threads will access the sqlite database, is it safe?
     with concurrent.futures.ThreadPoolExecutor(max_workers=32, thread_name_prefix='Konzum') as executor:
         futures = []
-        for p in today_coll:
+        for p in actual:
             futures.append(executor.submit(process_single, konzum, p))
 
         for future in concurrent.futures.as_completed(futures):
@@ -106,5 +109,5 @@ def process_single(konzum: Store, p: PriceList):
         # za konzum, unit == 'ko' za pakirane proizvode, 'kg' za proizvode u rinfuzi
         name, _id, brand, total_qty, _, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
         quantity, unit = total_qty.split()
-        resolve_product(coll, barcode, konzum, p.location_id, name, discount_mpc or mpc, quantity, may2_price)
+        resolve_product(coll, barcode, konzum, p.location_id, name, discount_mpc or mpc, quantity, may2_price, p.date)
     return coll

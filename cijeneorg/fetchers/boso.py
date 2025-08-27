@@ -1,6 +1,6 @@
 import re
 import time
-from datetime import datetime
+from datetime import datetime, date
 from urllib.parse import urlencode
 
 import requests
@@ -8,12 +8,12 @@ from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, PriceList, \
-    extract_offers_from_today
+    extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city, most_occuring, split_by_lengths
 
 
-def fetch_boso_prices(boso: Store):
+def fetch_boso_prices(boso: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.boso.hr/cjenik/')
     html = requests.get(index_url).content
     if not (m := re.search(br'\{"ajax_url":"(.*?)","nonce":"(.*?)","version":"(.*?)"}', html)):
@@ -58,10 +58,10 @@ def fetch_boso_prices(boso: Store):
             logger.exception(e)
             continue
 
-    today_coll = extract_offers_from_today(boso, coll)
+    actual = extract_offers_since(boso, coll, min_date)
 
     prod = []
-    for t in today_coll:
+    for t in actual:
         rows = get_csv_rows(ensure_archived(t, True))
         for k in rows[1:]:
             *name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
@@ -76,5 +76,5 @@ def fetch_boso_prices(boso: Store):
             while '  ' in name:
                 name = name.replace('  ', ' ')
 
-            resolve_product(prod, barcode, boso, t.location_id, name, price, None, may2_price)
+            resolve_product(prod, barcode, boso, t.location_id, name, price, None, may2_price, t.date)
     return prod

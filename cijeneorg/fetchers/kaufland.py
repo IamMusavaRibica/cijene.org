@@ -1,17 +1,17 @@
 import json
 import re
-from datetime import datetime
+from datetime import datetime, date
 
 import requests
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
-from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_from_today
+from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_city, split_by_lengths
 
 HOST = 'https://www.kaufland.hr'
-def fetch_kaufland_prices(kaufland: Store):
+def fetch_kaufland_prices(kaufland: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.kaufland.hr/akcije-novosti/popis-mpc.html')
     x ,= xpath(index_url,'//div[contains(@data-props, "/akcije-novosti/popis-mpc")]/@data-props')
     data_url = HOST + json.loads(x)['settings']['dataUrlAssets']
@@ -45,16 +45,16 @@ def fetch_kaufland_prices(kaufland: Store):
         else:
             logger.warning(f'failed to parse kaufland pricelist {filename}')
 
-    today_coll = extract_offers_from_today(kaufland, coll)
+    actual = extract_offers_since(kaufland, coll, min_date)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         rows = get_csv_rows(ensure_archived(p, True))
         for k in rows[1:]:
             name, _id, brand, _qty, units, mpc, is_sale, u, units, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
             # may2_price = may2_price.removeprefix('MPC 2.5.2025=').removesuffix('€')
             # TODO: kaufland has `MPC 21.5.2025=3,89` somewhere
             may2_price = may2_price.rsplit('=')[-1].removesuffix('€')
-            resolve_product(prod, barcode, kaufland, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
+            resolve_product(prod, barcode, kaufland, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

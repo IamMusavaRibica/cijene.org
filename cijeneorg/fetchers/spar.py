@@ -4,9 +4,9 @@ from datetime import date, datetime
 import requests
 from loguru import logger
 
-from cijeneorg.utils import ONE_DAY, fix_address, fix_city
+from cijeneorg.utils import ONE_DAY, fix_address, fix_city, UA_HEADER
 from .archiver import WaybackArchiver, PriceList
-from .common import resolve_product, get_csv_rows, ensure_archived, extract_offers_from_today
+from .common import resolve_product, get_csv_rows, ensure_archived, extract_offers_since
 from ..models import ProductOffer, Store
 
 # https://www.spar.hr/usluge/cjenici
@@ -15,16 +15,15 @@ MULTIPLE_WORD_CITIES = {'dugo_selo', 'donja_stubica', 'grubisno_polje', 'slavons
     'kastel_sucurac', 'marija_bistrica', 'novi_marof', 'sv._ivan_zelina', 'sesvetski_kraljevec', 'krapinske_toplice',
     'donji_stupnik', 'ivanic_grad', }
 
-def fetch_spar_prices(spar: Store) -> list[ProductOffer]:
+def fetch_spar_prices(spar: Store, min_date: date) -> list[ProductOffer]:
     WaybackArchiver.archive('https://www.spar.hr/datoteke_cjenici/index.html')
-    d = date.today() + ONE_DAY
-    yesterday = date.today() - ONE_DAY
+
     files = []
-    while d.toordinal() > 739385:  # date(2025, 5, 14)
+    d = date.today()
+    while d >= min_date:  # date(2025, 5, 14).toordinal == 739385
         url = INDEX_URL.format(d)
-        if d >= yesterday:
-            WaybackArchiver.archive(url)
-        r = requests.get(url)
+        WaybackArchiver.archive(url)
+        r = requests.get(url, headers=UA_HEADER)
         if r.status_code == 200:
             try:
                 files.extend(r.json()['files'])
@@ -60,11 +59,11 @@ def fetch_spar_prices(spar: Store) -> list[ProductOffer]:
         dt = datetime.strptime(datestr + timestr, '%Y%m%d%H%M%S')
         coll.append(PriceList(url, address, city, spar.id, location_id, dt, filename))
 
-    today_coll = extract_offers_from_today(spar, coll)
+    actual = extract_offers_since(spar, coll, min_date)
 
     results = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=30, thread_name_prefix='Spar') as executor:
-        futures = [executor.submit(fetch_single, p, spar) for p in today_coll]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10, thread_name_prefix='Spar') as executor:
+        futures = [executor.submit(fetch_single, p, spar) for p in actual]
         for fut in concurrent.futures.as_completed(futures):
             try:
                 if res := fut.result():
@@ -81,5 +80,5 @@ def fetch_single(p: PriceList, spar: Store) -> list[ProductOffer]:
     prod = []
     for k in rows[1:]:
         name, _id, brand, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-        resolve_product(prod, barcode, spar, p.location_id, name, discount_mpc or mpc, _qty, may2_price)
+        resolve_product(prod, barcode, spar, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
     return prod

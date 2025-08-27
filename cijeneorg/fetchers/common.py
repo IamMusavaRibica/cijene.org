@@ -1,5 +1,7 @@
 import csv
 import io
+import os
+from datetime import date, timedelta
 from pathlib import Path
 
 import requests
@@ -30,6 +32,8 @@ def xpath(w: str | bytes, query: str, extra_headers = None, return_root: bool = 
 def ensure_archived(pricelist: PriceList, return_it: bool = False, wayback: bool = True) -> bytes | None:
     # logger.debug(f'ensure_archived: {pricelist.url}')
     wayback and WaybackArchiver.archive(pricelist.url)
+    if not return_it and os.getenv('DO_NOT_FILL_MY_DISK') and pricelist.date < (date.today() - timedelta(days=2)):
+        return
     return LocalArchiver.fetch(pricelist, return_it)
 
 
@@ -48,8 +52,8 @@ def get_csv_rows(raw: bytes) -> list[list[str]]:
         rows = list(csv.reader(stream, delimiter=delimiter))
     return rows
 
-def resolve_product(coll: list, barcode: str, store: Store, location_id: str, name: str, price: float | str, quantity: float, may2_price: float | None) -> bool:
-    barcode = barcode.lstrip('0')
+def resolve_product(coll: list, barcode: str, store: Store, location_id: str, name: str, price: float | str, quantity: float, may2_price: float | None, offer_date: date) -> bool:
+    barcode = barcode.strip().lstrip('0')
     if barcode not in AllProducts:
         return False
     price = fix_price(price)
@@ -65,10 +69,11 @@ def resolve_product(coll: list, barcode: str, store: Store, location_id: str, na
         return False
     product: Product
     product, qty = AllProducts[barcode]
-    p = product.instance(store=store, store_location_id=location_id, offer_name=name, price=price, quantity=qty, may2_price=may2_price)
+    p = product.instance(barcode=barcode, date=offer_date, store=store, store_location_id=location_id, offer_name=name, price=price, quantity=qty, may2_price=may2_price)
     coll.append(p)
     return True
 
+# Deprecated
 def extract_offers_from_today(store: Store, plist: list[PriceList], wayback: bool = False) -> list[PriceList]:
     if not plist:
         logger.warning(f'no {store.id} price lists found')
@@ -83,3 +88,19 @@ def extract_offers_from_today(store: Store, plist: list[PriceList], wayback: boo
         else:
             ensure_archived(p, wayback=wayback)
     return today_coll
+
+def extract_offers_since(store: Store, pricelists: list[PriceList], min_date: date, wayback: bool = False, wayback_past: bool = True) -> list[PriceList]:
+    if not pricelists:
+        logger.warning(f'no {store.id} price lists found')
+        return []
+    logger.info(f'found {len(pricelists)} {store.id} prices')
+    pricelists.sort(key=lambda x: x.dt, reverse=True)
+    selected = []
+    for p in pricelists:
+        if p.date >= min_date:
+            selected.append(p)
+        else:
+            ensure_archived(p, wayback=wayback_past and wayback)
+    return selected
+
+

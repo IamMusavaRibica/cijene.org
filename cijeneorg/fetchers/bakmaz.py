@@ -1,14 +1,14 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
-from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product, extract_offers_from_today
+from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product, extract_offers_since
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_city
 
 
-def fetch_bakmaz_prices(bakmaz: Store):
+def fetch_bakmaz_prices(bakmaz: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.bakmaz.hr/o-nama/')
     coll = []
     for url in xpath(index_url, '//a[@class="btn-preuzmi"]/@href'):
@@ -27,13 +27,13 @@ def fetch_bakmaz_prices(bakmaz: Store):
             logger.exception(e)
             continue
 
-    today_coll = extract_offers_from_today(bakmaz, coll)
+    actual = extract_offers_since(bakmaz, coll, min_date)
 
     prod = []
-    for t in today_coll:
+    for t in actual:
         rows = get_csv_rows(ensure_archived(t, True, wayback=False))
         for k in rows[1:]:
             name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-            resolve_product(prod, barcode, bakmaz, t.location_id, name, discount_mpc or mpc, _qty, may2_price)
+            resolve_product(prod, barcode, bakmaz, t.location_id, name, discount_mpc or mpc, _qty, may2_price, t.date)
 
     return prod

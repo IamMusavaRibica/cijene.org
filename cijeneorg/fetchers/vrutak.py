@@ -1,15 +1,15 @@
-from datetime import datetime
+from datetime import datetime, date
 
 import requests.exceptions
 from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
-from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_from_today
+from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, extract_offers_since
 from cijeneorg.models import Store
 
 
-def fetch_vrutak_prices(vrutak: Store):
+def fetch_vrutak_prices(vrutak: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.vrutak.hr/cjenik-svih-artikala')
     coll = []
     for href in xpath(index_url, '//a[contains(@href, ".xml")]/@href'):
@@ -24,10 +24,10 @@ def fetch_vrutak_prices(vrutak: Store):
         dt = datetime.strptime(date_str, '%Y%m%d-%H%M%S.xml')
         coll.append(PriceList(href, address, 'Zagreb', vrutak.id, location_id, dt, filename))
 
-    today_coll = extract_offers_from_today(vrutak, coll, wayback=True)
+    actual = extract_offers_since(vrutak, coll, min_date, wayback=True)
 
     prod = []
-    for p in today_coll:
+    for p in actual:
         try:
             xml_data = ensure_archived(p, True)
         except requests.exceptions.HTTPError as e:
@@ -38,6 +38,6 @@ def fetch_vrutak_prices(vrutak: Store):
             mpc = item.findtext('mpcijena')
             barcode = item.findtext('barkod')
             _qty = item.findtext('nettokolicina')
-            resolve_product(prod, barcode, vrutak, p.location_id, name, mpc, _qty, None)
+            resolve_product(prod, barcode, vrutak, p.location_id, name, mpc, _qty, None, p.date)
 
     return prod
