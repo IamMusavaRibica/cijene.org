@@ -52,6 +52,7 @@ def get_csv_rows(raw: bytes) -> list[list[str]]:
         rows = list(csv.reader(stream, delimiter=delimiter))
     return rows
 
+
 def resolve_product(coll: list, barcode: str, store: Store, location_id: str, name: str, price: float | str, quantity: float, may2_price: float | None, offer_date: date) -> bool:
     barcode = barcode.strip().lstrip('0')
     if barcode not in AllProducts:
@@ -87,5 +88,3 @@ def extract_offers_since(store: Store, pricelists: list[PriceList], min_date: da
         else:
             ensure_archived(p, wayback=wayback_past and wayback)
     return selected
-
-
