@@ -21,7 +21,7 @@ def fetch_lidl_prices(lidl: Store, min_date: date):
             filename = href.rsplit('/', 1)[-1]
             coll.append(PriceList(href, None, None, lidl.id, None, dt, filename))
 
-    actual = extract_offers_since(lidl, coll, min_date, wayback=True)
+    actual = extract_offers_since(lidl, coll, min_date, wayback=True, wayback_past=False)
 
     prod = []
     for p in actual:

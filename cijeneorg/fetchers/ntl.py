@@ -16,7 +16,11 @@ def fetch_ntl_prices(ntl: Store, min_date: date):
     for date_str in dates:
         if not date_str:
             continue
-        WaybackArchiver.archive(then_url := f'https://ntl.hr/cjenik?date={date_str}')
+        then_url = f'https://ntl.hr/cjenik?date={date_str}'
+        year, month, day = map(int, date_str.split('-'))
+        date_ = date(year, month, day)
+        if date_ >= min_date:
+            WaybackArchiver.archive(then_url)
         hrefs1 = xpath(then_url, '//a[contains(@href, ".csv")]/@href')
         hrefs.extend(hrefs1)
 

@@ -24,7 +24,7 @@ def fetch_vrutak_prices(vrutak: Store, min_date: date):
         dt = datetime.strptime(date_str, '%Y%m%d-%H%M%S.xml')
         coll.append(PriceList(href, address, 'Zagreb', vrutak.id, location_id, dt, filename))
 
-    actual = extract_offers_since(vrutak, coll, min_date, wayback=True)
+    actual = extract_offers_since(vrutak, coll, min_date, wayback=True, wayback_past=False)
 
     prod = []
     for p in actual:
