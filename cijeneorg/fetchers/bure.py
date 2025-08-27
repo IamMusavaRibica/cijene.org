@@ -68,6 +68,7 @@ def fetch_bure_prices(bure: Store, min_date: date):
                             may2_price = k.findtext('SidrenaCijena')
                             barcode = k.findtext('Barkod')
                             category = k.findtext('KategorijeProizvoda')
-                            resolve_product(prod, barcode, bure, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+                            resolve_product(prod, barcode, bure, p.location_id, name, discount_mpc or mpc, _qty,
+                                            may2_price, p.date)
 
     return prod

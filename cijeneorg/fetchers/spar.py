@@ -12,8 +12,10 @@ from ..models import ProductOffer, Store
 # https://www.spar.hr/usluge/cjenici
 INDEX_URL = 'https://www.spar.hr/datoteke_cjenici/Cjenik{:%Y%m%d}.json'
 MULTIPLE_WORD_CITIES = {'dugo_selo', 'donja_stubica', 'grubisno_polje', 'slavonski_brod', 'velika_gorica',
-    'kastel_sucurac', 'marija_bistrica', 'novi_marof', 'sv._ivan_zelina', 'sesvetski_kraljevec', 'krapinske_toplice',
-    'donji_stupnik', 'ivanic_grad', }
+                        'kastel_sucurac', 'marija_bistrica', 'novi_marof', 'sv._ivan_zelina', 'sesvetski_kraljevec',
+                        'krapinske_toplice',
+                        'donji_stupnik', 'ivanic_grad', }
+
 
 def fetch_spar_prices(spar: Store, min_date: date) -> list[ProductOffer]:
     WaybackArchiver.archive('https://www.spar.hr/datoteke_cjenici/index.html')

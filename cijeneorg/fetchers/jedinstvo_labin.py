@@ -13,10 +13,10 @@ def fetch_jedinstvo_labin_prices(jedinstvo_labin: Store, min_date: date):
         market_type, location_name, file_id, date_str = filename.split('_', 3)
         dt = datetime.strptime(date_str, '%Y%m%d_%H%M%S.csv')
         location_id, address, city = {
-            'TRGOVINA APOLLO Rabac': ('00', 'Obala maršala Tita 24', 'Rabac'),
-            'MARKET KATURE LABIN': ('01', 'Prilaz Kikova 1-3', 'Labin'),
-            'MARKET OPSKRBNI CENTAR LABIN': ('02', 'Ermenegilda Štembergera 1b', 'Labin')
-        }.get(location_name) or ('???', '???', '???')
+                                         'TRGOVINA APOLLO Rabac': ('00', 'Obala maršala Tita 24', 'Rabac'),
+                                         'MARKET KATURE LABIN': ('01', 'Prilaz Kikova 1-3', 'Labin'),
+                                         'MARKET OPSKRBNI CENTAR LABIN': ('02', 'Ermenegilda Štembergera 1b', 'Labin')
+                                     }.get(location_name) or ('???', '???', '???')
         coll.append(PriceList(href, address, city, jedinstvo_labin.id, location_id, dt, filename))
 
     actual = extract_offers_since(jedinstvo_labin, coll, min_date)

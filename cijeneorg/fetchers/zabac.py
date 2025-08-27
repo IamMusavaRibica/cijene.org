@@ -6,7 +6,6 @@ from loguru import logger
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product
 from cijeneorg.models import Store
-from cijeneorg.utils import fix_address
 
 extra_urls = '''
 https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-2-Tratinska-80A.csv
@@ -20,6 +19,8 @@ https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-P
 '''
 date_pattern = re.compile(r'Cjenik-(\d{1,2}\.?\d{1,2}\.?\d{4})')
 date_pattern2 = re.compile(r'10000-(\d{1,2}\.?\d{1,2}\.?\d{4})')
+
+
 def fetch_zabac_prices(zabac: Store, min_date: date):
     coll = []
     WaybackArchiver.archive('https://zabacfoodoutlet.hr/cjenik/')  # just in case

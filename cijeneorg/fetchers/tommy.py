@@ -11,6 +11,8 @@ from cijeneorg.utils import ONE_DAY, fix_address, fix_city
 
 BASE_URL = 'https://spiza.tommy.hr'
 API_URL = 'https://spiza.tommy.hr/api/v2/shop/store-prices-tables?itemsPerPage=789&date={:%Y-%m-%d}'
+
+
 def fetch_tommy_prices(tommy: Store, min_date: date):
     WaybackArchiver.archive('https://www.tommy.hr/objava-cjenika')
 

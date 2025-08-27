@@ -1,6 +1,5 @@
 from datetime import datetime, date
 
-from loguru import logger
 from lxml.etree import XML
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
@@ -16,7 +15,7 @@ def fetch_trgocentar_prices(trgocentar: Store, min_date: date):
         full_url = index_url + filename
         market_type, *full_addr, location_id, file_id, date_str = filename.split('_')
         i = 1
-        for t in {'HUM_NA_SUTLI', 'SV_IVAN_ZELINA', 'SV_KRIZ_ZACRETJE',}:
+        for t in {'HUM_NA_SUTLI', 'SV_IVAN_ZELINA', 'SV_KRIZ_ZACRETJE', }:
             if t in filename:
                 i += t.count('_')
         address, city = full_addr[:-i], full_addr[-i:]
@@ -43,6 +42,7 @@ def fetch_trgocentar_prices(trgocentar: Store, min_date: date):
             may2_price = item.findtext('c_020525')
             barcode = item.findtext('ean_kod')
             category = item.findtext('naz_kat')
-            resolve_product(prod, barcode, trgocentar, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+            resolve_product(prod, barcode, trgocentar, p.location_id, name, discount_mpc or mpc, _qty, may2_price,
+                            p.date)
 
     return prod

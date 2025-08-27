@@ -14,6 +14,8 @@ from ..utils import remove_extra_spaces
 pattern = re.compile(r"PROIZVODI-(\d{4})-(\d{2})-(\d{2})\.zip")
 PREFIX = 'https://www.studenac.hr/cjenici/'
 BASE_URL = 'https://www.studenac.hr/popis-maloprodajnih-cijena'
+
+
 def fetch_studenac_prices(studenac: Store, min_date: date):
     WaybackArchiver.archive(BASE_URL)
     coll = []
@@ -64,7 +66,8 @@ def fetch_studenac_prices(studenac: Store, min_date: date):
                                     .replace(' 2*2L', ' 4 l')
                                     .replace(' 150 ML 12/1', ' 1,8 l'))
 
-                            resolve_product(prod, barcode, studenac, location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+                            resolve_product(prod, barcode, studenac, location_id, name, discount_mpc or mpc, _qty,
+                                            may2_price, p.date)
 
     # restore the original method
     zipfile.ZipFile.open.__code__ = orig_code
@@ -82,8 +85,8 @@ def monkeypatch_zipfile_open():
     instrs = list(dis.get_instructions(orig))
     for idx, ins in enumerate(instrs[1:], start=1):
         if ins.opname == 'LOAD_CONST' and ins.argval == 'File name in directory ':
-            wanted = instrs[idx-1]
-            cond_jump = instrs[idx-2]
+            wanted = instrs[idx - 1]
+            cond_jump = instrs[idx - 2]
             # print(f'Found {wanted = }')
             # print(f'Found {cond_jump = }')
             # put a JUMP_FORWARD after POP_JUMP_IF_FALSE so it always jumps, never reaches the exception code

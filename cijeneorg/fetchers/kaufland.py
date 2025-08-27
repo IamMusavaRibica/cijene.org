@@ -11,9 +11,11 @@ from cijeneorg.models import Store
 from cijeneorg.utils import fix_city, split_by_lengths
 
 HOST = 'https://www.kaufland.hr'
+
+
 def fetch_kaufland_prices(kaufland: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.kaufland.hr/akcije-novosti/popis-mpc.html')
-    x ,= xpath(index_url,'//div[contains(@data-props, "/akcije-novosti/popis-mpc")]/@data-props')
+    x, = xpath(index_url, '//div[contains(@data-props, "/akcije-novosti/popis-mpc")]/@data-props')
     data_url = HOST + json.loads(x)['settings']['dataUrlAssets']
     files = requests.get(data_url).json()
 

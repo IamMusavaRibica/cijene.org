@@ -30,7 +30,8 @@ def fetch_jadranka_prices(jadranka: Store, min_date: date):
             if name.isnumeric():
                 name, _id = _id, name
             if barcode.isnumeric():
-                resolve_product(prod, barcode, jadranka, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+                resolve_product(prod, barcode, jadranka, p.location_id, name, discount_mpc or mpc, _qty, may2_price,
+                                p.date)
             elif barcode != '':
                 logger.warning(f'failed to parse jadranka row {row}')
 

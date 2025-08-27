@@ -3,7 +3,6 @@ from datetime import datetime, date
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, extract_offers_since, get_csv_rows, ensure_archived, resolve_product
 from cijeneorg.models import Store
-from cijeneorg.utils import DDMMYYYY_dots
 
 
 def fetch_travelfree_prices(travelfree: Store, min_date: date):

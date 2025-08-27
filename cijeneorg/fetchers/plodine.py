@@ -14,7 +14,8 @@ from cijeneorg.utils import fix_address, fix_city
 def fetch_plodine_prices(plodine: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.plodine.hr/info-o-cijenama')
     coll = []
-    for href in xpath(index_url, '//a[contains(@href, "plodine.hr/cjenici/")]/@href', verify='certs/www.plodine.hr.crt'):
+    for href in xpath(index_url, '//a[contains(@href, "plodine.hr/cjenici/")]/@href',
+                      verify='certs/www.plodine.hr.crt'):
         filename = href.rsplit('/', 1)[-1]
         if not filename.endswith('.zip'):
             logger.warning(f'unexpected file href in Plodine prices page: {href}')
@@ -51,5 +52,6 @@ def fetch_plodine_prices(plodine: Store, min_date: date):
                     rows = get_csv_rows(f.read())
                     for k in rows[1:]:
                         name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, *_ = k
-                        resolve_product(prod, barcode, plodine, store_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+                        resolve_product(prod, barcode, plodine, store_id, name, discount_mpc or mpc, _qty, may2_price,
+                                        p.date)
     return prod

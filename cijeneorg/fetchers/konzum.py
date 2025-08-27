@@ -102,6 +102,7 @@ def fetch_konzum_prices(konzum: Store, min_date: date):
 
     return all_products
 
+
 def process_single(konzum: Store, p: PriceList):
     rows = get_csv_rows(ensure_archived(p, True, wayback=False))
     coll = []

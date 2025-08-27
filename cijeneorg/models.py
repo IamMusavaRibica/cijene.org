@@ -1,7 +1,6 @@
 import datetime
 import enum
-import math
-from typing import TypeVar, Any, Callable
+from typing import TypeVar, Callable
 
 from loguru import logger
 from pydantic import BaseModel, Field, model_validator
@@ -9,15 +8,15 @@ from pydantic import BaseModel, Field, model_validator
 P = TypeVar('P', bound='ProductOffer')
 
 
-
 class UnitType(enum.Enum):
     NONE = 0
     UNIT = 1
 
+
 class Product(BaseModel):
     id: str
     name: str
-    baseq: int | float = 1   # base quantity of units (some products are sold per 100 grams for example)
+    baseq: int | float = 1  # base quantity of units (some products are sold per 100 grams for example)
     unit: str = 'kom'
     unit_type: UnitType = UnitType.UNIT
 
@@ -26,6 +25,7 @@ class Product(BaseModel):
 
     def instance(self, **kwargs):
         return ProductOffer(product=self, **kwargs)
+
 
 class Store(BaseModel):
     id: str
@@ -47,7 +47,7 @@ class Store(BaseModel):
     def fetch(self, *, min_date: datetime.date | None = None) -> list['ProductOffer']:
         return self.fetch_prices(self, min_date=min_date)
 
-    def __call__(self, product: Product, quantity: int|float|None, **kwargs) -> 'ProductOffer':
+    def __call__(self, product: Product, quantity: int | float | None, **kwargs) -> 'ProductOffer':
         return ProductOffer(product=product, store=self, quantity=quantity, **kwargs)
 
 
@@ -80,6 +80,7 @@ class ProductOffer(BaseModel):
     #     elif math.isclose(self.price, self.may2_price, rel_tol=0.00001):
     #         return ' equal'
     #     return ' better' if self.price < self.may2_price else ' worse'
+
 
 # Deprecated!
 class ProductOfferParsed(ProductOffer):

@@ -39,6 +39,7 @@ def fetch_trgovina_krk_prices(trgovina_krk: Store, min_date: date):
                 continue
             parsed_barcodes.add(barcode)
             name = name.removesuffix(' COCA-COLA').removesuffix(' COCA COLA').removesuffix(' COCA')
-            resolve_product(prod, barcode, trgovina_krk, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+            resolve_product(prod, barcode, trgovina_krk, p.location_id, name, discount_mpc or mpc, _qty, may2_price,
+                            p.date)
 
     return prod

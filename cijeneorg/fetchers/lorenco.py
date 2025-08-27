@@ -1,7 +1,5 @@
 from datetime import datetime, date
 
-from loguru import logger
-
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, get_csv_rows, extract_offers_since
 from cijeneorg.models import Store

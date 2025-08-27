@@ -20,7 +20,8 @@ def fetch_djelo_vodice_prices(djelo_vodice: Store, min_date: date):
             filename = unquote(url).replace('GA?ELEZA', 'GAĆELEZA')
             market_type, address, city, location_id, file_id, dtstr = filename.split('#')
             dt = datetime.strptime(dtstr, '%Y-%m-%dT%H%M%S.xlsx')
-            coll.append(PriceList(full_url, fix_address(address), fix_city(city), djelo_vodice.id, location_id, dt, filename))
+            coll.append(
+                PriceList(full_url, fix_address(address), fix_city(city), djelo_vodice.id, location_id, dt, filename))
         except Exception as e:
             logger.warning(f'error {e!r} while parsing metadata for djelo vodice pricelist {url}')
             logger.exception(e)

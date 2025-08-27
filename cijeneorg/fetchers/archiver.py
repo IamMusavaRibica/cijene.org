@@ -195,7 +195,8 @@ class _LocalArchiverImpl:
                 local_file, sha256, added_ts
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''', (
                 pricelist.url, pricelist.filename, pricelist.store_id, pricelist.location_id,
-                pricelist.dt.year, pricelist.dt.month, pricelist.dt.day, pricelist.dt.hour, pricelist.dt.minute, pricelist.dt.second,
+                pricelist.dt.year, pricelist.dt.month, pricelist.dt.day, pricelist.dt.hour, pricelist.dt.minute,
+                pricelist.dt.second,
                 relative_path, sha256, self.now_ts()
             ))
             conn.commit()
@@ -250,7 +251,6 @@ class _LocalArchiverImpl:
         # if 'jadranka-trgovina.com/' in pricelist.url.lower():
         #     pricelist.request_kwargs['verify'] = 'certs/jadranka-trgovina-com-chain.pem'
 
-
         if not return_it:
             self._queue.put(pricelist)
             return None
@@ -259,7 +259,8 @@ class _LocalArchiverImpl:
             # logger.debug(f'checking local file {local_file} for {pricelist.url}')
             if local_file.exists() and hashlib.sha256(t := local_file.read_bytes()).hexdigest() == row[1]:
                 return t
-            logger.warning(f'local file {local_file} does not exist (deleted/changed?), re-downloading and updating index.db')
+            logger.warning(
+                f'local file {local_file} does not exist (deleted/changed?), re-downloading and updating index.db')
             with sqlite3.connect(self.db_path, timeout=30) as conn:
                 cursor = conn.cursor()
                 cursor.execute('DELETE FROM pricelists WHERE id = ?;', (row[3],))

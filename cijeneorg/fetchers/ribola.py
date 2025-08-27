@@ -11,6 +11,8 @@ from cijeneorg.products import AllProducts
 from cijeneorg.utils import remove_extra_spaces
 
 BASE_URL = 'https://ribola.hr/ribola-cjenici/'
+
+
 def fetch_ribola_prices(ribola: Store, min_date: date):
     WaybackArchiver.archive(BASE_URL)
     coll = []
@@ -39,7 +41,6 @@ def fetch_ribola_prices(ribola: Store, min_date: date):
                     else:
                         logger.warning(f'unknown ribola location id: {location_id} from {href}')
                 logger.warning(f'failed to parse ribola href: {href}')
-
 
     actual = extract_offers_since(ribola, coll, min_date)
 
@@ -88,11 +89,11 @@ def process_single(p: PriceList, ribola: Store):
                 name = name[:-3] + 'l PET'
 
             name = (name.replace(' PET GAZIRANI SOK', '')
-                .replace(' PET GAZIRANI S', '')
-                .replace(' l PET', ' l')
-                .replace(' l P', ' l')
-                .replace(' 5+1 GRATIS LIM.', '')
-                .replace(' GAZIRANI SOK', ''))
+                    .replace(' PET GAZIRANI S', '')
+                    .replace(' l PET', ' l')
+                    .replace(' l P', ' l')
+                    .replace(' 5+1 GRATIS LIM.', '')
+                    .replace(' GAZIRANI SOK', ''))
 
             try:
                 *_, _qty, unit = name.rsplit(maxsplit=2)

@@ -41,7 +41,7 @@ def fetch_boso_prices(boso: Store, min_date: date):
                 if sep == ', ':  # supermarket, K. P. KREŠIMIRA IV 15 a, Vukovar, 2524,137,17.05.2025,07_30.csv
                     market_id, file_id, datetime0 = _rest.split(',', 2)
                     datefmt = '%d.%m.%Y,%H_%M.csv'
-                else:            # supermarket-K.-P.-KRESIMIRA-IV-15-a-Vukovar-252413616.05.202507_42.csv
+                else:  # supermarket-K.-P.-KRESIMIRA-IV-15-a-Vukovar-252413616.05.202507_42.csv
                     market_id, file_id, datetime0 = split_by_lengths(_rest, 4, 3)
                     datefmt = '%d.%m.%Y%H_%M.csv'
                     address = address.replace('-', ' ')
@@ -49,7 +49,8 @@ def fetch_boso_prices(boso: Store, min_date: date):
                 if market_id.isdigit() and len(market_id) == 4:
                     url, = td_anchor.xpath('./a/@href')
                     dt = datetime.strptime(datetime0, datefmt)
-                    coll.append(PriceList(url, fix_address(address), fix_city(city), boso.id, market_id, dt, td_filename.text))
+                    coll.append(
+                        PriceList(url, fix_address(address), fix_city(city), boso.id, market_id, dt, td_filename.text))
                 else:
                     logger.warning(f'failed to parse store id from {td_filename.text}')
 

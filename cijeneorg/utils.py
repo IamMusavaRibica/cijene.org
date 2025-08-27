@@ -6,7 +6,8 @@ from cijeneorg.models import ProductOffer
 
 # if we get 'æ', we need to decode as cp1250 instead of ansi!
 # FIX_WEIRD_CHARS = str.maketrans({'È': 'Č', 'è': 'č', 'Æ': 'Ć', 'æ': 'ć'})
-UA_HEADER = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36'}
+UA_HEADER = {
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36'}
 DDMMYYYY_dots = re.compile(r'(\d{1,2})\.(\d{1,2})\.(\d{4})')
 ONE_DAY = timedelta(days=1)
 _ppu = operator.attrgetter('price_per_unit')
@@ -20,7 +21,6 @@ sublocations = {
 }
 
 
-
 def stylize_unit_price(offer: ProductOffer, offers):
     min_price = _ppu(min(offers, key=_ppu))
     max_price = _ppu(max(offers, key=_ppu))
@@ -32,8 +32,8 @@ def stylize_unit_price(offer: ProductOffer, offers):
     # if t < 0.3 then hue=0, lightness linearly varies between 20% and 50%  (dark red to light red)
     # otherwise hue goes linearly between 0 and 120, lightness=50% (light red to light green)
     if t < 0.3:
-        return f'background: hsla(0 100% {20+30*t/.3:.0f}/0.99); font-weight: {500+100*(t<.15)+100*(t<.75)}'
-    return f'background: hsla({120*(t-0.3)/0.7:.0f} 100% 50%/0.99)'
+        return f'background: hsla(0 100% {20 + 30 * t / .3:.0f}/0.99); font-weight: {500 + 100 * (t < .15) + 100 * (t < .75)}'
+    return f'background: hsla({120 * (t - 0.3) / 0.7:.0f} 100% 50%/0.99)'
 
 
 def remove_extra_spaces(s: str) -> str:
@@ -69,10 +69,8 @@ def split_by_lengths(s: str, *lengths: int) -> list[str]:
     return parts
 
 
-
 def fix_address(address: str) -> str:
     address = address.strip().title()
-
 
     address = (address.replace('Zrtava', 'Žrtava')
                .replace('Fasizma', 'Fašizma')
@@ -90,7 +88,6 @@ def fix_address(address: str) -> str:
 
     for i in range(10):
         address = address.replace(f'Ul.{i}', f'ul. {i}')
-
 
     for t in {'Av.', 'Svibnja', 'Ulica', 'Na', 'Zona', 'Hrvatske', 'Trg', 'Javora', 'Žrtava',
               'Redarstvenika', 'Branitelja', 'Generala', 'Cesta', 'Naselje', 'Sabora', 'Grada',
@@ -113,6 +110,7 @@ def fix_address(address: str) -> str:
     while '  ' in address:
         address = address.replace('  ', ' ')
     return address
+
 
 CITIES = {
     'Biograd Na Moru': 'Biograd na Moru',
@@ -171,6 +169,8 @@ CITIES = {
     'Zminj': 'Žminj',
     'Zupanja': 'Županja',
 }
+
+
 def fix_city(city: str) -> str:
     city = city.strip().title()
     city = CITIES.get(city, city)

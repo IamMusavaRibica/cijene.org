@@ -17,7 +17,7 @@ def fetch_lidl_prices(lidl: Store, min_date: date):
         if m := DDMMYYYY_dots.findall(p.text):
             day, month, year = map(int, *m)
             dt = datetime(year, month, day)
-            href ,= p.xpath('a/@href')
+            href, = p.xpath('a/@href')
             filename = href.rsplit('/', 1)[-1]
             coll.append(PriceList(href, None, None, lidl.id, None, dt, filename))
 
@@ -43,6 +43,7 @@ def fetch_lidl_prices(lidl: Store, min_date: date):
                         name, _id, _qty, _, brand, mpc, discount_mpc, last_30d_mpc, ppu, barcode, category, may2_price = k
                         if not may2_price or 'Nije_bilo' in may2_price:
                             may2_price = None
-                        resolve_product(prod, barcode, lidl, location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+                        resolve_product(prod, barcode, lidl, location_id, name, discount_mpc or mpc, _qty, may2_price,
+                                        p.date)
 
     return prod

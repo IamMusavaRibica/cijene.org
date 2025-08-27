@@ -37,6 +37,7 @@ def fetch_eurospin_prices(eurospin: Store, min_date: date):
                     rows = get_csv_rows(f.read())
                     for k in rows[1:]:
                         name, _id, brand, _qty, units, mpc, ppu, discount_mpc, _, last_30d_mpc, may2_price, barcode, category = k
-                        resolve_product(prod, barcode, eurospin, location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+                        resolve_product(prod, barcode, eurospin, location_id, name, discount_mpc or mpc, _qty,
+                                        may2_price, p.date)
 
     return prod

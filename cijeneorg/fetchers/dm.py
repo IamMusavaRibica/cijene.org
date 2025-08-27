@@ -12,7 +12,6 @@ def fetch_dm_prices(dm: Store, min_date: date):
     api_url = 'https://content.services.dmtech.com/rootpage-dm-shop-hr-hr/novo/promocije/nove-oznake-cijena-i-vazeci-cjenik-u-dm-u-2906632?mrclx=false'
     url_prefix = 'https://content.services.dmtech.com/rootpage-dm-shop-hr-hr'
 
-
     json_data = requests.get(api_url).json()
     coll = []
     for item in json_data['mainData']:

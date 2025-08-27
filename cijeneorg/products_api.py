@@ -1,4 +1,3 @@
-import os
 import sqlite3
 import threading
 import time
@@ -182,7 +181,6 @@ class ProductApi:
         #                 continue
         #             logger.info(f'Fetched {len(offers)} offers from {store.name}')
         #             self.add_offers_from_store(store, offers)
-
 
     def add_product(self, product: Product):
         if product.id in self._products:

@@ -9,7 +9,7 @@ from loguru import logger
 from lxml.etree import HTML
 
 from cijeneorg.fetchers.archiver import LocalArchiver, WaybackArchiver, PriceList
-from cijeneorg.models import ProductOffer, Product, Store
+from cijeneorg.models import Product, Store
 from cijeneorg.products import AllProducts
 from cijeneorg.utils import most_occuring, remove_extra_spaces, fix_price
 
@@ -18,7 +18,9 @@ session.headers.update({'User-Agent': 'cijene.org scraper (kontakt email: darac[
 ARCHIVE = Path('archive')
 NotGiven = object()
 
-def xpath(w: str | bytes, query: str, extra_headers = None, return_root: bool = False, verify: bool | str = True) -> list | tuple[list, HTML]:
+
+def xpath(w: str | bytes, query: str, extra_headers=None, return_root: bool = False,
+          verify: bool | str = True) -> list | tuple[list, HTML]:
     # NOTE: validators.url() is wrong for "https://www.ktc.hr/cjenici?poslovnica=SAMOPOSLUGA KOPRIVNICA PJ-88"
     if isinstance(w, str) and w.startswith('http'):
         w = session.get(w, headers=extra_headers or {}, verify=verify).text
@@ -53,7 +55,8 @@ def get_csv_rows(raw: bytes) -> list[list[str]]:
     return rows
 
 
-def resolve_product(coll: list, barcode: str, store: Store, location_id: str, name: str, price: float | str, quantity: float, may2_price: float | None, offer_date: date) -> bool:
+def resolve_product(coll: list, barcode: str, store: Store, location_id: str, name: str, price: float | str,
+                    quantity: float, may2_price: float | None, offer_date: date) -> bool:
     barcode = barcode.strip().lstrip('0')
     if barcode not in AllProducts:
         return False
@@ -70,12 +73,14 @@ def resolve_product(coll: list, barcode: str, store: Store, location_id: str, na
         return False
     product: Product
     product, qty = AllProducts[barcode]
-    p = product.instance(barcode=barcode, date=offer_date, store=store, store_location_id=location_id, offer_name=name, price=price, quantity=qty, may2_price=may2_price)
+    p = product.instance(barcode=barcode, date=offer_date, store=store, store_location_id=location_id, offer_name=name,
+                         price=price, quantity=qty, may2_price=may2_price)
     coll.append(p)
     return True
 
 
-def extract_offers_since(store: Store, pricelists: list[PriceList], min_date: date, wayback: bool = False, wayback_past: bool = True) -> list[PriceList]:
+def extract_offers_since(store: Store, pricelists: list[PriceList], min_date: date, wayback: bool = False,
+                         wayback_past: bool = True) -> list[PriceList]:
     if not pricelists:
         logger.warning(f'no {store.id} price lists found')
         return []
