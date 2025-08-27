@@ -18,3 +18,5 @@ archive/
 
 .env
 cijene.sqlite3
+cijene.sqlite3-shm
+cijene.sqlite3-wal
