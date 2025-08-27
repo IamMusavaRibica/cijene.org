@@ -1,12 +1,11 @@
 import hashlib
+import os
+import pathlib
 import queue
 import sqlite3
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from os import getenv
-from pathlib import Path
-from queue import Queue
 from threading import Thread, Event
 
 import requests
@@ -39,7 +38,7 @@ class _WaybackArchiverImpl:
     }
     _headers: dict
     _thread: Thread
-    _queue: Queue[str | None]
+    _queue: queue.Queue[str | None]
     _ready: bool = False
     _stop: Event = Event()
 
@@ -49,7 +48,7 @@ class _WaybackArchiverImpl:
             'Authorization': f'LOW {access_key}:{secret_key}',
             'Content-Type': 'application/x-www-form-urlencoded',
         }
-        self._queue = Queue()
+        self._queue = queue.Queue()
         self._ready = True
         self._thread = Thread(target=self._worker, daemon=True, name='WaybackArchiverThread')
         self._thread.start()
@@ -118,11 +117,11 @@ class _WaybackArchiverImpl:
 
 # noinspection SqlNoDataSourceInspection
 class _LocalArchiverImpl:
-    archive_dir = Path('archive').resolve()
+    archive_dir = pathlib.Path('archive').resolve()
     db_path = archive_dir / 'index.db'
     session = requests.Session()
     _initialized: bool = False
-    _queue: Queue[PriceList | None] = Queue()
+    _queue: queue.Queue[PriceList | None] = queue.Queue()
     _thread: Thread
 
     def initialize(self):
@@ -176,7 +175,7 @@ class _LocalArchiverImpl:
         response.raise_for_status()
         return response.content
 
-    def _save_new_file(self, pricelist: PriceList, raw_data: bytes) -> Path:
+    def _save_new_file(self, pricelist: PriceList, raw_data: bytes) -> pathlib.Path:
         # logger.debug(f'saving {task}')
         sha256 = hashlib.sha256(raw_data).hexdigest()
         local_file = self.archive_dir / pricelist.store_id / pricelist.dt.strftime('%Y-%m-%d') \
@@ -284,7 +283,7 @@ class _LocalArchiverImpl:
 
 
 WaybackArchiver = _WaybackArchiverImpl()
-if (a := getenv('WAYBACK_ACCESS_KEY')) and (s := getenv('WAYBACK_SECRET_KEY')):
+if (a := os.getenv('WAYBACK_ACCESS_KEY')) and (s := os.getenv('WAYBACK_SECRET_KEY')):
     WaybackArchiver.initialize(a, s)
 
 LocalArchiver = _LocalArchiverImpl()
