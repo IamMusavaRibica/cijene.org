@@ -1,7 +1,9 @@
 
 import os
 import sys
+import time
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Response
@@ -52,6 +54,8 @@ app = FastAPI(docs_url=None, lifespan=fastapi_lifespan, exception_handlers={404:
 app.provider = None
 app.mount('/static', StaticFiles(directory='static'), name='static')
 cfg = load_config()
+logger.info('Config stores: {}', cfg.stores)
+logger.info('Config days_back: {}', cfg.days_back)
 provider = get_provider(cfg)
 
 
@@ -78,7 +82,9 @@ async def read_page(request: Request, page: str):
 @app.get('/product/{proizvod_id}')
 async def read_product_page(request: Request, proizvod_id: str):
     if product := provider.products_by_id.get(proizvod_id):
-        offers = provider.get_offers_by_product(product)
+        the_date = (datetime.now() - timedelta(hours=8)).date()
+        # offers = provider.get_offers_by_product(product, on_date=the_date)
+        offers = provider.get_offers_by_product_grouped(product, on_date=the_date)
         return TemplateResponse('product_page.html', {
             'request': request, 'product': product, 'offers': offers
         })
