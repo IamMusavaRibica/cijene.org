@@ -5,6 +5,7 @@ cd "$(dirname "$0")" || exit 1
 
 git fetch --all
 git reset --hard origin/main
+mkdir -p data
 
 docker compose pull
 docker compose up -d --build --remove-orphans
