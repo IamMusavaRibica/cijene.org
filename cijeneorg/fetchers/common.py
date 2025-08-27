@@ -84,7 +84,7 @@ def extract_offers_since(store: Store, pricelists: list[PriceList], min_date: da
     if not pricelists:
         logger.warning(f'no {store.id} price lists found')
         return []
-    logger.info(f'found {len(pricelists)} {store.id} prices')
+    logger.info(f'found {len(pricelists)} {store.id} price lists')
     pricelists.sort(key=lambda x: x.dt, reverse=True)
     selected = []
     for p in pricelists:
