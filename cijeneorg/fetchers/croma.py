@@ -11,6 +11,7 @@ from cijeneorg.utils import DDMMYYYY_dots
 
 
 def fetch_croma_prices(croma: Store, min_date: date):
+    # location_id hardcoded as MP
     WaybackArchiver.archive(index_url := 'https://croma.com.hr/maloprodaja/')
     coll = []
     for a in xpath(index_url, '//a[contains(@href, ".zip")]'):

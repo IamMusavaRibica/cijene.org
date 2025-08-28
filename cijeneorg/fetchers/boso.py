@@ -13,6 +13,8 @@ from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, fix_city, most_occuring, split_by_lengths
 
 
+# Note: boso sometimes changes the price list csvs!
+# See 'Uniques' https://web.archive.org/web/*/https://www.boso.hr/wp-content/uploads/cjenik/*
 def fetch_boso_prices(boso: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.boso.hr/cjenik/')
     html = requests.get(index_url).content
