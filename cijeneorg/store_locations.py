@@ -34,6 +34,69 @@ StoreLocations = {
         '2410': ['Vinkovci', None, 'Školska ulica 39', 45.290244760706145, 18.769196877866356,
                  'https://maps.app.goo.gl/oD8KDp6Awy3Ss3az9']
     },
+    'brodokomerc': {
+        '25252': ['Rijeka', None, 'Ulica Franje Belulovića 5', 45.32285036807483, 14.479207283723035,
+                  'https://maps.app.goo.gl/TF6ULmQ5sf2Be52eA'],
+        '22041': ['Dražice', None, 'Dražičkih boraca bb', 45.38923821844833, 14.465995951948772,
+                  'https://maps.app.goo.gl/HbMBpuHLgPT1VeJa9'],
+        '21155': ['Candekova', None, 'Ul. Franje Čandeka 32', 45.34031344487963, 14.40971748091005,
+                  'https://maps.app.goo.gl/oH3AfYnXPCQbgmJi8'],
+        '22054': ['Rijeka', None, 'Kvaternikova ul. 65', 45.320873686259425, 14.475007045465087,
+                  'https://maps.app.goo.gl/fMVExZAxqXjFqYzc6'],
+        '21004': ['Kraljevica', None, 'Zrinski trg bb', 45.27461041487981, 14.569480688799095,
+                  'https://maps.app.goo.gl/kQF4LZDZkUK1CWvC6'],
+    },
+    'bure': {
+        '06': ['Murter', None, 'Ul. Butina 22', 43.8235120783384, 15.59517791777508, 'https://maps.app.goo.gl/tCWc3Jmvzt96oHy4A'],
+        '08': ['Ugljan', None, 'Fortoška ulica 4', 44.124867179986175, 15.10189222952444, 'https://maps.app.goo.gl/uWxaZeEhzWKcAJWJ9'],
+        '20': ['Biograd na Moru', None, 'Odranska 15', 43.93985711155733, 15.468081273017615, 'https://maps.app.goo.gl/gM3EpycfyMfpjk9e6']
+    },
+    'croma': {
+        'MP': ['Sveti Ilija', None, 'Ulica Vilima Cecelja 6', 46.24529592176293, 16.321024960776302, 'https://maps.app.goo.gl/LAY3zQmW9vXXxduP9']
+    },
+    'djelo': {
+        '02001': ['Šibenik', None, 'Ul. bana Josipa Jelaćića 78', 43.74555849772655, 15.896510539153729, 'https://maps.app.goo.gl/89rJVF1oyipCUGcr6'],
+        '02017': ['Ražine', 'Šibenik', 'Krapanjska cesta 1b', 43.70373796408777, 15.918008029984364, 'https://maps.app.goo.gl/4yqjPHtV1GXyaxR76']
+    },
+    'djelo_vodice': {
+        '02010': ['Vodice', None, 'Put Gaćeleza 5a', 43.76908127941161, 15.772175851293289, 'https://maps.app.goo.gl/EFgxiURDxWeW3LyP7'],
+    },
+    'dm': {
+        # https://www.dm.hr/store
+    },
+    'eurospin': {
+        '310002': ['Zagreb', None, 'I. Štefanovečki zavoj 12', 45.81851489356575, 16.043340924014032, 'https://maps.app.goo.gl/Wmke5WUxTJJvUcHTA'],
+        '310004': ['Požega', None, 'Zagrebačka ulica 52', 45.331072432969314, 17.647736851806783, 'https://maps.app.goo.gl/YWyXf2B31hfhnNBm9'],
+        '310005': ['Samobor', None, 'Ul. hrvatskih branitelja 2', 45.81032199388016, 15.714765549668526, 'https://maps.app.goo.gl/Ejkz9FFxWyns7SPk7'],
+        '310006': ['Velika Gorica', None, 'Ul. Jurja Dobrile 1c', 45.724293550622725, 16.062151688471676, 'https://maps.app.goo.gl/pk7G99ZPX4CXdsTm9'],
+        '310007': ['Križevci', None, 'Ul. kralja Tomislava 47a', 46.01700033393975, 16.54709834947033, 'https://maps.app.goo.gl/qYTxdbfg86sihShX8'],
+        '310008': ['Čakovec', None, 'Obrtnička ulica 2', 46.38952308907521, 16.414250390540225, 'https://maps.app.goo.gl/CGg8xDvUe43PQg558'],
+        '310009': ['Vrbovec', None, 'Celine 2', 45.88672674803128, 16.411741836904298, 'https://maps.app.goo.gl/GUWkWnYJ8DjFULog6'],
+        '310010': ['Poreč', None, 'Ul. Mate Vlašića 51a', 45.23134676829542, 13.619459272156455, 'https://maps.app.goo.gl/23boQ1ivXGNuh6xv9'],
+        '310011': ['Bjelovar', None, 'Ul. Vlahe Paljetka 7', 45.90396196109503, 16.853329395126696, 'https://maps.app.goo.gl/McGXsvmHxG3rZaVHA'],
+        '310012': ['Sisak', None, 'Zagrebačka ulica 49g', 45.4958571996872, 16.357689673268926, 'https://maps.app.goo.gl/NKeaSrC4HerbNTUJA'],
+        '310013': ['Pula', None, 'Ul. rimske centurijacije 100 / Via della Centuriazione romana 100', 44.86732273067825, 13.867671739091621, 'https://maps.app.goo.gl/WQJg7r9TMGo1GPmYA'],
+        '310014': ['Slavonski Brod', None, 'Ul. Petra Svačića 2b', 45.16206007883841, 18.01759458076162, 'https://maps.app.goo.gl/H5kNd4JwjFvtCVP26'],
+        '310015': ['Split', None, 'Solinska ulica 84', 43.528012384214435, 16.483166351615456, 'https://maps.app.goo.gl/ZnsoANQdrLDJTL467'],
+        '310017': ['Osijek', None, 'Gacka ulica 70', 45.54762345315063, 18.69074448601774, 'https://maps.app.goo.gl/8J6ChVobW2SY3m9J9'],
+        '310019': ['Zaprešić', None, 'Ul. Ante Starčevića 20', 45.859046668929395, 15.797858990578913, 'https://maps.app.goo.gl/g8jAgx1xgeiGwdQ1A'],
+        '310021': ['Zadar', None, 'Ul. Matije Gupca 59', 44.13979804194729, 15.227513690208859, 'https://maps.app.goo.gl/NWRbUiNeLzhg5P1QA'],
+        '310024': ['Koprivnica', None, 'Ul. Mihovila P. Miškine 5', 46.16532909143549, 16.83266361394141, 'https://maps.app.goo.gl/CBCXKWcqojw3Qqqq8'],
+        '310026': ['Labin', None, 'Štrmac 303', 45.11821619110296, 14.1190056662431, 'https://maps.app.goo.gl/RmmnrtEXK5JjqgBcA'],
+        '310027': ['Pazin', None, 'Istarskih narodnjaka 17', 45.232934388425534, 13.921420497669109, 'https://maps.app.goo.gl/Uo9zyDkFtL2auyqG9'],
+        '310028': ['Đakovo', None, 'Ul. Petra Preradovića 198', 45.28573868130891, 18.407484016309997, 'https://maps.app.goo.gl/B8vQCWQC7nFC2YW87'],
+        '310032': ['Dugo Selo', None, 'Ul. hrvatskog preporoda 70', 45.80350054940367, 16.227420891009825, 'https://maps.app.goo.gl/iAUykfame1YqJojX9'],
+        '310034': ['Jastrebarsko', None, 'Ul. Većeslava Holjevca 15', 45.66033571457831, 15.653365699975458, 'https://maps.app.goo.gl/Tb2hLvT7YN3sxykb9'],
+        '310035': ['Vinkovci', None, 'Zvonarska ulica 63', 45.28732937332031, 18.818196349443465, 'https://maps.app.goo.gl/LJw9nY6u2yK1vRMY9'],
+        '310036': ['Virovitica', None, 'Ulica Ote Horvata 1', 45.820228049458855, 17.394199924288145, 'https://maps.app.goo.gl/VLeS4qs3fpwkg2cV6'],
+        '310003': ['Zadar', None, 'Ul. 4. gardijske brigade 1', 44.113147712016506, 15.255016899033956, 'https://maps.app.goo.gl/puPh9viAPPASMZH66'],
+        '310016': ['Viškovo', 'Rijeka', 'Furićevo 20', 45.37060621650787, 14.385606210672188, 'https://maps.app.goo.gl/zP3TXWwPSPq7x2699'],
+        '310018': ['Sesvete', 'Zagreb', 'Zagrebačka cesta 162a', 45.8276660990895, 16.082064640926095, 'https://maps.app.goo.gl/P9Ky5wSKxMEuS62m8'],
+        '310023': ['Biograd na Moru', None, 'Žutska ulica 1', 43.94567881117271, 15.454193036959847, 'https://maps.app.goo.gl/W9UcXkgrAhQRXKL57'],
+        '310030': ['Matulji', 'Rijeka', 'Cesta dalmatinskih brigada 7a', 45.36322877823651, 14.317746827115537, 'https://maps.app.goo.gl/R7ZnPDXqWM8Qhd9K9'],  # TODO: needs verification
+        '310033': ['Ludbreg', None, 'Koprivnička ulica 34a', 46.2426518833097, 16.626427172830116, 'https://maps.app.goo.gl/U55rndFuB8uVruP67'],
+        '310037': ['Karlovac', None, 'Ul. Ljudevita Šestića 7', 45.486681008737214, 15.54218367916544, 'https://maps.app.goo.gl/6m96yJ5xe823Mb4v6'],
+    },
     'konzum': {},
     'tommy': {},
     'spar': {},
