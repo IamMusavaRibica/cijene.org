@@ -1,4 +1,4 @@
-div#content footer {
+footer {
     margin-top: auto;
     padding: 10px 0;
     font-size: 1.2rem;
@@ -12,29 +12,29 @@ div#content footer {
     border-top: 1px solid var(--amber);
 }
 
-div#content footer span.nav-footer {
+footer span.nav-footer {
     float: right;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: space-evenly;
 }
-div#content footer span.nav-footer a:first-child {
+footer span.nav-footer a:first-child {
     margin-left: 0;
 }
 
-div#content footer span.nav-footer a {
+footer span.nav-footer a {
     margin-left: 80px;
     color: lightgray;
     font-size: 0.9em;
     text-decoration: none;
 }
 
-div#content footer span.nav-footer a[href] {
+footer span.nav-footer a[href] {
     position: relative;
 }
 
-div#content footer span.nav-footer a[href]::after {
+footer span.nav-footer a[href]::after {
     content: "";
     position: absolute;
     left: 50%;
@@ -44,7 +44,7 @@ div#content footer span.nav-footer a[href]::after {
     background-color: lightgray;
     transition: width 0.1s ease-out, left 0.1s ease-out;
 }
-div#content footer span.nav-footer a[href]:hover::after {
+footer span.nav-footer a[href]:hover::after {
     width: 100%;
     left: 0;
 }
