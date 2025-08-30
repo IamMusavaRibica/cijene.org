@@ -30,16 +30,18 @@
             Onemogućili ste JavaScript u pregledniku. Funkcionalnost stranice je ograničena!
         </noscript>
     {% endblock %}
-    <div id="content">
-        {% include 'header.html' %}
-        {% block content %}
-            <div id="not-found">
-                <h1>404</h1>
-                <p>Stranica koju ste tražili ne postoji:<br><span class="url">{{ request.url|e }}</span></p>
-                <a class="go-back" href="/" >&#x2190; Povratak na početnu stranicu</a>
-            </div>
-        {% endblock %}
-        {% include 'footer.html' %}
+    <div id="content-wrapper">
+        <div id="content">
+            {% include 'header.html' %}
+            {% block content %}
+                <div id="not-found">
+                    <h1>404</h1>
+                    <p>Stranica koju ste tražili ne postoji:<br><span class="url">{{ request.url|e }}</span></p>
+                    <a class="go-back" href="/" >&#x2190; Povratak na početnu stranicu</a>
+                </div>
+            {% endblock %}
+            {% include 'footer.html' %}
+        </div>
     </div>
 </div>
 </body>

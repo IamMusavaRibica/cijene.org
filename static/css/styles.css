@@ -38,12 +38,6 @@ body > div {
     overflow: hidden;
 
 }
-@media (min-width: 550px) {
-    body > div {
-        /* when scrollbar appears, it pushes content to the left, this visually undoes the push */
-        transform: translateX(calc(50vw - 50%));
-    }
-}
 
 h1, h2 {
     margin-top: 0;
@@ -57,6 +51,24 @@ a {
 
 p {
     margin-bottom: 0;
+}
+
+div#content-wrapper {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex: 1;
+    width: 100%;
+    /*max-width: calc(100% - 50vw + 50% - 50vw + 50%);*/
+
+}
+@media (min-width: 1220px) {  /* calc(1200px - 50vw + 50%) is apparently legal but does not work here ?*/
+    div#content-wrapper {
+        /* This transform is effective only when a scrollbar is visible, and then
+          it offsets the content back where it would be without a scrollbar
+           (undoes the push done by the scrollbar on content) */
+        transform: translateX(calc(50vw - 50%));
+    }
 }
 
 div#content {
@@ -74,18 +86,19 @@ div#content {
     background: #252536;
 }
 
-/* orange glow behind the content */
-#content::after {
+/* colored glow behind the content */
+#content-wrapper::after {
     content: "";
     position: absolute;
     height: 150%;
     width: 100%;
+    max-width: 1200px;
     background: orange;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: -1;
-    padding: 4px;
+    /*padding: 4px;*/
     border-radius: 4px;
     filter: blur(3rem);
     opacity: 0.38;
