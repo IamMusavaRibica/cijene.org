@@ -26,7 +26,7 @@ body {
             radial-gradient(farthest-side at 50% -33.33%,var(--_g)),
             var(--c2);
     background-size: calc(var(--s)/4.667) var(--s),var(--s) calc(var(--s)/4.667);
-
+    /*background-attachment: fixed;*/
     overflow-x: hidden;
 }
 
@@ -154,14 +154,14 @@ div#not-found p {
     line-height: 120%;
     margin-bottom: 40px;
 }
-div#not-found a.go-back {
+div#not-found > a {
     display: inline-block;
     margin-top: 20px;
     font-size: 1.7rem;
     color: color-mix(var(--amber), whitesmoke, 90%);
     transition: transform 0.3s ease
 }
-div#not-found a.go-back:hover {
+div#not-found > a:hover {
     transform: scale(1.1);
 }
 div#not-found span.url {
