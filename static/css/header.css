@@ -1,4 +1,4 @@
-div#header {
+header {
     min-height: 70px;
     line-height: 70px;
     padding-top: 12px;
@@ -8,13 +8,13 @@ div#header {
     justify-content: space-between;
     font-family: Mansalva, Gaegu, sans-serif;
 }
-div#header a.homepage {
+header a.homepage {
     color: var(--amber);
     font-size: 4rem;
     padding: 0;
 }
 
-div#header a {
+header a {
     position: relative;
     color: whitesmoke;  /* #669999 */
     text-decoration: none;  /* hide underline that <a> tags usually have */
@@ -24,14 +24,15 @@ div#header a {
 }
 
 @media (max-width: 550px) {
-    div#header a.homepage { font-size: 3rem; }
-    div#header a { font-size: 2.2rem; }
+    header a.homepage { font-size: 3rem; }
+    header a { font-size: 2.2rem; }
 }
-div#header a:first-child {
+
+header a:first-child {
     margin-left: 0;
 }
 
-div#header a:last-child {
+header a:last-child {
     margin-right: 7px;
 }
 
@@ -45,9 +46,8 @@ div#header a:last-child {
     margin: 0 0 0 auto;
 }
 
-
 /* header anchors underlined when hovered */
-div#header a.homepage::after, div#header span a::after {
+header a.homepage::after, header span a::after {
     content: "";
     position: absolute;
     left: 50%;
@@ -57,10 +57,12 @@ div#header a.homepage::after, div#header span a::after {
     background-color: var(--amber);
     transition: width 0.1s ease-out, left 0.1s ease-out;
 }
-div#header span a::after {
+
+header span a::after {
     background-color: whitesmoke;
 }
-div#header a.homepage:hover::after, div#header span a:hover::after {
+
+header a.homepage:hover::after, header span a:hover::after {
     width: 100%;
     left: 0;
 }
