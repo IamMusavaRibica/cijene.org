@@ -19,7 +19,7 @@ header a {
     color: whitesmoke;  /* #669999 */
     text-decoration: none;  /* hide underline that <a> tags usually have */
     font-size: 2.7rem;
-    margin-left: 35px;
+    /*margin-left: 35px;*/
     word-spacing: -0.5rem;
 }
 
@@ -28,26 +28,28 @@ header a {
     header a { font-size: 2.2rem; }
 }
 
-header a:first-child {
+header > a:first-child {
     margin-left: 0;
 }
 
 header a:last-child {
-    margin-right: 7px;
+    margin-right: 7px;  /* todo: set margin-right on nav? */
 }
 
-.nav {
+nav {
     line-height: 40px;
     text-align: center;
     padding: 0;
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
     margin: 0 0 0 auto;
+    justify-content: right;  /* on narrow screens */
+    column-gap: 35px;
 }
 
 /* header anchors underlined when hovered */
-header a.homepage::after, header span a::after {
+header a.homepage::after, header nav a::after {
     content: "";
     position: absolute;
     left: 50%;
@@ -58,11 +60,11 @@ header a.homepage::after, header span a::after {
     transition: width 0.1s ease-out, left 0.1s ease-out;
 }
 
-header span a::after {
+header nav a::after {
     background-color: whitesmoke;
 }
 
-header a.homepage:hover::after, header span a:hover::after {
+header a.homepage:hover::after, header nav a:hover::after {
     width: 100%;
     left: 0;
 }
