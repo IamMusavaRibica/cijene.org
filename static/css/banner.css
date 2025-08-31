@@ -1,8 +1,9 @@
 .banner {
-    /* width: 100% 100vw ; */
     z-index: 2025;
     text-align: center;
-    padding: 6px/* 4px 6px 5px 6px */;
+    /* compensate for scrollbar */
+    /* right padding is base + scrollbar width = 6px + 10px */
+    padding: 6px 16px 6px calc(6px + 100vw - 100%);
     font-size: 1.3rem;
 }
 
