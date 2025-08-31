@@ -1,8 +1,13 @@
 .banner {
     z-index: 2025;
     text-align: center;
-    /* compensate for scrollbar */
-    /* right padding is base + scrollbar width = 6px + 10px */
+    /*
+     right padding is kept constant as 16 px, while the scrollbar width is 10px when it's visible
+     and the scrollbar will add onto the right padding (so total right padding from the edge will be 26px)
+     left padding, however, is set to 6px + visible scrollbar width, so when the scrollbar is not visible
+     it's just 6px, but with scrollbar it increases to 16px to compensate for the extra right padding
+     caused by the scrollbar
+     */
     padding: 6px 16px 6px calc(6px + 100vw - 100%);
     font-size: 1.3rem;
 }
