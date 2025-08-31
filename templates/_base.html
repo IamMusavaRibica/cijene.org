@@ -33,6 +33,7 @@
     <div id="content-wrapper">
         <div id="content">
             {% include 'header.html' %}
+            <main>
             {% block content %}
                 <div id="not-found">
                     <h1>404</h1>
@@ -40,6 +41,7 @@
                     <a class="go-back" href="/" >&#x2190; Povratak na početnu stranicu</a>
                 </div>
             {% endblock %}
+            </main>
             {% include 'footer.html' %}
         </div>
     </div>
