@@ -36,7 +36,7 @@ header a:last-child {
     margin-right: 7px;  /* todo: set margin-right on nav? */
 }
 
-nav {
+header nav {
     line-height: 40px;
     text-align: center;
     padding: 0;

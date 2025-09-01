@@ -12,29 +12,29 @@ footer {
     border-top: 1px solid var(--amber);
 }
 
-footer span.nav-footer {
+footer nav {
     float: right;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: space-evenly;
 }
-footer span.nav-footer a:first-child {
+footer nav a:first-child {
     margin-left: 0;
 }
 
-footer span.nav-footer a {
+footer nav a {
     margin-left: 80px;
     color: lightgray;
     font-size: 0.9em;
     text-decoration: none;
 }
 
-footer span.nav-footer a[href] {
+footer nav a[href] {
     position: relative;
 }
 
-footer span.nav-footer a[href]::after {
+footer nav a[href]::after {
     content: "";
     position: absolute;
     left: 50%;
@@ -44,7 +44,7 @@ footer span.nav-footer a[href]::after {
     background-color: lightgray;
     transition: width 0.1s ease-out, left 0.1s ease-out;
 }
-footer span.nav-footer a[href]:hover::after {
+footer nav a[href]:hover::after {
     width: 100%;
     left: 0;
 }
