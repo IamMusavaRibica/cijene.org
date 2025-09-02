@@ -32,7 +32,11 @@ def fetch_lidl_prices(lidl: Store, min_date: date):
                     logger.warning(f'unexpected file in lidl zip: {filename}')
                     continue
 
-                market_type, location_id, *full_addr, city, postal_code, _id, _date, _ = filename.split('_')
+                if filename.startswith('Supermarket '):
+                    market_type = 'Supermarket'
+                    location_id, *full_addr, postal_code, city, file_id, _date, _ = filename.removeprefix('Supermarket ').split('_')
+                else:
+                    market_type, location_id, *full_addr, city, postal_code, file_id, _date, _ = filename.split('_')
                 city = fix_city(city.replace('_', ' '))
                 address = ' '.join(full_addr).replace('_', ' ')
 
