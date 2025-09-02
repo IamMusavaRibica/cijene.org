@@ -16,6 +16,7 @@ from starlette.types import Scope
 from cijeneorg.config import load_config
 from cijeneorg.fetchers.archiver import LocalArchiver, WaybackArchiver
 from cijeneorg.products_api import get_provider
+from cijeneorg.store_locations import StoreLocations
 from cijeneorg.utils import stylize_unit_price
 
 templates = Jinja2Templates(directory='templates')
@@ -65,14 +66,14 @@ async def read_root(request: Request):
 
 @app.get('/api/storelocations')
 async def storelocs(request: Request):
-    return JSONResponse([s.locations for s in provider._stores])
+    return JSONResponse(StoreLocations)
 
 
 @app.get('/{page}')
 async def read_page(request: Request, page: str):
     if page == 'robots.txt':
         return Response('User-agent: *\nDisallow: /', media_type='text/plain')
-    if page in {'blog', 'contact', 'products'}:
+    if page in {'blog', 'contact', 'products', 'location'}:
         if Path(f'templates/{page}.html').is_file():
             return TemplateResponse(f'{page}.html', {'request': request, 'products': provider.products_by_id.values()})
     raise HTTPException(status_code=404)
