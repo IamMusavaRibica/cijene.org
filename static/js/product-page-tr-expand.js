@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const w = byKey[k]?.wrap;
         if (!w)
             return cb && cb();
+        byKey[k]?.row.classList.add('opening-started');
         const h = w.scrollHeight;
         w.style.height = '0px';
         forceReflow(w);
@@ -87,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 w.style.height = 'auto';
                 openRows[k] = true;
                 currentKey = k;
+                byKey[k]?.row.classList.add('is-open');
                 cb && cb();
             });
         });
@@ -104,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 delete openRows[k];
                 if (currentKey === k)
                     currentKey = null;
+                byKey[k]?.row.classList.remove('is-open', 'opening-started');
                 cb && cb();
             });
         });
@@ -114,6 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const oldW = byKey[currentKey]?.wrap, newW = byKey[k]?.wrap;
         if (!oldW || !newW)
             return cb && cb();
+
+        byKey[k]?.row.classList.add('opening-started');
+
         const hOld = oldW.scrollHeight, hNew = newW.scrollHeight;
         oldW.style.height = hOld+'px';
         newW.style.height = '0px';
@@ -125,9 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const both = () => {
             if (++done === 2) {
                 newW.style.height = 'auto';
-                delete openRows[currentKey];
+                const prevKey = currentKey;
+                delete openRows[prevKey];
                 openRows[k] = true;
                 currentKey = k;
+                byKey[prevKey]?.row.classList.remove('is-open', 'opening-started');
+                byKey[k]?.row.classList.add('is-open');
                 cb && cb();
             }
         }

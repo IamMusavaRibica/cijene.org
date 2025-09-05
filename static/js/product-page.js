@@ -47,10 +47,13 @@ document.querySelector('#filters').style.removeProperty('display');
 
 function updateVisibleRows() {
     rows.forEach(r => {
-        if (!filters.quantity.size || filters.quantity.has(r.quantity))
+        if (!filters.quantity.size || filters.quantity.has(r.quantity)) {
             r.handle.style.removeProperty('display');
-        else
+            r.classList.remove('is-hidden');
+        } else {
             r.handle.style.setProperty('display', 'none');
+            r.classList.add('is-hidden');
+        }
     });
     // document.querySelector('#offers tbody').classList.toggle('filtered', filters.quantity.size > 0);
     console.log('Filters applied:', filters);
