@@ -1,4 +1,28 @@
 # noinspection SpellCheckingInspection
+
+License = {
+    '_License': 'CC BY-NC-SA 4.0',
+    '_Note-HR': '''
+Ovi podaci licencirani su pod Creative Commons BY-NC-SA 4.0 licencom.
+
+Morate adekvatno navesti autora i izvor podataka, priložiti poveznicu na licencu te naznačiti jesu li izvršene izmjene.
+Korištenje podatka nije dozvoljeno u komercijalne svrhe i u komercijalnim aplikacijama!
+
+Pravni tekst: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+Sažetak: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.hr
+'''.strip().splitlines(),
+    '_Note-EN': '''
+This data is licensed under the Creative Commons Attribution–NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+
+You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+You may not use the material for commercial purposes or in commerical applications!
+
+Full legal code: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+Summary: https://creativecommons.org/licenses/by-nc-sa/4.0/
+'''.strip().splitlines()
+}
+
+
 StoreLocations = {
     'bakmaz': {
         '2701': ['Zadar', None, 'Ul. Marijane Radev 14', 44.1506546217952, 15.23967228630357,

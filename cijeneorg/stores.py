@@ -76,6 +76,6 @@ for store in ALL_STORES:
     for loc_id, loc_data in StoreLocations.get(store.id, {}).items():
         city = loc_data[0]
         address = loc_data[2]
-        lat, lng = loc_data[3:5]
+        lat, lng = map(lambda t: round(t, 6), loc_data[3:5])
         google_maps_url = loc_data[5]
         store.register_location(loc_id, city, address, lat, lng, google_maps_url)

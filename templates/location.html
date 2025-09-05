@@ -1,0 +1,53 @@
+{% extends '_base.html' %}
+
+{% block extra_head %}
+    <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+    <link href="/static/css/location-picker.css" rel="stylesheet" />
+    <script src="/static/js/CircleSelector.js"></script>
+    <script defer src="/static/js/location-picker.js"></script>
+
+    <noscript>
+        <style>
+            #map {
+                border: 1px solid red;
+                background: repeating-linear-gradient(-45deg, rgba(255,0,0,0.25) 0 10px, transparent 0px 25px);
+                height: 400px !important;
+                padding: 15px;
+                box-sizing: border-box;
+                margin-bottom: 15px;
+            }
+            #map > div {
+                position:relative;
+                margin: 0 35px;
+                display: unset !important;
+            }
+            @media (min-width: 600px) {
+                #map {
+                    height: 500px !important;
+                    font-size: 1.5rem;
+                }
+            }
+        </style>
+    {# TODO: add text when user has disabled javascript. the user only has to enable javascript temporarily
+        to set the cookie, then can continue browsing without it #}
+    </noscript>
+
+{% endblock %}
+
+{% block content %}
+    <h1>Filtriranje trgovina</h1>
+    <div id="map">
+        <div style="display: none">
+            <p>Za učitavanje karte i filtriranje trgovina prema lokaciji potrebno je privremeno omogućiti JavaScript.</p>
+            <p>Nakon postavljanja kolačića (<i>cookie</i>) možete nastaviti koristiti ostatak stranice bez JavaScripta u ograničenom načinu, a prikazane ponude proizvoda bit će filtrirane prema postavljenom kolačiću.</p>
+            <p>Jeste li iskusni s JavaScriptom? Pogledajte
+                <a href="https://github.com/IamMusavaRibica/cijene.org/tree/main/static/js" target="_blank">
+                    sav kod ove stranice
+                </a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,100 @@
+#map {
+	height: 620px;
+	margin: 0 auto;
+	margin-top: 15px;
+	width: 100%;
+}
+
+.maplibregl-ctrl.radius-ctrl {}
+
+.radius-ctrl__group {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	background: #fff;
+    border-radius: 4px;
+}
+
+/* label */
+.radius-ctrl__group label {
+	color: black;
+	font-size: 1.1rem;
+	font-weight: 600;
+	/*line-height: 1;*/
+	white-space: nowrap;
+	margin: 0;
+	font-family: Nunito Sans, sans-serif;
+}
+
+/* slider base */
+.radius-ctrl__group input[type="range"] {
+	inline-size: 360px;
+	margin: 0;
+	background: transparent;
+	vertical-align: middle;
+}
+
+/* chrome edge safari */
+.radius-ctrl__group input[type="range"]::-webkit-slider-runnable-track {
+	height: 4px;
+	background: #e5e7eb;
+	border-radius: 999px;
+}
+
+.radius-ctrl__group input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	margin-top: -6px;
+	border-radius: 50%;
+	background: #111;
+	border: 2px solid #fff;
+	cursor: pointer;
+}
+
+.radius-ctrl__group input[type="range"]:focus::-webkit-slider-thumb {
+	outline: 2px solid #3b82f6;
+	outline-offset: 2px;
+}
+
+/* firefox */
+.radius-ctrl__group input[type="range"]::-moz-range-track {
+	height: 4px;
+	background: #e5e7eb;
+	border: none;
+	border-radius: 999px;
+}
+
+.radius-ctrl__group input[type="range"]::-moz-range-thumb {
+	width: 16px;
+	height: 16px;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: #111;
+	cursor: pointer;
+}
+
+.radius-ctrl__group input[type="range"]::-moz-focus-outer {
+	border: 0;
+}
+
+.radius-ctrl__group input[type="range"]::-moz-range-progress {
+	height: 4px;
+	background: #c7d2fe;
+	border-radius: 999px 0 0 999px;
+}
+
+
+
+
+
+.radius-ctrl__group {
+	touch-action: none;
+}
+
+.store-popup {
+	color: black;
+	font-family: Nunito Sans, sans-serif;
+}

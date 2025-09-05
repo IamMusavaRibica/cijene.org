@@ -6,7 +6,7 @@ from loguru import logger
 from pydantic import BaseModel, Field, model_validator
 
 P = TypeVar('P', bound='ProductOffer')
-
+StoreLocationPredicate = Callable[['StoreLocation'], bool]
 
 class UnitType(enum.Enum):
     NONE = 0
@@ -54,9 +54,6 @@ class Store(BaseModel):
 
     def fetch(self, *, min_date: datetime.date | None = None) -> list['ProductOffer']:
         return self.fetch_prices(self, min_date=min_date)
-
-    def __call__(self, product: Product, quantity: int | float | None, **kwargs) -> 'ProductOffer':
-        return ProductOffer(product=product, store=self, quantity=quantity, **kwargs)
 
     def register_location(self, location_id: str, city: str, address: str, lat: float, lng: float, google_maps_url: str):
         if location_id in self.locations:

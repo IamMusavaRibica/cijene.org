@@ -1,8 +1,12 @@
+import math
 import operator
 import re
 from datetime import timedelta
+from functools import lru_cache
 
-from cijeneorg.models import ProductOffer
+from loguru import logger
+
+from cijeneorg.models import ProductOffer, StoreLocationPredicate
 
 # if we get 'æ', we need to decode as cp1250 instead of ansi!
 # FIX_WEIRD_CHARS = str.maketrans({'È': 'Č', 'è': 'č', 'Æ': 'Ć', 'æ': 'ć'})
@@ -67,6 +71,37 @@ def split_by_lengths(s: str, *lengths: int) -> list[str]:
     if s:
         parts.append(s)
     return parts
+
+
+def distance_km(lat1, lon1, lat2, lon2) -> float:
+    # equirectangular approximation, accurate for short distances
+    # for better accuracy, use haversine
+    assert -90 <= lat1 <= 90 and -90 <= lat2 <= 90
+    assert -180 <= lon1 <= 180 and -180 <= lon2 <= 180
+    phi1, phi2, lam1, lam2 = map(math.radians, (lat1, lat2, lon1, lon2))
+    phi_m = (phi1 + phi2) / 2.0
+    x = (lam2 - lam1) * math.cos(phi_m)
+    y = (phi2 - phi1)
+    return 6371 * math.hypot(x, y)
+
+
+@lru_cache(maxsize=100000)
+def _get_predicate(_cookie: str) -> StoreLocationPredicate:
+    logger.debug(f'_get_predicate({_cookie})')
+    lng0, lat0, rad0 = map(float, _cookie.split(','))
+    lat0 /= 1e5
+    lng0 /= 1e5
+    rad0 /= 1e3
+    return lambda s: distance_km(lat0, lng0, s.lat, s.lng) <= rad0
+
+
+def parse_cookie(cookie: str) -> StoreLocationPredicate:
+    # memoize only "successful" cookies
+    try:
+        return _get_predicate(cookie)
+    except:
+        pass
+    return lambda s: True
 
 
 def fix_address(address: str) -> str:

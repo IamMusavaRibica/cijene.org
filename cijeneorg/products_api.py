@@ -9,7 +9,7 @@ import urllib3.exceptions
 from loguru import logger
 
 from cijeneorg.config import Config
-from cijeneorg.models import Product, ProductOffer, Store
+from cijeneorg.models import Product, ProductOffer, Store, StoreLocationPredicate
 from cijeneorg.stores import ALL_STORES, ALL_STORES_BY_ID
 
 
@@ -194,7 +194,12 @@ class ProductApi:
     def get_product_by_id(self, product_id: str) -> Product:
         return self._products.get(product_id)
 
-    def get_offers_by_product(self, product: Product, on_date: date | None = None) -> list[ProductOffer]:
+    def get_offers_by_product(
+            self,
+            product: Product,
+            on_date: date | None = None,
+            predicate: StoreLocationPredicate = lambda s: True
+    ) -> list[ProductOffer]:
         """
         Return offers only for 'today' defined as the latest day present in SQLite
         for this product_id. No in-memory dictionaries involved.
@@ -228,17 +233,21 @@ class ProductApi:
             if store_obj is None:
                 logger.warning(f'unknown store {r["store_id"]}')
             assert isinstance(store_obj, Store)
-            offers.append(ProductOffer(
-                product=product,
-                offer_name=r["product_name"],
-                price=(r["price_cents"] / 100.0),
-                store=store_obj,
-                store_location_id=r["store_location_id"],
-                may2_price=None if r["may2_price_cents"] is None else (r["may2_price_cents"] / 100.0),
-                quantity=float(r["quantity"]),
-                barcode=r["product_barcode"],
-                date=self._from_yyyymmdd(int(r["date_yyyymmdd"])),
-            ))
+            store_location = store_obj.locations.get(r["store_location_id"])
+            if store_location is None:
+                ...
+            elif predicate(store_location) is True:
+                offers.append(ProductOffer(
+                    product=product,
+                    offer_name=r["product_name"],
+                    price=(r["price_cents"] / 100.0),
+                    store=store_obj,
+                    store_location_id=r["store_location_id"],
+                    may2_price=None if r["may2_price_cents"] is None else (r["may2_price_cents"] / 100.0),
+                    quantity=float(r["quantity"]),
+                    barcode=r["product_barcode"],
+                    date=self._from_yyyymmdd(int(r["date_yyyymmdd"])),
+                ))
 
         # keep your original ordering logic
         try:
@@ -248,8 +257,13 @@ class ProductApi:
 
         return offers
 
-    def get_offers_by_product_grouped(self, product: Product, on_date: date | None = None) -> list[ProductOffer]:
-        raw_offers = self.get_offers_by_product(product, on_date)
+    def get_offers_by_product_grouped(
+            self,
+            product: Product,
+            on_date: date | None = None,
+            predicate: StoreLocationPredicate = lambda s: True
+    ) -> list[ProductOffer]:
+        raw_offers = self.get_offers_by_product(product, on_date, predicate)
         GroupKey = tuple[str, str, int]  # (store_id, barcode, price_cents)
         # TODO: offer_name or barcode?
         grouped: dict[GroupKey, dict] = {}
