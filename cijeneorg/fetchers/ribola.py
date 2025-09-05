@@ -39,9 +39,9 @@ def fetch_ribola_prices(ribola: Store, min_date: date):
                 if m:
                     location_id = m.group(1)
                     if location_id in ribola.locations:
-                        city, _, address, lat, lon, gmaps_url = ribola.locations[location_id]
+                        loc = ribola.locations[location_id]
                         filename = href.rsplit('/')[-1]
-                        coll.append(PriceList(BASE_URL + href, address, city, ribola.id, location_id, dt, filename))
+                        coll.append(PriceList(BASE_URL + href, loc.address, loc.city, ribola.id, location_id, dt, filename))
                         continue
                     else:
                         logger.warning(f'unknown ribola location id: {location_id} from {href}')

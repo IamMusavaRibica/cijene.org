@@ -27,18 +27,26 @@ class Product(BaseModel):
         return ProductOffer(product=self, **kwargs)
 
 
+class StoreLocation(BaseModel):
+    store: 'Store' = Field(exclude=True)
+    location_id: str
+    city: str
+    address: str
+    lat: float
+    lng: float
+    google_maps_url: str | None
+
+
 class Store(BaseModel):
     id: str
     name: str
-    locations: dict[str, list]
-    fetch_prices: Callable[..., list['ProductOffer']]
-    url: str | None = None
-    google_maps_url: str | None = None
+    locations: dict[str, StoreLocation] = Field(default_factory=dict)
+    fetch_prices: Callable[..., list['ProductOffer']] = Field(exclude=True)
+    url: str
 
     @model_validator(mode='before')
     def preconstruct(cls, values):
         if not isinstance(values, dict):
-            logger.error('Expected dict for Store preconstruction, got: {}, values={}', type(values), values)
             raise ValueError(f'expected dict, got {type(values)}')
         if values.get('id') is None:
             values['id'] = values['name'].lower().strip().replace(' ', '_')
@@ -49,6 +57,14 @@ class Store(BaseModel):
 
     def __call__(self, product: Product, quantity: int | float | None, **kwargs) -> 'ProductOffer':
         return ProductOffer(product=product, store=self, quantity=quantity, **kwargs)
+
+    def register_location(self, location_id: str, city: str, address: str, lat: float, lng: float, google_maps_url: str):
+        if location_id in self.locations:
+            logger.warning(f'Overwriting existing location {location_id} in store {self.id}')
+        self.locations[location_id] = StoreLocation(
+            store=self, location_id=location_id, city=city, address=address,
+            lat=lat, lng=lng, google_maps_url=google_maps_url
+        )
 
 
 class ProductOffer(BaseModel):
