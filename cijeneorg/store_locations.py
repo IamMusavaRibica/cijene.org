@@ -611,11 +611,14 @@ StoreLocations = {
                 'https://maps.app.goo.gl/2vCVS7sCFp475mYe7'],
         '004': ['Kaštel Stari', None, 'Put Blata 2', 43.55201716806334, 16.339595022987805,
                 'https://maps.app.goo.gl/85rT6o8sQASnKSqSA'],
-        '039': ['Kaštel Novi', None, 'Put sv. Jurja 115???', 43.56600985347082, 16.309372658337654,
-                '/NE_MOGU_NAC_RIBOLU_039'],  # TODO
-        '095': ['Ražanj', None, 'Ražanj 95a', None, None, None],
-        '010': ['Okrug Gornji', None, 'Stjepana Radića 51', None, None, None],
-        '060': ['Nečujam', None, 'Nečujam bb', None, None, 'https://maps.app.goo.gl/uDFwJdhv2J41j1Rh6'],
+        '039': ['Kaštel Novi', None, 'Put sv. Jurja 115', 43.56160527357821, 16.316649822749987,
+                'https://maps.app.goo.gl/nsyU3Ff2rtGJ9Dht9'],
+        '095': ['Ražanj', None, 'Ražanj 95a', 43.51008330308298, 15.979368831026052, 'https://maps.app.goo.gl/Ms3U4PmSPUZDUhyR6'],  # Ribola tvrdi Ražanj 52a
+        # 010 nije navedena na https://ribola.hr/popis-prodajnih-mjesta/
+        '010': ['Okrug Gornji', None, 'Šetalište Stjepana Radića 51', 43.50403027931097, 16.258122042888512, 'https://maps.app.goo.gl/WcknXu2GBe2UE9747'],
+        # 060 nije navedena na https://ribola.hr/popis-prodajnih-mjesta/, a na https://ribola.hr/poslovnice/ Ribola tvrdi da je adresa Nečujam bb
+        # lokacija na OpenStreetMapu je neprecizna
+        '060': ['Nečujam', None, 'Dioklecijanova 15', 43.38073312782481, 16.32383172913855, 'https://maps.app.goo.gl/uDFwJdhv2J41j1Rh6'],
         '052': ['Split', None, 'Ul. Ruđera Boškovića 10', 43.50559388745281, 16.466005794663978,
                 'https://maps.app.goo.gl/N8gwyPpM32JHPWxk7'],
         '074': ['Primošten', None, 'Splitska 22', 43.572051513860245, 15.940717834648607,
@@ -656,6 +659,6 @@ StoreLocations = {
                 'https://maps.app.goo.gl/jmoVifVjb4bzH5qn6'],
         '092': ['Zadar', None, 'Ul. Miroslava Krleže 1a', 44.120548999243475, 15.228312191633433,
                 'https://maps.app.goo.gl/jfyX8ErEQrmrGgfq9'],
-        '099': ['Dubrovnik', None, 'Žuljanska ul. 1', 42.65209558872317, 18.087602739040467, None]
+        '099': ['Dubrovnik', None, 'Žuljanska ul. 1', 42.652280679763486, 18.087658565662863, 'https://maps.app.goo.gl/QehwyyDRKW7ukCoW7']
     }
 }
