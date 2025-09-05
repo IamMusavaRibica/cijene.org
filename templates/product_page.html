@@ -1,19 +1,9 @@
 {% extends '_base.html' %}
+
 {% block extra_head %}
     <link rel="stylesheet" href="/static/css/product-page.css">
     <script src="/static/js/product-page.js" defer></script>
-
-
-
-<style>
-  #offers tr.data-row { cursor: pointer; }
-  #offers tr.details-row > td { padding: 0; border: 0; }
-  .details { height: 0; overflow: hidden; transition: height .24s ease; will-change: height; contain: layout; }
-  .details > .inner { padding: 12px 16px; background: #f7fafc; border-top: 1px solid #e2e8f0; }
-</style>
-
-
-
+    <script src="/static/js/product-page-tr-expand.js" defer></script>
 {% endblock %}
 
 {% block content %}
@@ -61,7 +51,7 @@
             <th class="unit-price">Cij<span class="only-wide">ena</span><span class="only-narrow">.</span>/{% if product.baseq != 1%}{{ product.baseq }} {% endif %}{{ product.unit }}</th>
         </tr>
         {% for offer in offers %}
-            <tr>
+            <tr class="data-row" data-key="{{ loop.index }}">
                 <td class="name">
                     <div class="name-flex">
                         <span>{{ offer.offer_name }}</span>
@@ -92,6 +82,21 @@
                     <span class="price" style="{{ stylize(offer, offers) }}">
                         {{ offer.price_per_unit|formatted_price }}
                     </span>
+                </td>
+            </tr>
+            <tr class="details-row">
+                <td colspan="6">
+                    <div class="details">
+                        <div class="inner">
+                            {% set store_location = offer.store.locations[offer.store_location_id] %}
+                            <div>
+                                <h3>{{ offer.store.name }}</h3>
+                                <p>{{ store_location.address }}, {{ store_location.city }}</p>
+                            </div>
+                            <div class="link">
+                                <a href="{{ store_location.google_maps_url }}" target="_blank">Google Maps ></a>
+                            </div>
+                    </div>
                 </td>
             </tr>
         {% endfor %}

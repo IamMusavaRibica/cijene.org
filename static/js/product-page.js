@@ -4,7 +4,7 @@ const filters = {quantity: new Set()};
 const TABLE = document.querySelector('#offers');
 
 // parse the offers table, extract all rows and relevant data
-document.querySelectorAll('#offers tbody tr').forEach(row => {
+document.querySelectorAll('#offers tbody tr.data-row').forEach(row => {
     if (row.querySelector('th'))
         return;
 
