@@ -65,11 +65,6 @@ async def read_root(request: Request):
     return TemplateResponse('index.html', {'request': request})
 
 
-@app.get('/api/storelocations')
-async def storelocs(request: Request):
-    return JSONResponse(StoreLocations)
-
-
 @app.get('/api/stores')
 async def api_stores(request: Request):
     return JSONResponse({
