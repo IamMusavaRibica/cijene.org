@@ -95,12 +95,13 @@ def _get_predicate(_cookie: str) -> StoreLocationPredicate:
     return lambda s: distance_km(lat0, lng0, s.lat, s.lng) <= rad0
 
 
-def parse_cookie(cookie: str) -> StoreLocationPredicate:
+def parse_cookie(cookie: str | None) -> StoreLocationPredicate:
     # memoize only "successful" cookies
-    try:
-        return _get_predicate(cookie)
-    except:
-        pass
+    if cookie is not None:
+        try:
+            return _get_predicate(cookie)
+        except:
+            pass
     return lambda s: True
 
 
