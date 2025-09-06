@@ -49,10 +49,10 @@ function updateVisibleRows() {
     rows.forEach(r => {
         if (!filters.quantity.size || filters.quantity.has(r.quantity)) {
             r.handle.style.removeProperty('display');
-            r.classList.remove('is-hidden');
+            r.handle.classList.remove('is-hidden');
         } else {
             r.handle.style.setProperty('display', 'none');
-            r.classList.add('is-hidden');
+            r.handle.classList.add('is-hidden');
         }
     });
     // document.querySelector('#offers tbody').classList.toggle('filtered', filters.quantity.size > 0);
