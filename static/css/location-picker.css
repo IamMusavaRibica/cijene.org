@@ -5,6 +5,11 @@
 	width: 100%;
 }
 
+.maplibregl-popup-content {
+	font-size: 1rem;
+}
+
+
 .maplibregl-ctrl.radius-ctrl {}
 
 .radius-ctrl__group {
