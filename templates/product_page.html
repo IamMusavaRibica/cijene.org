@@ -28,6 +28,17 @@
     <noscript>
     <p style="margin-top: 0">Omogućite JavaScript za filtriranje prikazanih ponuda.</p>
     </noscript>
+
+    {% if request.cookies.get('LocationPreference') is not none %}
+        <p>
+            Prikazaju se samo ponude iz trgovina odabranih prema lokaciji. <a href="/location">Promijeni lokaciju</a>
+        </p>
+    {% else %}
+        <p>
+            Prikazuju se ponude iz svih dostupnih trgovina. Za filtriranje prema lokaciji <a href="/location">kliknite ovdje</a>.
+        </p>
+    {% endif %}
+
     <div id="filters" style="margin-top: 10px; display: none;">
         <h2>Filtri:</h2>
         <div id="filter-quantity">
