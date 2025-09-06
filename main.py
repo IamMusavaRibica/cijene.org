@@ -93,7 +93,7 @@ async def read_product_page(request: Request, proizvod_id: str):
     if product := provider.products_by_id.get(proizvod_id):
         the_date = (datetime.now() - timedelta(hours=8)).date()
         predicate = parse_cookie(request.cookies.get('LocationPreference'))
-        logger.debug(f'{the_date=}, {predicate=}')
+
         _start = time.perf_counter()
         # offers = provider.get_offers_by_product(product, on_date=the_date)
         offers = provider.get_offers_by_product_grouped(product, on_date=the_date, predicate=predicate)
