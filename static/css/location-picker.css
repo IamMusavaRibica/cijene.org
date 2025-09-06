@@ -98,3 +98,7 @@
 	color: black;
 	font-family: Nunito Sans, sans-serif;
 }
+
+.store-marker {
+	cursor: pointer;
+}

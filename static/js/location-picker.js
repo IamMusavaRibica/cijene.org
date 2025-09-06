@@ -33,6 +33,9 @@ function readLocationCookie() {
 (() => {
     const loc = readLocationCookie();
     const initialRadiusKm = loc ? loc.radiusKm : 1;
+    if (loc) {
+        map.setCenter([loc.lng, loc.lat]);
+    }
     LocationRadius.init(map, {
         startLngLat: loc ? [loc.lng, loc.lat] : [15.9819, 45.8150],
         startRadiusKm: initialRadiusKm,
@@ -83,7 +86,7 @@ map.on('load', () => {
 function addMarker(feature) {
     const el = document.createElement('div');
     const { storeName, storeId, locId, city, address, googleMapsUrl } = feature.properties;
-    el.className = 'marker';
+    el.className = 'store-marker';
     el.title = `${storeName} ${locId}`;  // tooltip on mouse hover
     el.style.backgroundImage = `url(/static/icons/${storeId}.png)`;
     el.style.backgroundSize = `contain`;
