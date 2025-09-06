@@ -3,6 +3,10 @@ const rows = [];
 const filters = {quantity: new Set()};
 const TABLE = document.querySelector('#offers');
 
+/* TODO: repeatedly look at the value of document.cookie and if it changes (perhaps from another tab),
+*   show a notice and ask the user to reload the page. */
+
+
 // parse the offers table, extract all rows and relevant data
 document.querySelectorAll('#offers tbody tr.data-row').forEach(row => {
     if (row.querySelector('th'))
