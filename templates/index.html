@@ -52,13 +52,16 @@
     <!-- margins here do not collapse because we're in a flexbox -->
 
     <div id="picker">
-        <div id="child1"><a href="/products">Pregledaj proizvode</a></div>
-        <div id="child2" style="filter: blur(3px); cursor: not-allowed; user-select: none;">
+        <div class="child">
+            <a href="/products">Pregledaj proizvode</a>
+        </div>
+        <div class="child">
+            <a href="/location">Istraži trgovine</a>
+        </div>
+        <div class="child" style="filter: blur(3px); cursor: not-allowed; user-select: none;">
             <a>Napravi košaricu</a>
             <span>(uskoro)</span>
         </div>
-{#        <div id="child2" style="filter: blur(4px); cursor: not-allowed;">Istraži trgovine</div>#}
-{#        <div id="child3" style="filter: blur(4px); cursor: not-allowed;">Pogledaj kartu</div>#}
     </div>
 
 {% endblock %}

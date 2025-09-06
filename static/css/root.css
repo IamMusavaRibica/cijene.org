@@ -21,10 +21,10 @@ div#picker > div {
     flex-direction: column;
 }
 
-div#picker div#child1 {
+#picker .child {
     transition: transform 0.3s ease;
 }
 
-div#picker div#child1:hover {
+#picker .child:hover {
     transform: scale(1.1);
 }
