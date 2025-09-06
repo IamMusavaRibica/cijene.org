@@ -10,7 +10,12 @@
 }
 
 
-.maplibregl-ctrl.radius-ctrl {}
+.maplibregl-ctrl.radius-ctrl, .maplibregl-ctrl.radius-ctrl button {  /* buttons don't inherit font styles */
+	font-family: Nunito Sans, sans-serif;
+	color: black;
+	font-size: 1.1rem;
+	font-weight: 600;
+}
 
 .radius-ctrl__group {
 	display: flex;
@@ -23,13 +28,9 @@
 
 /* label */
 .radius-ctrl__group label {
-	color: black;
-	font-size: 1.1rem;
-	font-weight: 600;
 	/*line-height: 1;*/
 	white-space: nowrap;
 	margin: 0;
-	font-family: Nunito Sans, sans-serif;
 }
 
 /* slider base */
@@ -92,6 +93,15 @@
 }
 
 
+.radius-ctrl__group--clear {
+	margin-top: 8px;
+	width: min-content;
+}
+
+
+.maplibregl-ctrl.radius-ctrl button {
+	width: 150px;
+}
 
 
 

@@ -22,7 +22,6 @@ function setLocationCookie(lng, lat, radiusKm) {
 
 function readLocationCookie() {
     const m = document.cookie.match(/(?:^|;\s*)LocationPreference=(\d+),(\d+),(\d+)(?=;|$)/);
-    console.log(m);
     const [lng, lat, radiusKm] = m ? [+m[1], +m[2], +m[3]] : [NaN, NaN, NaN];
     if ([lng, lat, radiusKm].every(Number.isSafeInteger)) {
         return { lng: lng / 1e5, lat: lat / 1e5, radiusKm: radiusKm / 1e3 };
@@ -30,28 +29,41 @@ function readLocationCookie() {
     return null;
 }
 
+function clearLocationCookie() {
+    document.cookie = 'LocationPreference=; Path=/; Max-Age=0; SameSite=Lax';
+}
+
 (() => {
     const loc = readLocationCookie();
     const initialRadiusKm = loc ? loc.radiusKm : 1;
     if (loc) {
         map.setCenter([loc.lng, loc.lat]);
+        map.setZoom(12.0);
     }
     LocationRadius.init(map, {
-        startLngLat: loc ? [loc.lng, loc.lat] : [15.9819, 45.8150],
+        startLngLat: loc && [loc.lng, loc.lat] || null,
         startRadiusKm: initialRadiusKm,
         controlPosition: 'top-left',
         controlOptions: {
             id: 'radius',
             labelText: 'Udaljenost u km',
             min: 0.2, max: 4, step: 0.2, value: initialRadiusKm,
+            clearLabel: 'Ukloni odabir',
+            onClear: () => {
+                LocationRadius.removeMarker();
+                clearLocationCookie();
+            }
         },
         updateCallback: persist
     });
 
     function persist() {
-        const { lng, lat } = LocationRadius.getMarker().getLngLat();
-        const radiusKm = LocationRadius.getRadiusKm();
-        setLocationCookie(lng, lat, radiusKm);
+        const marker = LocationRadius.getMarker();
+        if (marker) {
+            const { lng, lat } = marker.getLngLat();
+            const radiusKm = LocationRadius.getRadiusKm();
+            setLocationCookie(lng, lat, radiusKm);
+        }
     }
 })();
 

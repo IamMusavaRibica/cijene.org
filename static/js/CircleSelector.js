@@ -6,6 +6,7 @@ window.LocationRadius = (() => {
     let control = null;
     let radiusKm = 1;
     let callback = () => {};
+    let onMapClick = null;
 
     const ids = {
         source: 'lr-circle-src',
@@ -18,12 +19,15 @@ window.LocationRadius = (() => {
         constructor({
             id = 'radius', labelText = 'Udaljenost u km',
             min = 1, max = 100, step = 5, value = 15,
-            onInput = null
+            clearLabel = 'Ukloni odabir',
+            onInput = null, onClear = null
         } = {}) {
             this.id = id;
             this.labelText = labelText;
             this.min = min; this.max = max; this.step = step; this.value = value;
+            this.clearLabel = clearLabel;
             this.onInput = onInput;
+            this.onClear = onClear;
         }
 
         onAdd(map) {
@@ -32,9 +36,9 @@ window.LocationRadius = (() => {
             const container = document.createElement('div');
             container.className = 'maplibregl-ctrl radius-ctrl';
 
-            const group = document.createElement('div');
-            group.className = 'maplibregl-ctrl-group radius-ctrl__group';
-            container.appendChild(group);
+            const rangeGroup = document.createElement('div');
+            rangeGroup.className = 'maplibregl-ctrl-group radius-ctrl__group';
+            container.appendChild(rangeGroup);
 
             // <label for="radius">Udaljenost u km</label><input id="radius" type="range" min="1" max="25" value="5" step="1" oninput="void 0;">
 
@@ -45,12 +49,13 @@ window.LocationRadius = (() => {
             input.max = this.max;
             input.step = this.step;
             input.value = this.value;
+
             const label = document.createElement('label');
             label.setAttribute('for', this.id);
             label.textContent = this.labelText;
 
             ['mousedown', 'touchstart', 'wheel', 'dblclick'].forEach(evt =>
-                group.addEventListener(evt, e => e.stopPropagation(), {passive: true})
+                rangeGroup.addEventListener(evt, e => e.stopPropagation(), {passive: true})
             );
 
             input.addEventListener('input', e => {
@@ -59,8 +64,27 @@ window.LocationRadius = (() => {
                 callback();
             });
 
-            group.appendChild(label);
-            group.appendChild(input);
+            rangeGroup.appendChild(label);
+            rangeGroup.appendChild(input);
+
+
+
+            const clearGroup = document.createElement('div');
+            clearGroup.className = 'maplibregl-ctrl-group radius-ctrl__group radius-ctrl__group--clear';
+            container.appendChild(clearGroup);
+
+            const clearBtn = document.createElement('button');
+            clearBtn.type = 'button';
+            clearBtn.id = 'clear-marker-btn';
+            clearBtn.className = 'radius-ctrl__clear';
+            clearBtn.textContent = this.clearLabel;
+            clearBtn.addEventListener('click', e => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.onClear && this.onClear();
+            });
+            clearGroup.appendChild(clearBtn);
+            clearGroup.style.display = 'none';
 
             this._container = container;
             this._input = input;
@@ -103,8 +127,11 @@ window.LocationRadius = (() => {
         });
     }
 
-    function updateCircle(lngLat = marker.getLngLat(), km = radiusKm) {
-        const circle = turf.circle([lngLat.lng, lngLat.lat], km, { steps: 128, units: 'kilometers' });
+    function updateCircle(lngLat = null, km = radiusKm) {
+        const ll = lngLat ? maplibregl.LngLat.convert(lngLat) : (marker && marker.getLngLat());
+        if (!ll)
+            return;
+        const circle = turf.circle([ll.lng, ll.lat], km, { steps: 128, units: 'kilometers' });
         const src = map.getSource(ids.source);
         src && src.setData(circle);
     }
@@ -115,6 +142,23 @@ window.LocationRadius = (() => {
         marker && updateCircle(marker.getLngLat(), km);
     }
 
+    function attachMarkerEvents() {
+        if (!marker) return;
+        // drag event keeps circle in sync while dragging
+        marker.on('drag', () => { updateCircle(marker.getLngLat(), radiusKm); });
+        marker.on('dragend', () => { callback(); });
+    }
+
+    function createMarkerAt(lngLatLike) {
+        const ll = maplibregl.LngLat.convert(lngLatLike);
+        marker = new maplibregl.Marker({ draggable: true })
+            .setLngLat(ll)
+            .addTo(map);
+        attachMarkerEvents();
+        document.getElementById('clear-marker-btn').parentElement.style.display = 'block';
+        updateCircle(ll, radiusKm);
+    }
+
     function setPosition(lngLatLike) {
         if (!marker) return;
         const ll = maplibregl.LngLat.convert(lngLatLike);
@@ -123,25 +167,39 @@ window.LocationRadius = (() => {
     }
 
     function wireEvents() {
-        // drag event keeps circle in sync while dragging
-        marker.on('drag', () => {
-            updateCircle(marker.getLngLat(), radiusKm);
-        });
-
-        marker.on('dragend', () => {
+        onMapClick = e => {
+            if (!marker) {
+                createMarkerAt(e.lngLat);
+            } else {
+                marker.setLngLat(e.lngLat);
+                updateCircle(e.lngLat, radiusKm);
+            }
             callback();
-        });
-
-        // map click moves marker
-        map.on('click', e => {
-            marker.setLngLat(e.lngLat);
-            updateCircle(e.lngLat, radiusKm);
-            callback();
-        });
+        }
+        map.on('click', onMapClick);
     }
 
+    function clearCircle() {
+        if (!map) return;
+        const src = map.getSource(ids.source);
+        if (src) {
+            src.setData({ type: 'FeatureCollection', features: [] });
+        }
+    }
+
+    function removeMarker() {
+        if (!map) return;
+        if (marker) {
+            marker.remove();
+            marker = null;
+        }
+        document.getElementById('clear-marker-btn').parentElement.style.display = 'none';
+        clearCircle();
+    }
+
+
     function init(userMap, {
-        startLngLat = [14.9819, 45.8150],
+        startLngLat = null,
         startRadiusKm = 15,
         controlPosition = 'top-left',
         controlOptions = {},
@@ -156,13 +214,7 @@ window.LocationRadius = (() => {
 
         const setup = () => {
             setupCircleLayers();
-
-            marker = new maplibregl.Marker({ draggable: true })
-                .setLngLat(startLngLat)
-                .addTo(map);
-
             wireEvents();
-
 
             control = new RadiusControl({
                 value: startRadiusKm,
@@ -171,7 +223,9 @@ window.LocationRadius = (() => {
             });
             map.addControl(control, controlPosition);
 
-            updateCircle(marker.getLngLat(), radiusKm);
+            if (startLngLat !== undefined && startLngLat !== null) {
+                createMarkerAt(startLngLat);
+            }
         };
 
         if (!map.isStyleLoaded()) {
@@ -184,16 +238,23 @@ window.LocationRadius = (() => {
     }
 
     function destroy() {
-        // TODO: .off events?
         if (!map) return;
+
         if (control) {
             map.removeControl(control);
             control = null;
         }
+
+        if (onMapClick) {
+            map.off('click', onMapClick);
+            onMapClick = null;
+        }
+
         if (marker) {
             marker.remove();
             marker = null;
         }
+
         [ids.line, ids.fill].forEach(id => {
             if (map.getLayer(id)) map.removeLayer(id);
         });
@@ -205,5 +266,6 @@ window.LocationRadius = (() => {
         init, destroy, updateCircle, setRadiusKm, setPosition,
         getRadiusKm: () => radiusKm,
         getMarker: () => marker,
+        removeMarker
     }
 })();
