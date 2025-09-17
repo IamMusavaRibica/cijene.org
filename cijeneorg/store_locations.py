@@ -1,8 +1,5 @@
 # noinspection SpellCheckingInspection
-
-License = {
-    '_License': 'CC BY-NC-SA 4.0',
-    '_Note-HR': '''
+_LicenseHR = '''
 Ovi podaci licencirani su pod Creative Commons BY-NC-SA 4.0 licencom.
 
 Morate adekvatno navesti autora i izvor podataka, priložiti poveznicu na licencu te naznačiti jesu li izvršene izmjene.
@@ -10,8 +7,9 @@ Korištenje podatka nije dozvoljeno u komercijalne svrhe i u komercijalnim aplik
 
 Pravni tekst: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 Sažetak: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.hr
-'''.strip().splitlines(),
-    '_Note-EN': '''
+'''
+
+_LicenseEN = '''
 This data is licensed under the Creative Commons Attribution–NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
 
 You must give appropriate credit, provide a link to the license, and indicate if changes were made.
@@ -19,7 +17,13 @@ You may not use the material for commercial purposes or in commerical applicatio
 
 Full legal code: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 Summary: https://creativecommons.org/licenses/by-nc-sa/4.0/
-'''.strip().splitlines()
+'''
+
+
+License = {
+    '_License': 'CC BY-NC-SA 4.0',
+    '_Note-HR': _LicenseHR.strip().splitlines(),
+    '_Note-EN': _LicenseEN.strip().splitlines()
 }
 
 
@@ -519,6 +523,181 @@ StoreLocations = {
         '260': ['Novi Marof', None, 'Grana 150/4', 46.158283313995945, 16.33304623396552, 'https://maps.app.goo.gl/4XjJw82TiJmmnk5j8'],
         '266': ['Omišalj', None, 'Ulica Pušća 150', 45.21707347742557, 14.56510968926306, 'https://maps.app.goo.gl/q29yY4sBYTitmYSv8'],
         '270': ['Ludbreg', None, 'Ulica žrtava fašizma 1', 46.24874427232281, 16.625454327620645, 'https://maps.app.goo.gl/UG9prfRQvMhCgicD6'],
+    },
+    'lorenco': {},
+    'metro': {
+        'S12': ['Rijeka-Čavle', None, 'Bujanovo 10', 45.3480250933447, 14.493524406422003, 'https://maps.app.goo.gl/zTXdafDMRC8Hcakq5'],
+        'S23': ['Pula', None, 'Industrijska ulica 2e', 44.88852536073816, 13.857660102384381, 'https://maps.app.goo.gl/WGvFQPx9NBUmM8Mn8'],  # needs verification
+        'S20': ['Kaštel Sućurac', None, 'Ivana Pavla II 3', 43.54395507882315, 16.4530640600786, 'https://maps.app.goo.gl/ELyGATA22EbG9mke9'],
+        'S14': ['Osijek', None, 'Ul. kneza Trpimira 28', 45.54337425596883, 18.688135266193953, 'https://maps.app.goo.gl/tm91gTXpLHWsRvGd9'],
+        'S10': ['Zagreb', None, 'Jankomir 31', 45.8002592790673, 15.881198333760242, 'https://maps.app.goo.gl/PQeap2F5RZFWyTQc7'],
+        'S11': ['Zagreb-Sesvete', None, 'Slavonska avenija 71', 45.80524417438144, 16.114664563232502, 'https://maps.app.goo.gl/W51m3nQmaSLJF5EJ6'],
+        'S15': ['Zadar', None, 'Murvica IK 2', 44.13898006344027, 15.313825079317676, 'https://maps.app.goo.gl/a2efwRFK9WoJB6nt9'],
+        'S19': ['Poreč', None, 'Fascinka bb', 45.22891173776313, 13.618449206063463, 'https://maps.app.goo.gl/tHpzXo1Vby92DZ7a8'],  # unverified address!
+        'S16': ['Čibača', None, 'Ul. Tomislava Macana 2', 42.63019057119835, 18.16348276883119, 'https://maps.app.goo.gl/ABJgpj2FQjKwBDdP9'],
+        'S18': ['Varaždin', None, 'Gospodarska ulica 35', 46.29465286991243, 16.35366694309245, 'https://maps.app.goo.gl/3jCFrxMDNUymC4qA8']
+    },
+    'ntl': {
+        '10101': ['Krapina', None, 'Ul. Frana Galovića 11a', 46.154305743440744, 15.874627721737056, 'https://maps.app.goo.gl/1TZmWuiAKGmLYnMt5'],
+        '31038': ['Ludbreg', None, 'Frankopanska ul. 70', 46.25696830472234, 16.602492430748963, 'https://maps.app.goo.gl/2FYjr23w9usUn4ku9'],
+        # for 20201, NTL claims house no. 3 and Google Maps reports 7, but cadastre and street view confirms it's actually 5
+        '20201': ['Bilje', None, 'Ul. kralja Tomislava 5', 45.60474904334576, 18.74262486848231, 'https://maps.app.goo.gl/KZoXohN5tH3fiaCd6'],
+        '20202': ['Čepin', None, 'Kralja Tomislava 2e', 45.52301821015463, 18.575283059736716, 'https://maps.app.goo.gl/3aJAgaEqmApCmGF5A'],
+        '10103': ['Duga Resa', None, 'Ul. Ljudevita Gaja 1', 45.453717296324385, 15.491226341861989, 'https://maps.app.goo.gl/o1eF9PVRC9aAgP7j9'],
+        '31020': ['Varaždin', None, 'Podravska ulica 11', 46.30858264777663, 16.35907675282138, 'https://maps.app.goo.gl/8PUxy6puCTCsPNgj6'],
+        '31039': ['Novi Marof', None, 'Radnička ulica 1', 46.162192758732125, 16.329793444082775, 'https://maps.app.goo.gl/wENLFrqphKFe88sS7'],
+        '10102': ['Soblinec', None, 'Soblinečka ulica 55', 45.866115898232025, 16.155132971885628, 'https://maps.app.goo.gl/yvBU94uFKKdvfNtE6'],
+        '20206': ['Slatina', None, 'Trg sv. Josipa 2', 45.70237609659626, 17.700468986272305, 'https://maps.app.goo.gl/4fvvWPfsSNSdiy2J7'],
+    },
+    'plodine': {
+        '178': ['Buje', None, 'Digitronska ulica 27a', 45.415481457468076, 13.659732249453356, 'https://maps.app.goo.gl/isEG9L5Mznv4R4i57'],  # too new for street view
+        '176': ['Krapina', None, 'Pristava Krapinska 63', 46.144600424884345, 15.873681012234366, 'https://maps.app.goo.gl/EiTqYSqcPkKSCtJF7'],
+        '177': ['Šibenik', None, 'Ul. 113. šibenske brigade HV-a 195', 43.75987174616395, 15.899870942655664, 'https://maps.app.goo.gl/2VtxF8AbBGyg3KGd8'],
+        '152': ['Vinkovci', None, 'Ul. Alojzija Stepinca 201', 45.287145522778324, 18.753942260144687, 'https://maps.app.goo.gl/tPmwRKDyWYSWcBCz8'],
+        '151': ['Daruvar', None, 'Ul. Augusta Šenoe 2b', 45.59360312008493, 17.20027029437974, 'https://maps.app.goo.gl/9HnqRqXLUemcNhFZ6'],
+        '163': ['Pleternica', None, 'Ul. bana Josipa Jelačića 158a', 45.29963669769059, 17.79413628699891, 'https://maps.app.goo.gl/s7evkYMoWzUktBVW9'],
+        '157': ['Ston', None, 'Česvinica 1b', 42.84235907977462, 17.686028838398002, 'https://maps.app.goo.gl/7JGR6nN6iyvUvi7q7'],  # duplicate: https://maps.app.goo.gl/1H3d5DPyNCkbkFhRA
+        '156': ['Novalja', None, 'Čiponjac 1', 44.54641461592576, 14.894651244764516, 'https://maps.app.goo.gl/SS1m5HEusjWT3nXm7'],
+        '162': ['Vis', None, 'Dol 1a', 43.06239053243638, 16.168743485632934, 'https://maps.app.goo.gl/8z3UrybS485R6XeYA'],
+        '154': ['Varaždinske Toplice', None, 'Duga ulica 59a', 46.209133627746645, 16.43143691614249, 'https://maps.app.goo.gl/P3SFgDDgwsQQNqraA'],
+        '166': ['Donja Stubica', None, 'Golubovečka ulica 36b', 45.97947028595721, 15.983088922256542, 'https://maps.app.goo.gl/q3Rc5uQS2aoVgdcZ9'],
+        '161': ['Pregrada', None, 'Ul. Janka Leskovara 12/2', 46.15730035405038, 15.754314508322556, 'https://maps.app.goo.gl/zEn5uoqVv2XXJMiF6'],
+        '174': ['Ozalj', None, 'Karlovačka cesta 125a', 45.59741075285172, 15.486454981491486, 'https://maps.app.goo.gl/AoLbCK36cZi5JVVT9'],
+        '143': ['Krapinske Toplice', None, 'Klokovec 260a', 46.083467539077255, 15.839602371969521, 'https://maps.app.goo.gl/Z92t6PVEWGvSmchAA'],
+        '149': ['Novska', None, 'Ul. kralja Tomislava 65', 45.33455771344188, 16.97581775404504, 'https://maps.app.goo.gl/7dKmej4H9utnMB5x6'],
+        '148': ['Beli Manastir', None, 'Osječka ulica 1j', 45.76552400653511, 18.618697711815596, 'https://maps.app.goo.gl/z2hZihgzXwCufSYT7'],
+        '169': ['Pašman', None, 'Otočka cesta 14', 43.95767434761456, 15.368346297715508, 'https://maps.app.goo.gl/QKCH688NbendWvor6'],
+        '150': ['Pomer', None, 'Pomer 350c', 44.82681617434756, 13.889450726911042, 'https://maps.app.goo.gl/j493LJJRrW8u4Kdb7'],
+        '144': ['Privlaka', None, 'Put sv. Petra 2', 44.272403190855016, 15.132300087925959, 'https://maps.app.goo.gl/geGNApupSdp2XeYNA'],
+        '171': ['Rijeka-Drenova', None, 'Ul. Ružice Mihić 20', 45.35631595587295, 14.42658102655826, 'https://maps.app.goo.gl/uBuAxokQVhj5UdJX8'],
+        '172': ['Poreč-Žbandaj', None, 'Stancija Kaligari 2', 45.21235778404603, 13.671891687576649, 'https://maps.app.goo.gl/2D22QkAECCaJtWjX8'],
+        '153': ['Opatija-Volosko', None, 'Tošina ulica 16', 45.35417938581585, 14.321889950148488, 'https://maps.app.goo.gl/7X2EgVxtUQTnz92F8'],
+        '159': ['Čakovec', None, 'Ul. 34. inženjerijske bojne 2', 46.38895360476534, 16.449891091714992, 'https://maps.app.goo.gl/qp7WxGu2fdHgSUtA8'],
+        '168': ['Lepoglava', None, 'Varaždinska ulica 22d', 46.216164435370885, 16.05852936929623, 'https://maps.app.goo.gl/coRWY88WCsMLQcAu5'],  # needs verification
+        '175': ['Viškovo', None, 'Viškovo 32', 45.37798745424838, 14.385294572145968, 'https://maps.app.goo.gl/z6mHv5zbrrWcqMwMA'],  # needs verification
+        '147': ['Donji Miholjac', None, 'Vukovarska ulica 97b', 45.76018108709807, 18.184947556810513, 'https://maps.app.goo.gl/tWLXgDLHWdgNSJ6T7'],
+        '170': ['Vukovar', None, 'Zagrebačka ulica 1a', 45.339306120612875, 19.022855298478618, 'https://maps.app.goo.gl/NkNuMmogkqVW5e728'],
+        '167': ['Rijeka', None, 'Zametska ulica 96a', 45.34338853037967, 14.390086168797524, 'https://maps.app.goo.gl/kX7MC8cmUvw1k5ct5'],
+        '124': ['Korčula', None, 'Ul. Ante Starčevića 47', 42.953852588994906, 17.127595878067915, 'https://maps.app.goo.gl/WGJL1H71EGs8Lzbo8'],
+        '128': ['Prelog', None, 'Ul. Antuna Mihanovića 82', 46.342343078448785, 16.60032168198571, 'https://maps.app.goo.gl/V5fu1KNrAeNdzDes6'],
+        '120': ['Orebić', None, 'Ul. bana Josipa Jelačića 1b', 42.981190065819796, 17.195373165855514, 'https://maps.app.goo.gl/m61zGzuvnxPSHovTA'],
+        '117': ['Ploče', None, 'Crna rika 3', 43.052316305270615, 17.43925678311046, 'https://maps.app.goo.gl/M6hwZJeNGBnTGkcbA'],
+        '122': ['Posedarje', None, 'Jadranska ulica 44a', 44.21328213529827, 15.469742536461295, 'https://maps.app.goo.gl/WyQTR6GuuDYVVbvG9'],
+        '116': ['Jelsa', None, 'Jelsa 1081a', 43.16459968965512, 16.680409637537412, 'https://maps.app.goo.gl/DpwSE1o4rCdR8uM99'],
+        '142': ['Tribunj', None, 'Ulica Križine 10', 43.75954504873626, 15.75261483964487, 'https://maps.app.goo.gl/rn4b5b9G2fMLPMS28'],
+        '137': ['Rijeka', None, 'Labinska ulica 51a', 45.34258307933865, 14.37875351762983, 'https://maps.app.goo.gl/gu4MxNMscmNB4nfj9'],
+        '129': ['Zagreb', None, 'Ljubljanska avenija 2b', 45.799150879973375, 15.889043324595699, 'https://maps.app.goo.gl/JntbVnEVKWSnJVDM9'],
+        '126': ['Zaostrog', None, 'Ostroška 1a', 43.140903266553835, 17.281968194723394, 'https://maps.app.goo.gl/4XL9o1bnGeFgizp3A'],
+        '127': ['Murter', None, 'Pačipolje 20', 43.811408306171735, 15.603221939296578, 'https://maps.app.goo.gl/f5KkoyAe4D6GkkdG6'],
+        '136': ['Opuzen', None, 'Ul. Poduzetnička zona 1a', 43.01159029447937, 17.551744183854474, 'https://maps.app.goo.gl/MzEEPYMQ8SGTDkVx7'],
+        '131': ['Metković', None, 'Splitska ulica 28a', 43.05024329918749, 17.631408531744633, 'https://maps.app.goo.gl/z9zqAVwjs7adRiNe8'],
+        '118': ['Rijerka', None, 'Trninina ulica 3', 45.324418248677055, 14.44340946705987, 'https://maps.app.goo.gl/4JFdyKWoAzGiiTS1A'],
+        '140': ['Velika Gorica', None, 'Ul. kneza Ljudevita Posavskog 47', 45.716138518784554, 16.054935883322567, 'https://maps.app.goo.gl/1cTcsYUyenHMfh9LA'],
+        '125': ['Zagreb', None, 'Ul. Velimira Škorpika 11', 45.80432139451378, 15.85942138332311, 'https://maps.app.goo.gl/ZsQqnz6wv22z55gPA'],
+        '138': ['Korenica', None, 'Vranovača 80', 44.76574656931484, 15.692892506545592, 'https://maps.app.goo.gl/b3mQ7Kib3K32u6og9'],
+        '121': ['Makarska', None, 'Vrgorska ulica 2', 43.28421164916453, 17.033516850043092, 'https://maps.app.goo.gl/nscsQfUvAa3GmpAg7'],
+        '130': ['Vrbovec', None, 'Zagrebačka ulica 60', 45.88579091744173, 16.405179305060845, 'https://maps.app.goo.gl/GDV7VXW9eVN2Pqq69'],
+        '139': ['Sveti Ivan Zelina', None, 'Zagrebačka ulica 62', 45.951458986152105, 16.238249488241404, 'https://maps.app.goo.gl/szFvRdKLYSsowhoc9'],
+        '091': ['Pula', None, 'Stoja 14a', 44.861047586330905, 13.82301933978498, 'https://maps.app.goo.gl/YtQvD4ogfh694W4R6'],
+        '108': ['Rijeka', None, 'Ul. Martina Kontuša 5', 45.3242562149701, 14.470382833354797, 'https://maps.app.goo.gl/Ybq2SMzmcWRNabZF6'],
+        '090': ['Tar-Vabriga', None, 'Brajde 7', 45.296065278457, 13.618109272183275, 'https://maps.app.goo.gl/YWNnvbUk9p3maQmG8'],
+        '112': ['Matulji', None, 'Cesta dalmatinskih brigada 9a', 45.36286401977542, 14.316098227520822, 'https://maps.app.goo.gl/uc67x2Pa7Ki5T3cv8'],
+        '097': ['Kastav', None, 'Ćikovići 9b', 45.366148243824796, 14.352840890698792, 'https://maps.app.goo.gl/cEXhSJ1dSmeAtxQb6'],
+        '102': ['Poreč', None, 'Creska ulica 2a', 45.23751861927748, 13.60419408114382, 'https://maps.app.goo.gl/TiWbhmsogCamBD8f6'],
+        '093': ['Funtana', None, 'Istarska ulica 1p', 45.176829840041584, 13.607852039921148, 'https://maps.app.goo.gl/bHwLw6ak5NpQfhGk6'],
+        '095': ['Sveti Filip i Jakov', None, 'Jadranska cesta 78', 43.96550995655151, 15.421540098427103, 'https://maps.app.goo.gl/LmCqA6rHJjE7ZASX9'],
+        '099': ['Pakoštane', None, 'Jadranska magistrala 13', 43.915286285192636, 15.510230930355796, 'https://maps.app.goo.gl/VzyBaekJ9SJV9PeeA'],
+        '113': ['Žminj', None, 'Ulica Karlov vrt 2a', 45.14469783020723, 13.901496277323442, 'https://maps.app.goo.gl/S8np259GMjMx2SQWA'],
+        '110': ['Kali', None, 'Otočka cesta 10', 44.06732626549791, 15.199075573991427, 'https://maps.app.goo.gl/a6oztdJaRwzt7aPR6'],
+        '109': ['Pirovac', None, 'Pirovačka ulica 1a', 43.82554457103703, 15.658918944913435, 'https://maps.app.goo.gl/D4yayzjgNLaSBckQA'],
+        '107': ['Rogoznica', None, 'Podvornica 1', 43.543879825272704, 15.965914443009376, 'https://maps.app.goo.gl/Ek5KEhc98ttQ7irj6'],
+        '087': ['Nin', None, 'Prilaz dr. Franje Tuđmana 9', 44.238521756664824, 15.173871911547833, 'https://maps.app.goo.gl/dFabuLzFiQxrNJpH9'],
+        '106': ['Kaštel Sućurac', None, 'Ulica Satnije Putalj 5', 43.54902475781038, 16.411608388837525, 'https://maps.app.goo.gl/arCFdBUWyCk5EwM68'],
+        '088': ['Lovran', None, 'Šetalište maršala Tita 2a', 45.30179972393635, 14.279023957292372, 'https://maps.app.goo.gl/p7QtCxXs5EdFiPxe7'],
+        '096': ['Kaštel Štafilić', None, 'Škabrnjska ulica 14', 43.55014438017897, 16.323426885862197, 'https://maps.app.goo.gl/DjcfK7UEP3CsqX2U6'],
+        '101': ['Vodnjan', None, 'Ulica 1. maja 33 / Via 1. maggio 33', 44.953727185858135, 13.85220834622203, 'https://maps.app.goo.gl/gWFxgayxccTQufHM8'],
+        '098': ['Sukošan', None, 'Ulica dr. Franje Tuđmana 7', 44.05806008986692, 15.300645289682185, 'https://maps.app.goo.gl/ZukLntF1ggaurhRo7'],
+        '114': ['Strmec', None, 'Ul. kralja Tomislava 57', 45.80288651780345, 15.78614769262785, 'https://maps.app.goo.gl/LYNLXapPs4xqxLxr8'],
+        '111': ['Vrsar', None, 'Ulica sv. Martina 4a', 45.152148620179446, 13.617353165790512, 'https://maps.app.goo.gl/GpnDUXPY98VS3XSo7'],
+        '094': ['Labin', None, 'Zelenice 46', 45.09610255698357, 14.1158513711608, 'https://maps.app.goo.gl/31zfEJiPfQCcwM1R6'],
+        '064': ['Zaprešić', None, 'Ul. Ante Starčevića 21', 45.858575958582534, 15.799042743357997, 'https://maps.app.goo.gl/T3B71bsXfSpi2Esn9'],
+        '066': ['Kukuljanovo', None, 'Kukuljanovo 344', 45.335381957097255, 14.503854155604362, 'https://maps.app.goo.gl/CSbRXh4D1jCV4XZ26'],
+        '073': ['Zagreb', None, 'Ul. Karla Metikoša 4', 45.779637482547386, 16.002743857133265, 'https://maps.app.goo.gl/rSX5LcdugzAWo8CG7'],
+        '061': ['Rijeka', None, 'Zvonimirova ulica 3', 45.33780891244095, 14.406996527011326, 'https://maps.app.goo.gl/D5hMB6uQKdXLbpnn7'],
+        '075': ['Karlovac', None, 'Banija 88', 45.50527491629939, 15.550783864906768, 'https://maps.app.goo.gl/VzvCuMMmMYcDve9o7'],
+        '076': ['Novigrad', None, 'Carlotte Grisi 1', 45.31946089507067, 13.568586332020153, 'https://maps.app.goo.gl/tvMapaBDsdPsx6zo8'],
+        '062': ['Ludbreg', None, 'Gospodarska ulica 12', 46.242796083967214, 16.62953209664982, 'https://maps.app.goo.gl/6j6deHCo2AWADHap6'],
+        '067': ['Dugo Selo', None, 'Ul. Josipa Zorića 117', 45.806092911176165, 16.248376843465646, 'https://maps.app.goo.gl/VQQGYFWAknWXNcrK6'],
+        '084': ['Trogir', None, 'Kardinala Alojzija Stepinca 112', 43.51839667208809, 16.243643886421918, 'https://maps.app.goo.gl/ppWHnPYeEExiUtPP6'],
+        '083': ['Rab', None, 'Mundanije 12b', 44.76259151145309, 14.767407308362023, 'https://maps.app.goo.gl/9QVX6KW9SKrjAkeT8'],
+        '071': ['Medulin', None, 'Munida 3b', 44.82679261679932, 13.930977215695485, 'https://maps.app.goo.gl/znFpAPiTZ34XWPWY9'],
+        '086': ['Pula', None, 'Mutilska ulica 60b', 44.86181617887787, 13.862117704741513, 'https://maps.app.goo.gl/MbGQxrULWgTRGpRU8'],
+        '085': ['Fažana', None, 'Puljska cesta 20', 44.921398058450336, 13.80666873848114, 'https://maps.app.goo.gl/beEHGTkEqc64LD9y7'],
+        '074': ['Novalja', None, 'Ul. Silvija Strahimira Kranjčevića 4', 44.55236285542772, 14.886059055450266, 'https://maps.app.goo.gl/r14DL51t1oRZxUj77'],
+        '072': ['Senj', None, 'Stara cesta 9', 44.99113902067559, 14.90372262581103, 'https://maps.app.goo.gl/PttkNZ1kWftTR3ru7'],
+        '070': ['Malinska', None, 'Sveti Vid 200', 45.13413132780147, 14.545801195243289, 'https://maps.app.goo.gl/bVXePDohGJcaabsW8'],
+        '082': ['Pag', None, 'Ul. braće Andrijića 1', 44.4421899069806, 15.061763532955199, 'https://maps.app.goo.gl/aYq6infRm9yf7qcw9'],
+        '063': ['Jastrebarsko', None, 'Ul. Franje Tuđmana 83a', 45.663191553235436, 15.64506294420272, 'https://maps.app.goo.gl/hReKxjoMJBLrZM6v6'],
+        '068': ['Otočac', None, 'Ul. generala Nikole Maštrovića 8', 44.87226764564875, 15.23733056694111, 'https://maps.app.goo.gl/p4XZckyHhmroiu5t6'],
+        '081': ['Cres', None, 'Volnik 2', 44.96386954184467, 14.411774108847466, 'https://maps.app.goo.gl/Jmo4uZEN8WbrXXDs8'],
+        '065': ['Krk', None, 'Vršanska ulica 28', 45.03406741526232, 14.565773060320947, 'https://maps.app.goo.gl/DsDwH9kh6huUjJbL9'],
+        '069': ['Petrinja', None, 'Zagrebačka ulica 2b', 45.44122218645447, 16.268575328399475, 'https://maps.app.goo.gl/iYN6MUKeDExxGYhN9'],
+        '055': ['Zagreb', None, 'Ul. Mije Haleuša 1', 45.803758250404, 16.102221608832046, 'https://maps.app.goo.gl/JrKXLKWtzjNG2fa87'],
+        '054': ['Split', None, 'Put Pazdigrada 5', 43.508798592214625, 16.493378495298874, 'https://maps.app.goo.gl/Q3sj88oEAzArycJn7'],
+        '059': ['Novi Vinodolski', None, 'Ul. Antona Mataije 17', 45.13219305593459, 14.782805033917557, 'https://maps.app.goo.gl/oiJkRAdQdifZL4T19'],
+        '050': ['Rijeka', None, 'Ul. Bartola Kašića 7', 45.35546283423654, 14.365849417644029, 'https://maps.app.goo.gl/x8YytebU8NBxAswL8'],
+        '057': ['Biograd na Moru', None, 'Blaženog Alojzija Stepinca 3', 43.94244626243677, 15.455550449924006, 'https://maps.app.goo.gl/BJ7M4g7EqRNKC4Z19'],
+        '053': ['Osijek', None, 'Huttlerova ulica 30', 45.55311674368398, 18.71427334446513, 'https://maps.app.goo.gl/5sA4dv2EYc7KCfqx5'],
+        '056': ['Matulji', None, 'Kastavska cesta 19', 45.36628222446366, 14.331547952025955, 'https://maps.app.goo.gl/T9X1bD4gFxcLMPxX9'],
+        '051': ['Poreč', None, 'Ul. Mate Vlašića 38', 45.229900671797395, 13.616908011536488, 'https://maps.app.goo.gl/nskWkTbL5ot6qoHV9'],
+        '042': ['Čazma', None, 'Ul. Milana Novačića 15', 45.750752163037475, 16.615428628512532, 'https://maps.app.goo.gl/dj5h6pJKjjZC5vj76'],
+        '049': ['Ogulin', None, 'Nova cesta 28', 45.26464012607634, 15.220394747515622, 'https://maps.app.goo.gl/BqA1UdbDLieHaoTP6'],
+        '044': ['Varaždin', None, 'Optujska ulica 151', 46.31688240683089, 16.315985774867254, 'https://maps.app.goo.gl/Ye8zGp2QVg5PN8Pv8'],
+        '041': ['Požega', None, 'Osječka ulica 62h', 45.34253666525477, 17.69431506807323, 'https://maps.app.goo.gl/CeGFHmyemrhKsyii9'],
+        '046': ['Benkovac', None, 'Ul. Petra Zoranića 20', 44.03009966757674, 15.613800295451057, 'https://maps.app.goo.gl/wrMEpbaAC17dHyUf9'],
+        '048': ['Ivanić-Grad', None, 'Savska ulica 91', 45.69892178216037, 16.38718662412522, 'https://maps.app.goo.gl/ay66PanNMJpa8tGx5'],
+        '047': ['Slatina', None, 'Trg Ruđera Boškovića 16d', 45.70614758216846, 17.69846710436534, 'https://maps.app.goo.gl/gkhS6FGdcrrokKbL9'],
+        '060': ['Zabok', None, 'Josipa Broza Tita 6', 46.02177797307962, 15.905222322681624, 'https://maps.app.goo.gl/AcTgvMDDtGwrTgif7'],
+        '043': ['Čepin', None, 'Ulija kralja Zvonimira 6', 45.525015335537375, 18.576377645242708, 'https://maps.app.goo.gl/MRAS1ygrZ59ib3W76'],
+        '045': ['Zagreb', None, 'Ulica Vice Vukova 2', 45.773088588495746, 15.943041779296664, 'https://maps.app.goo.gl/xwZKjaXPzWWpqHYw7'],
+        '052': ['Ražine', None, 'Ul. Velimira Škorpika 16', 43.70851973849152, 15.909082840447534, 'https://maps.app.goo.gl/BoS41yByQLBSck656'],
+        '028': ['Valpovo', None, 'Bizovačka ulica 10', 45.650230217728925, 18.42005087466468, 'https://maps.app.goo.gl/RsprTxSNg5oJ1DZp6'],
+        '034': ['Gospić', None, 'Budačka ulica 25', 44.550755085341926, 15.37493109753124, 'https://maps.app.goo.gl/RjTcBeo2rvgZfmBY7'],
+        '033': ['Nova Gradiška', None, 'Ul. Grgura Ninskog 19', 45.25635735093004, 17.39327185361923, 'https://maps.app.goo.gl/GozjBLeQkAnj8evR6'],
+        '039': ['Vinkovci', None, 'Ul. Hrvoja Vukčića Hrvatinića 5', 45.283574682249586, 18.802835713232287, 'https://maps.app.goo.gl/HtEwjRhJzy5jNPdU8'],
+        '030': ['Osijek', None, 'Josipa Jurja Strossmayera 343', 45.5640012306061, 18.634504400251675, 'https://maps.app.goo.gl/5A5B7ACRU4hdFiHTA'],
+        '032': ['Našice', None, 'Ul. kralja Petra Krešimira IV 4b', 45.49887576944439, 18.096429390188973, 'https://maps.app.goo.gl/FNRf2WJ9Ub2hwZCP9'],
+        '031': ['Buzet', None, 'Naselje Korenika 1', 45.40979579229088, 13.974431527224318, 'https://maps.app.goo.gl/232J3mzXJURkdWMW9'],
+        '036': ['Đakovo', None, 'Ul. Petra Preradovića 96a', 45.29742528179516, 18.40991485245249, 'https://maps.app.goo.gl/g8RDo3RgJyAVWZ7N7'],
+        '040': ['Split', None, 'Put Supavla 15', 43.522533746446776, 16.435102251082252, 'https://maps.app.goo.gl/XUsXYhwRt5RdorwG9'],
+        '035': ['Pazin', None, 'Šime Kurelića 28', 45.240733880078935, 13.915191910562621, 'https://maps.app.goo.gl/QxUCQMRHPoUfzBrs5'],
+        '037': ['Križevci', None, 'Ul. kralja Tomislava 51', 46.014310734034524, 16.546425832571142, 'https://maps.app.goo.gl/MgtVghERnQUbkoRD9'],
+        '029': ['Pitomača', None, 'Trg kralja Tomislava 10', 45.9514007316974, 17.236293575075635, 'https://maps.app.goo.gl/qYm25MudSymWDbLP8'],
+        '027': ['Čakovec', None, 'Zagrebačka ulica 2', 46.38332080248521, 16.429686587225397, 'https://maps.app.goo.gl/678nRBAzaHd7aHYx8'],
+        '038': ['Kutina', None, 'Zagrebačka ulica 3', 45.48230220344012, 16.765393196089757, 'https://maps.app.goo.gl/MimvrJf1NBi55k7Q7'],
+        '026': ['Bjelovar', None, 'Pakračka ulica 7', 45.88881543330197, 16.848961408661676, 'https://maps.app.goo.gl/MJPc6PY8xr6UsVna9'],
+        '001': ['Viškovo', None, 'Marinići 182a', 45.371257928293545, 14.390289132457946, 'https://maps.app.goo.gl/qv9gGtXE4TaJFqmJ6'],
+        '008': ['Zagreb', None, 'I. Štefanovečki zavoj 10', 45.819137034253906, 16.042906520069135, 'https://maps.app.goo.gl/cnUdfijQEsyj6D4W9'],
+        '015': ['Zadar', None, 'Zagrebačka ulica 2', 44.113622920779946, 15.256148012984063, 'https://maps.app.goo.gl/MX1uQvrxePCspDoJA'],
+        '005': ['Zadar', None, 'Biogradska cesta 68', 44.10279143048548, 15.262373548586684, 'https://maps.app.goo.gl/8sjWzKA8MDZGBgAe7'],
+        '017': ['Varaždin', None, 'Gospodarska ulica 33', 46.29286104111553, 16.35427836062352, 'https://maps.app.goo.gl/CkKpwL9yqFEpyuYs8'],
+        '016': ['Koprivnica', None, 'Ul. Ivana Česmičkog 5a', 46.18286340604829, 16.83866651096861, 'https://maps.app.goo.gl/gqF1tguZeN9JsqW27'],
+        '011': ['Šibenik', None, 'Ul. Ivana Meštrovića 70', 43.753342452577854, 15.882160643839356, 'https://maps.app.goo.gl/oFhuF6uBeRRzoQh59'],
+        '012': ['Pula', None, 'Ul. Jurja Žakna 12', 44.879004904975, 13.864653795175345, 'https://maps.app.goo.gl/XZP8vyECADjjaMin6'],
+        '014': ['Zadar', None, 'Put Cerodola 1', 44.140117143291526, 15.229435318063786, 'https://maps.app.goo.gl/ensANvYb9tMV9QGR9'],
+        '018': ['Vodice', None, 'Put Gaćeleza 3', 43.767854288148264, 15.772276011079487, 'https://maps.app.goo.gl/tWp487z2qTvTKzYV6'],
+        '003': ['Rijeka', None, 'Ružićeva ulica 29', 45.330584821007925, 14.451969265916532, 'https://maps.app.goo.gl/ZC8kzfx6vXp1fQvs6'],
+        '022': ['Slavonski Brod', None, 'Sjeverna vezna cesta 31', 45.18016686158482, 18.009980527846064, 'https://maps.app.goo.gl/3q8fJy7Tw2KnBiEp8'],
+        '019': ['Sisak', None, 'Školska ulica 3', 45.465020508890305, 16.38152264214585, 'https://maps.app.goo.gl/CS8GMEGFcWeGDdFGA'],
+        '020': ['Labin', None, 'Štrmac 320', 45.12017191350602, 14.11999905939358, 'https://maps.app.goo.gl/hZQdgGw4VzrkH8NPA'],  # Plodine claims city is Nedešćina
+        '025': ['Rovinj', None, 'Ulica braće Božić 4b / Via fratelli Božić 4b', 45.079692950496046, 13.657158050733475, 'https://maps.app.goo.gl/EEsdxKzxQmcKr4g97'],
+        '013': ['Kostrena', None, 'Vrh Martinšćice 69d', 45.310669581823376, 14.484981358706507, 'https://maps.app.goo.gl/ogDW4BdM8uEdiXWn6'],
+        '023': ['Županja', None, 'Vukovarska ulica 10', 45.093698275052496, 18.70113342471684, 'https://maps.app.goo.gl/5EKCR4zXSTcwYPnq6'],
+        '021': ['Rijeka', None, 'Vukovarska ulica 87', 45.342969907778716, 14.413098202068605, 'https://maps.app.goo.gl/8uzBu2hh7w68srcy6'],
+        '024': ['Virovitica', None, 'Vukovarska cesta 5a', 45.821920522489364, 17.391986247516776, 'https://maps.app.goo.gl/RWwL3hfdz9moHEub9'],
+        '009': ['Crikvenica', None, 'Kotorska ulica 9', 45.17369719922677, 14.694680426475646, 'https://maps.app.goo.gl/Xk4gbYKWxKjMCE4v7'],
+        '010': ['Umag', None, 'Novigradska ulica 24', 45.42217892800304, 13.527048800612997, 'https://maps.app.goo.gl/xridzUpXbyBY5SvB8'],
+        '007': ['Rijeka', None, 'Osječka ulica 50', 45.34064457781753, 14.427690671283553, 'https://maps.app.goo.gl/ArcmHGm8Gyb1DP6fA'],
     },
     'tommy': {},
     'spar': {},
