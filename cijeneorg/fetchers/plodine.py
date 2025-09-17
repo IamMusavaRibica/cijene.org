@@ -34,7 +34,7 @@ def fetch_plodine_prices(plodine: Store, min_date: date):
                     logger.warning(f'unexpected file in Plodine zip: {filename}')
                     continue
 
-                market_type, *full_addr, store_id, _id, _ = filename.split('_')
+                market_type, *full_addr, location_id, _id, _ = filename.split('_')
                 full_addr = ' '.join(full_addr)
                 five_digit_nums = list(re.finditer(r'\b\d{5}\b', full_addr))
                 if not five_digit_nums:
@@ -52,6 +52,6 @@ def fetch_plodine_prices(plodine: Store, min_date: date):
                     rows = get_csv_rows(f.read())
                     for k in rows[1:]:
                         name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, *_ = k
-                        resolve_product(prod, barcode, plodine, store_id, name, discount_mpc or mpc, _qty, may2_price,
+                        resolve_product(prod, barcode, plodine, location_id, name, discount_mpc or mpc, _qty, may2_price,
                                         p.date)
     return prod
