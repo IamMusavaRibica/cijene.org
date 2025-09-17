@@ -1,6 +1,6 @@
 # https://cijene.org/
 
-Projekt za arhiviranje, pretraživanje i prikaz cijena prema Odluci NN 75/2025. **WORK IN PROGRESS!**  
+Projekt za arhiviranje, pretraživanje i prikaz cijena prema [Odluci NN 75/2025](https://narodne-novine.nn.hr/clanci/sluzbeni/2025_05_75_979.html). **WORK IN PROGRESS!**  
 
 Nadam se da će kod nekome biti koristan za svoje istraživanje. Ovaj repository objavljen je pod AGPL-3.0 licencom. Molim vas da date adekvatan credit (npr. [poveznica](https://github.com/IamMusavaRibica/cijene.org/)) tamo gdje je potrebno. Ako imate neke komentare ili prijedloge, otvorite prvo issue pa ćemo diskutirati
 
