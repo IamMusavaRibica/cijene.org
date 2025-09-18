@@ -74,6 +74,8 @@ ALL_STORES_BY_ID = {s.id: s for s in ALL_STORES}
 
 for store in ALL_STORES:
     for loc_id, loc_data in StoreLocations.get(store.id, {}).items():
+        if not loc_data:
+            continue
         city = loc_data[0]
         address = loc_data[2]
         lat, lng = map(lambda t: round(t, 6), loc_data[3:5])
