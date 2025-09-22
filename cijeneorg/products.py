@@ -52,11 +52,11 @@ AllProducts = {
     '3850334268532': (Margarin, 0.250),  # K-Plus
     '3856015314130': (Margarin, 0.300),  # Zvijezda TODO verify quantity
     '3856015301901': (Margarin, 0.250),  # Zvijezda
-    '3858882211499': (Margarin, 0.20000),# Zvijezda
+    '3858882211499': (Margarin, 20.0),# Zvijezda
     '3856015328625': (Margarin, 0.225),  # Omegol
-    '3858882211420': (Margarin, 0.20000), # Zvijezda
+    '3858882211420': (Margarin, 20.0), # Zvijezda
     '3856015305534': (Margarin, 0.250),
-    '3856015323989': (Margarin, 0.1000),
+    '3856015323989': (Margarin, 1.0),
     '3858892943618': (Margarin, 0.250),
     '3856015309105': (Margarin, 0.500),
     '3856015317421': (Margarin, 0.250),
