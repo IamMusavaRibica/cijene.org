@@ -4,7 +4,7 @@ CocaCola = Product(id='cocacola', name='Coca Cola', unit='l')
 CocaColaZero = Product(id='cocacolazero', name='Coca Cola Zero', unit='l')
 Majoneza = Product(id='majoneza', name='Majoneza', unit='kg')
 
-Margarin = Product(id='margarin', name='Margarin', unit='g')
+Margarin = Product(id='margarin', name='Margarin', unit='kg')
 
 GaziranaVoda = Product(id='gaziranavoda', name='Gazirana voda', unit='l')
 GaziranoPice = Product(id='gaziranopice', name='Gazirana pića', unit='l')
@@ -40,30 +40,33 @@ AllProducts = {
     # '3859888152014': [GaziranaVoda, 1.0],  # Jamnica
     # '3859888152045': [GaziranaVoda, 1.5],  # Jamnica
 
-    '3858883228885': (Margarin, 250),  # Bakina Kuhinja
-    '3858883227406': (Margarin, 500),  # Bakina Kuhinja
-    '3858883221077': (Margarin, 250),  # Bakina Kuhinja
-    '3856021223433': (Margarin, 250),  # S-BUDGET
-    '3858882210102': (Margarin, 250),  # Zvijezda
-    '3858882211611': (Margarin, 250),  # Zvijezda
-    '3858882210553': (Margarin, 500),  # Zvijezda
-    '3858882213677': (Margarin, 15),   # Margo
-    '3850334268556': (Margarin, 500),  # K-Plus
-    '3850334268532': (Margarin, 250),  # K-Plus
-    '3856015314130': (Margarin, 300),  # Zvijezda TODO verify quantity
-    '3856015301901': (Margarin, 250),  # Zvijezda
-    '3858882211499': (Margarin, 20000),# Zvijezda
-    '3856015328625': (Margarin, 225),  # Omegol
-    '3858882211420': (Margarin, 20000), # Zvijezda
-    '3856015305534': (Margarin, 250),
-    '3856015323989': (Margarin, 1000),
-    '3858892943618': (Margarin, 250),
-    '3856015309105': (Margarin, 500),
-    '3856015317421': (Margarin, 250),
-    '3858886938590': (Margarin, 250),
-    '3856015317384': (Margarin, 250),
-    '3856015327253': (Margarin, 400),
-    '3856015332844': (Margarin, 225 + 0.2*225),  # TODO verify quantity
-    '3856015327284': (Margarin, 225),
+    '3858883228885': (Margarin, 0.250),  # Bakina Kuhinja
+    '3858883227406': (Margarin, 0.500),  # Bakina Kuhinja
+    '3858883221077': (Margarin, 0.250),  # Bakina Kuhinja
+    '3856021223433': (Margarin, 0.250),  # S-BUDGET
+    '3858882210102': (Margarin, 0.250),  # Zvijezda
+    '3858882211611': (Margarin, 0.250),  # Zvijezda
+    '3858882210553': (Margarin, 0.500),  # Zvijezda
+    '3858882213677': (Margarin, 0.15),   # Margo
+    '3850334268556': (Margarin, 0.500),  # K-Plus
+    '3850334268532': (Margarin, 0.250),  # K-Plus
+    '3856015314130': (Margarin, 0.300),  # Zvijezda TODO verify quantity
+    '3856015301901': (Margarin, 0.250),  # Zvijezda
+    '3858882211499': (Margarin, 0.20000),# Zvijezda
+    '3856015328625': (Margarin, 0.225),  # Omegol
+    '3858882211420': (Margarin, 0.20000), # Zvijezda
+    '3856015305534': (Margarin, 0.250),
+    '3856015323989': (Margarin, 0.1000),
+    '3858892943618': (Margarin, 0.250),
+    '3856015309105': (Margarin, 0.500),
+    '3856015317421': (Margarin, 0.250),
+    '3858886938590': (Margarin, 0.250),
+    '3856015317384': (Margarin, 0.250),
+    '3856015327253': (Margarin, 0.400),
+    '3856015332844': (Margarin, 0.225 + 0.2*0.225),  # TODO verify quantity
+    '3856015327284': (Margarin, 0.225),
+    '3858882210171': (Margarin, 0.500),
+    '3858882210140': (Margarin, 0.250),
+
 
 }
