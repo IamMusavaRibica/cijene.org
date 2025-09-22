@@ -31,10 +31,10 @@ def xpath(w: str | bytes, query: str, extra_headers=None, return_root: bool = Fa
     return res
 
 
-def ensure_archived(pricelist: PriceList, return_it: bool = False, wayback: bool = True) -> bytes | None:
+def ensure_archived(pricelist: PriceList, return_it: bool = False, wayback: bool = True, force=False) -> bytes | None:
     # logger.debug(f'ensure_archived: {pricelist.url}')
     wayback and WaybackArchiver.archive(pricelist.url)
-    if not return_it and os.getenv('DO_NOT_FILL_MY_DISK') and pricelist.date < (date.today() - timedelta(days=2)):
+    if not return_it and (not force and os.getenv('DO_NOT_FILL_MY_DISK')) and pricelist.date < (date.today() - timedelta(days=2)):
         return
     return LocalArchiver.fetch(pricelist, return_it)
 
