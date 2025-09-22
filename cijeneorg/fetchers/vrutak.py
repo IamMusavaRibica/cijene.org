@@ -35,9 +35,10 @@ def fetch_vrutak_prices(vrutak: Store, min_date: date):
             continue
         for item in XML(xml_data).findall('item'):
             name = item.findtext('naziv')
+            brand = item.findtext('marka')
             mpc = item.findtext('mpcijena')
             barcode = item.findtext('barkod')
             _qty = item.findtext('nettokolicina')
-            resolve_product(prod, barcode, vrutak, p.location_id, name, mpc, _qty, None, p.date)
+            resolve_product(prod, barcode, vrutak, p.location_id, name, brand, mpc, _qty, None, p.date)
 
     return prod

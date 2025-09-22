@@ -36,6 +36,6 @@ def fetch_croma_prices(croma: Store, min_date: date):
                     rows = get_csv_rows(f.read())
                     for k in rows:  # no header here
                         name, _id, _, unit, mpc, null, barcode, category = k
-                        resolve_product(prod, barcode, croma, p.location_id, name, mpc, None, None, p.date)
+                        resolve_product(prod, barcode, croma, p.location_id, name, None, mpc, None, None, p.date)
 
     return prod

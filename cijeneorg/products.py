@@ -4,6 +4,11 @@ CocaCola = Product(id='cocacola', name='Coca Cola', unit='l')
 CocaColaZero = Product(id='cocacolazero', name='Coca Cola Zero', unit='l')
 Majoneza = Product(id='majoneza', name='Majoneza', unit='kg')
 
+Margarin = Product(id='margarin', name='Margarin', unit='g')
+
+GaziranaVoda = Product(id='gaziranavoda', name='Gazirana voda', unit='l')
+GaziranoPice = Product(id='gaziranopice', name='Gazirana pića', unit='l')
+
 AllProducts = {
     # '3830065022566': [CocaCola, 0.33], # pepsi cola 0.33 l
     '5449000000286': [CocaCola, 2.0],  # classic 2 l
@@ -30,4 +35,35 @@ AllProducts = {
     '5449000241078': [CocaColaZero, 0.9],  # zero 6x0.15 l
 
     '3859888668188': [Majoneza, 0.62],  # Zvijezda
+
+    # '3859888152113': [GaziranaVoda, 0.5],  # Jamnica
+    # '3859888152014': [GaziranaVoda, 1.0],  # Jamnica
+    # '3859888152045': [GaziranaVoda, 1.5],  # Jamnica
+
+    '3858883228885': (Margarin, 250),  # Bakina Kuhinja
+    '3858883227406': (Margarin, 500),  # Bakina Kuhinja
+    '3858883221077': (Margarin, 250),  # Bakina Kuhinja
+    '3856021223433': (Margarin, 250),  # S-BUDGET
+    '3858882210102': (Margarin, 250),  # Zvijezda
+    '3858882211611': (Margarin, 250),  # Zvijezda
+    '3858882210553': (Margarin, 500),  # Zvijezda
+    '3858882213677': (Margarin, 15),   # Margo
+    '3850334268556': (Margarin, 500),  # K-Plus
+    '3850334268532': (Margarin, 250),  # K-Plus
+    '3856015314130': (Margarin, 300),  # Zvijezda TODO verify quantity
+    '3856015301901': (Margarin, 250),  # Zvijezda
+    '3858882211499': (Margarin, 20000),# Zvijezda
+    '3856015328625': (Margarin, 225),  # Omegol
+    '3858882211420': (Margarin, 20000), # Zvijezda
+    '3856015305534': (Margarin, 250),
+    '3856015323989': (Margarin, 1000),
+    '3858892943618': (Margarin, 250),
+    '3856015309105': (Margarin, 500),
+    '3856015317421': (Margarin, 250),
+    '3858886938590': (Margarin, 250),
+    '3856015317384': (Margarin, 250),
+    '3856015327253': (Margarin, 400),
+    '3856015332844': (Margarin, 225 + 0.2*225),  # TODO verify quantity
+    '3856015327284': (Margarin, 225),
+
 }

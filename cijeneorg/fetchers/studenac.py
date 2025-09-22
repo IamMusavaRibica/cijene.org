@@ -66,7 +66,7 @@ def fetch_studenac_prices(studenac: Store, min_date: date):
                                     .replace(' 2*2L', ' 4 l')
                                     .replace(' 150 ML 12/1', ' 1,8 l'))
 
-                            resolve_product(prod, barcode, studenac, location_id, name, discount_mpc or mpc, _qty,
+                            resolve_product(prod, barcode, studenac, location_id, name, brand, discount_mpc or mpc, _qty,
                                             may2_price, p.date)
 
     # restore the original method

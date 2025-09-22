@@ -31,6 +31,6 @@ def fetch_travelfree_prices(travelfree: Store, min_date: date):
         rows = get_csv_rows(ensure_archived(p, True))
         for k in rows[1:]:
             name, _id, brand, _qty, unit, mpc, ppu, barcode, category = k
-            resolve_product(prod, barcode, travelfree, p.location_id, name, mpc, _qty, None, p.date)
+            resolve_product(prod, barcode, travelfree, p.location_id, name, brand, mpc, _qty, None, p.date)
 
     return prod

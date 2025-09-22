@@ -62,6 +62,7 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
         for k in rows[1:]:
             qty = None
             may2_price = None
+            brand = None
             if header == 'Artikl Šifra;Barcode;Pdv %;Naziv artikla / usluge;MPC':
                 _id, barcode, vat, name, mpc = k
             elif header == 'Artikl;Pdv %;Naziv grupe artikla;Barcode;Naziv artikla / usluge;Mpc':
@@ -75,6 +76,6 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
                 continue
             if '+' in barcode:  # scientific notation for barcode, really ?
                 continue
-            resolve_product(prod, barcode, zabac, t.location_id, name, mpc, qty, may2_price, t.date)
+            resolve_product(prod, barcode, zabac, t.location_id, name, brand, mpc, qty, may2_price, t.date)
 
     return prod

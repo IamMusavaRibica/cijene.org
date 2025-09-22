@@ -34,6 +34,6 @@ def fetch_bakmaz_prices(bakmaz: Store, min_date: date):
         rows = get_csv_rows(ensure_archived(t, True, wayback=False))
         for k in rows[1:]:
             name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-            resolve_product(prod, barcode, bakmaz, t.location_id, name, discount_mpc or mpc, _qty, may2_price, t.date)
+            resolve_product(prod, barcode, bakmaz, t.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, t.date)
 
     return prod

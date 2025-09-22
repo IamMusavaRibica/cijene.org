@@ -107,5 +107,5 @@ def process_single(p: PriceList, ribola: Store):
             #     if barcode in AllProducts:
             #         logger.warning(f'didnt parse product {barcode} `{name}` {_qty =}')
 
-            resolve_product(coll, barcode, ribola, location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+            resolve_product(coll, barcode, ribola, location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
     return coll

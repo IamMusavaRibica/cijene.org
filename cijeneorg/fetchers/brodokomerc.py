@@ -32,7 +32,7 @@ def fetch_brodokomerc_prices(brodokomerc: Store, min_date: date):
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             name, _id, brand, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-            resolve_product(prod, barcode, brodokomerc, p.location_id, name, discount_mpc or mpc, _qty, may2_price,
+            resolve_product(prod, barcode, brodokomerc, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price,
                             p.date)
 
     return prod

@@ -29,6 +29,6 @@ def fetch_tobylex_prices(tobylex: Store, min_date: date):
             val1, val2, name, mpc = k
             barcode = val1 or val2
             if barcode:
-                resolve_product(prod, barcode, tobylex, 'WEBSHOP', name, mpc, None, None, p.date)
+                resolve_product(prod, barcode, tobylex, 'WEBSHOP', name, None, mpc, None, None, p.date)
 
     return prod

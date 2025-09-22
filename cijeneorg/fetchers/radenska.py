@@ -21,6 +21,6 @@ def fetch_radenska_prices(radenska: Store, min_date: date):
         for k in rows[1:]:
             name, _id, brand, _qty, unit0, mpc, A_means_discount, base_unit, unit1, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
             may2_price = may2_price.removeprefix('MPC 2.5.2025=').rstrip('€?')
-            resolve_product(prod, barcode, radenska, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+            resolve_product(prod, barcode, radenska, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

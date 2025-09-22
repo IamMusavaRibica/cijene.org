@@ -42,7 +42,7 @@ def fetch_trgocentar_prices(trgocentar: Store, min_date: date):
             may2_price = item.findtext('c_020525')
             barcode = item.findtext('ean_kod')
             category = item.findtext('naz_kat')
-            resolve_product(prod, barcode, trgocentar, p.location_id, name, discount_mpc or mpc, _qty, may2_price,
+            resolve_product(prod, barcode, trgocentar, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price,
                             p.date)
 
     return prod

@@ -30,6 +30,6 @@ def fetch_rotodinamic_prices(rotodinamic: Store, min_date: date):
                 continue
             # same pricelist for all those cash&carry locations
             for loc_id in 'D01 D28 D34 D18 D22 D13 D26 D11 D09'.split():
-                resolve_product(prod, barcode, rotodinamic, loc_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+                resolve_product(prod, barcode, rotodinamic, loc_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

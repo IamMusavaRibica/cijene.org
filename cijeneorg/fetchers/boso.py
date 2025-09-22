@@ -79,5 +79,5 @@ def fetch_boso_prices(boso: Store, min_date: date):
             while '  ' in name:
                 name = name.replace('  ', ' ')
 
-            resolve_product(prod, barcode, boso, t.location_id, name, price, None, may2_price, t.date)
+            resolve_product(prod, barcode, boso, t.location_id, name, brand, price, None, may2_price, t.date)
     return prod

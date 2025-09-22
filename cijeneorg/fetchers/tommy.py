@@ -64,9 +64,9 @@ def fetch_tommy_prices(tommy: Store, min_date: date):
 def fetch_single(p: PriceList, tommy: Store):
     rows = get_csv_rows(ensure_archived(p, True, wayback=False))
 
-    coll = []
+    prod = []
     for k in rows[1:]:
         # last two are: DATUM_ULASKA_NOVOG_ARTIKLA, PRVA_CIJENA_NOVOG_ARTIKLA
         barcode, _id, name, brand, category, unit, _qty, mpc, discount_mpc, ppu, last_30d_mpc, may2_price, _, _ = k
-        resolve_product(coll, barcode, tommy, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
-    return coll
+        resolve_product(prod, barcode, tommy, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
+    return prod

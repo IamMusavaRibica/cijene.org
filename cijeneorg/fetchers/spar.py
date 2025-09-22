@@ -82,5 +82,5 @@ def fetch_single(p: PriceList, spar: Store) -> list[ProductOffer]:
     prod = []
     for k in rows[1:]:
         name, _id, brand, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-        resolve_product(prod, barcode, spar, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+        resolve_product(prod, barcode, spar, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
     return prod

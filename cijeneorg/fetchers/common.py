@@ -55,10 +55,16 @@ def get_csv_rows(raw: bytes) -> list[list[str]]:
     return rows
 
 
-def resolve_product(coll: list, barcode: str, store: Store, location_id: str, name: str, price: float | str,
+def resolve_product(coll: list, barcode: str, store: Store, location_id: str, name: str, brand: str, price: float | str,
                     quantity: float, may2_price: float | None, offer_date: date) -> bool:
     barcode = barcode.strip().lstrip('0')
     if barcode not in AllProducts:
+        nl = name.lower()
+        for keyword in ('margarin', ):
+            if keyword in nl:
+                logger.debug(f'Found new product! {store.id} {location_id}: {barcode}, {name}, {price=}, ')
+
+
         return False
     price = fix_price(price)
     may2_price = fix_price(may2_price)

@@ -24,5 +24,5 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             barcode, name, unit, mpc, _datum, _tekst, ppu, _stajeovo, _valuta, may2_price, *_konst = k
-            resolve_product(prod, barcode, lorenco, p.location_id, name, mpc, None, may2_price, p.date)
+            resolve_product(prod, barcode, lorenco, p.location_id, name, None, mpc, None, may2_price, p.date)
     return prod

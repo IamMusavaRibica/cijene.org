@@ -52,5 +52,5 @@ def fetch_ktc_prices(ktc: Store, min_date: date):
             name, _id, brand, _qty, units, mpc, ppu, barcode, category, last_30d_mpc, discount_mpc = k
             barcode = barcode.strip("'")
             price = float(discount_mpc) or float(mpc)
-            resolve_product(prod, barcode, ktc, p.location_id, name, price, _qty, None, p.date)
+            resolve_product(prod, barcode, ktc, p.location_id, name, brand, price, _qty, None, p.date)
     return prod

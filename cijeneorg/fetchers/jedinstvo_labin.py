@@ -26,6 +26,6 @@ def fetch_jedinstvo_labin_prices(jedinstvo_labin: Store, min_date: date):
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             name, _id, brand, _qty, unit2, mpc, ppu, barcode, category = map(str.strip, k)
-            resolve_product(prod, barcode, jedinstvo_labin, p.location_id, name, mpc, _qty, None, p.date)
+            resolve_product(prod, barcode, jedinstvo_labin, p.location_id, name, brand, mpc, _qty, None, p.date)
 
     return prod

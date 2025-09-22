@@ -110,5 +110,5 @@ def process_single(konzum: Store, p: PriceList):
         # za konzum, unit == 'ko' za pakirane proizvode, 'kg' za proizvode u rinfuzi
         name, _id, brand, total_qty, _, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
         quantity, unit = total_qty.split()
-        resolve_product(coll, barcode, konzum, p.location_id, name, discount_mpc or mpc, quantity, may2_price, p.date)
+        resolve_product(coll, barcode, konzum, p.location_id, name, brand, discount_mpc or mpc, quantity, may2_price, p.date)
     return coll

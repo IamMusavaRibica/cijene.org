@@ -57,6 +57,6 @@ def fetch_kaufland_prices(kaufland: Store, min_date: date):
             # may2_price = may2_price.removeprefix('MPC 2.5.2025=').removesuffix('€')
             # TODO: kaufland has `MPC 21.5.2025=3,89` somewhere
             may2_price = may2_price.rsplit('=')[-1].removesuffix('€')
-            resolve_product(prod, barcode, kaufland, p.location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
+            resolve_product(prod, barcode, kaufland, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod
