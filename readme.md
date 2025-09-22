@@ -46,3 +46,9 @@ za cronjob:
 ```
 ovo će restartati server svaki dan u 8:05 i 20:05. **sve trgovine ažuriraju cjenike do 8:00**. promijenite ovo vrijeme u cronjobu po želji, **pripazite na vremenske zone** ovisno o tome gdje se vaš server nalazi    
 naravno `/REPOSITORY/` zamijenite putanjem do direktorija gdje ste klonirali repo
+
+
+## AI disclaimer
+
+Ovaj kod je djelomično generiran korištenjem pomoću umjetne inteligecije, uglavnom za dizajn i funkcionalnost stranice
+(HTML i JavaScript). Popis pojedinih trgovina i proizvoda u potpunosti je odrađen ručno.
