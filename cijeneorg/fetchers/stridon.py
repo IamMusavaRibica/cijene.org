@@ -1,4 +1,3 @@
-from angr.procedures.posix.getenv import getenv
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
