@@ -47,7 +47,7 @@ AllProducts = {
     '3858882210102': (Margarin, 0.250),  # Zvijezda
     '3858882211611': (Margarin, 0.250),  # Zvijezda
     '3858882210553': (Margarin, 0.500),  # Zvijezda
-    '3858882213677': (Margarin, 0.15),   # Margo
+    '3858882213677': (Margarin, 0.015),   # Margo
     '3850334268556': (Margarin, 0.500),  # K-Plus
     '3850334268532': (Margarin, 0.250),  # K-Plus
     '3856015314130': (Margarin, 0.300),  # Zvijezda TODO verify quantity
