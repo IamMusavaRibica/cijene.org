@@ -19,19 +19,28 @@ def fetch_stridon_prices(stridon: Store, min_date: date):
 
 
     # Temporary code, just for archival!
+    import requests
     for value in xpath(index_url, '//option[contains(@value, "Prod.")]/@value'):
         #
-        logger.debug(f'found value: {value}')
-        for i in range(date(2025, 5, 15).toordinal(), date.today().toordinal()):
-            d = datetime.fromordinal(i)
-            filename = value + '_' + d.strftime('%d%m%Y') + '.csv'
-            full_url = 'https://stridon.hr/cijene-csv/' + filename
-
-            location_id, market_type, *address, city, _ = filename.removesuffix('.csv').split('_')
-            p = PriceList(full_url, address, city, stridon.id, location_id, d, filename)
+        req = requests.get(index_url, params={'pageName': 'archeive', 'archive_file_name': value})
+        for href in xpath(req.text, '//a[contains(@href, ".csv")]/@href'):
+            # logger.debug(f'new href: {href}   for   {value}')
+            filename = href.rsplit('/', 1)[-1]
+            location_id, market_type, *address, city, datestr = filename.removesuffix('.csv').split('_')
+            address = ' '.join(address)
+            dt = datetime.strptime(datestr, '%d%m%Y')
+            p = PriceList(href, address, city, stridon.id, location_id, dt, filename)
             ensure_archived(p, force=True)
-        # p = PriceList(full_url)
 
+
+
+        # for i in range(date(2025, 5, 15).toordinal(), date.today().toordinal()):
+        #     d = datetime.fromordinal(i)
+        #     filename = value + '_' + d.strftime('%d%m%Y') + '.csv'
+        #     full_url = 'https://stridon.hr/cijene-csv/' + filename
+        #
+        #     location_id, market_type, *address, city, _ = filename.removesuffix('.csv').split('_')
+        #     p = PriceList(full_url, address, city, stridon.id, location_id, d, filename)
 
     actual = extract_offers_since(stridon, coll, min_date)
 
