@@ -100,12 +100,12 @@ def process_single(p: PriceList, ribola: Store):
                     .replace(' 5+1 GRATIS LIM.', '')
                     .replace(' GAZIRANI SOK', ''))
 
-            try:
-                *_, _qty, unit = name.rsplit(maxsplit=2)
-                quantity = float(_qty.replace(',', '.'))
-            except ValueError:  # can be thrown when unpacking or converting to float fails
-                if barcode in AllProducts:
-                    logger.warning(f'didnt parse product {barcode} `{name}` {_qty =}')
+            # try:
+            #     *_, _qty, unit = name.rsplit(maxsplit=2)
+            #     quantity = float(_qty.replace(',', '.'))
+            # except ValueError:  # can be thrown when unpacking or converting to float fails
+            #     if barcode in AllProducts:
+            #         logger.warning(f'didnt parse product {barcode} `{name}` {_qty =}')
 
             resolve_product(coll, barcode, ribola, location_id, name, discount_mpc or mpc, _qty, may2_price, p.date)
     return coll
