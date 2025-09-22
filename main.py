@@ -60,7 +60,7 @@ logger.info('Config days_back: {}', cfg.days_back)
 provider = get_provider(cfg)
 
 
-@app.get('/')
+@app.api_route('/', methods=['GET', 'HEAD'])
 async def read_root(request: Request):
     return TemplateResponse('index.html', {'request': request})
 
