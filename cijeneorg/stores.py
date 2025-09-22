@@ -22,6 +22,7 @@ from cijeneorg.fetchers import (
     fetch_ribola_prices,
     fetch_rotodinamic_prices,
     fetch_spar_prices,
+    fetch_stridon_prices,
     fetch_studenac_prices,
     fetch_tobylex_prices,
     fetch_tommy_prices,
@@ -65,10 +66,11 @@ Croma       = Store(name='Croma-Varaždin',  url='https://croma.com.hr/',       
 Travelfree  = Store(name='Travel FREE',     url='https://travelfree.hr/',           fetch_prices=fetch_travelfree_prices, id='travelfree')
 Tobylex     = Store(name='Tobylex',         url='https://tobylex.net/',             fetch_prices=fetch_tobylex_prices)
 DM          = Store(name="DM",              url="https://www.dm.hr/",               fetch_prices=fetch_dm_prices)
+Stridon     = Store(name='Stridon',         url='https://www.stridon.hr/',          fetch_prices=fetch_stridon_prices)
 
 ALL_STORES = [Tommy, Konzum, Spar, Studenac, Ribola, Lidl, Plodine, Eurospin, Kaufland, Metro, Boso, NTL, KTC,
               TrgovinaKrk, Bakmaz, DjeloVodice, Djelo, Zabac, Vrutak, Bure, Jadranka, Trgocentar, Lorenco, Rotodinamic,
-              Brodokomerc, Radenska, JedinstvoLabin, Croma, Travelfree, Tobylex, DM]
+              Brodokomerc, Radenska, JedinstvoLabin, Croma, Travelfree, Tobylex, DM, Stridon]
 
 ALL_STORES_BY_ID = {s.id: s for s in ALL_STORES}
 

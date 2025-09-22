@@ -21,6 +21,7 @@ from .radenska import fetch_radenska_prices
 from .ribola import fetch_ribola_prices
 from .rotodinamic import fetch_rotodinamic_prices
 from .spar import fetch_spar_prices
+from .stridon import fetch_stridon_prices
 from .studenac import fetch_studenac_prices
 from .tobylex import fetch_tobylex_prices
 from .tommy import fetch_tommy_prices

@@ -92,7 +92,7 @@ async def read_product_page(request: Request, proizvod_id: str):
         _start = time.perf_counter()
         # offers = provider.get_offers_by_product(product, on_date=the_date)
         offers = provider.get_offers_by_product_grouped(product, on_date=the_date, predicate=predicate)
-        logger.info(f'Database query took {time.perf_counter() - _start:.3f} seconds')
+        logger.info(f'Database query took {time.perf_counter() - _start:.3f} seconds. Returned {len(offers)} offers.')
         return TemplateResponse('product_page.html', {
             'request': request, 'product': product, 'offers': offers
         })
