@@ -11,9 +11,15 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
     for a in xpath(index_url, '//a[contains(@href, ".csv")]'):
         href = a.get('href')
         filename = href.split('/')[-1]
-        dt_str = (a.text.removeprefix('Cijenik ')
-                  .removeprefix('Cjenik ')  # in case they become literate
-                  .removeprefix('Cijene '))
+        dt_str = (a.text.removeprefix('Cijenik')
+                  .removeprefix('Cjenik')
+                  .removeprefix('Cijene')
+                  .removeprefix('_')
+                  .lstrip())
+        if dt_str.endswith('2025'):
+            dt_str += '.'
+        if not dt_str.endswith('2025.'):
+            dt_str += '2025.'
         dt = datetime.strptime(dt_str.rstrip('.'), '%d.%m.%Y')
         coll.append(PriceList(href, None, None, lorenco.id, 'X', dt, filename))
 
