@@ -15,6 +15,7 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
                   .removeprefix('Cjenik')
                   .removeprefix('Cijene')
                   .removeprefix('_')
+                  .removesuffix('2024.')
                   .lstrip())
         if dt_str.endswith('2025'):
             dt_str += '.'
