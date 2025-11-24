@@ -22,7 +22,8 @@ def fetch_brodokomerc_prices(brodokomerc: Store, min_date: date):
                       'F.+BELULOVICA+5.': 'Ulica Franje Belulovića 5',
                   }.get(address) or fix_address(address.replace('+', ' '))
         date_str = date_str.replace('_', '')
-        dt = datetime.strptime(date_str, '%d%m%Y%H%M%S.csv')
+        #                      fix 16112025071919+%281%29.csv
+        dt = datetime.strptime(date_str.split('+')[0], '%d%m%Y%H%M%S.csv')
         coll.append(PriceList(href, address, city, brodokomerc.id, location_id, dt, filename))
 
     actual = extract_offers_since(brodokomerc, coll, min_date)
