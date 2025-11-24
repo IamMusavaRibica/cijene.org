@@ -175,7 +175,9 @@ class _LocalArchiverImpl:
             return self._download_file(url, **kwargs, verify=False)
         except requests.exceptions.ChunkedEncodingError as e:
             logger.error(f'ChunkedEncodingError while downloading {url}: {e!r}')
-            raise e
+            logger.error(f'Retrying in 30 seconds!')
+            return self._download_file(url, **kwargs)
+            # raise e
         response.raise_for_status()
         return response.content
 
