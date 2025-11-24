@@ -13,7 +13,10 @@ from cijeneorg.utils import DDMMYYYY_dots, fix_city
 def fetch_lidl_prices(lidl: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://tvrtka.lidl.hr/cijene')
     coll = []
-    for p in xpath(index_url, '//a[starts-with(@href, "https://tvrtka.lidl.hr/content/download/")]/..'):
+    # TODO: a single request instead of two
+    # /content/download up until 12.11.2025. /file/download after that
+    for p in xpath(index_url, '//a[starts-with(@href, "https://tvrtka.lidl.hr/content/download/")]/..') \
+            + xpath(index_url, '//a[starts-with(@href, "https://tvrtka.lidl.hr/file/download/")]/..'):
         if m := DDMMYYYY_dots.findall(p.text):
             day, month, year = map(int, *m)
             dt = datetime(year, month, day)
