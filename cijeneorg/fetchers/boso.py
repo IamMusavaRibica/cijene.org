@@ -61,11 +61,11 @@ def fetch_boso_prices(boso: Store, min_date: date):
             logger.exception(e)
             continue
 
-    actual = extract_offers_since(boso, coll, min_date)
+    actual = extract_offers_since(boso, coll, min_date, wayback=False)
 
     prod = []
     for t in actual:
-        rows = get_csv_rows(ensure_archived(t, True))
+        rows = get_csv_rows(ensure_archived(t, True, wayback=False))
         for k in rows[1:]:
             *name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
             barcode = barcode.lstrip('0')

@@ -57,7 +57,7 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
     prod = []
     warned = False
     for t in coll:
-        rows = get_csv_rows(ensure_archived(t, True))
+        rows = get_csv_rows(ensure_archived(t, True, wayback=False))
         header = ';'.join(rows[0])
         for k in rows[1:]:
             qty = None

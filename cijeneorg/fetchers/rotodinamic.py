@@ -10,17 +10,23 @@ from cijeneorg.models import Store
 def fetch_rotodinamic_prices(rotodinamic: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://www.rotodinamic.hr/cjenici/')
     coll = []
-    for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href'):
-        filename = href.rsplit('/', 1)[-1]
-        *_, date_str, time_str = href.rsplit(', ')
-        dt = datetime.strptime(f'{date_str} {time_str}', '%d.%m.%Y %H.%M.csv')
-        coll.append(PriceList(href, '(sve poslovnice)', None, rotodinamic.id, None, dt, filename))
 
-    actual = extract_offers_since(rotodinamic, coll, min_date, wayback=True)
+    i = 0
+    for date_url in xpath(index_url, '//a[contains(@href, "?date=")]/@href'):
+        i += 1
+        if i < 4:
+            WaybackArchiver.archive(date_url)
+        for href in xpath(date_url, '//a[contains(@href, ".csv")]/@href'):
+            filename = href.rsplit('/', 1)[-1]
+            *_, date_str, time_str = href.rsplit(', ')
+            dt = datetime.strptime(f'{date_str} {time_str}', '%d.%m.%Y %H.%M.csv')
+            coll.append(PriceList(href, '(sve poslovnice)', None, rotodinamic.id, None, dt, filename))
+
+    actual = extract_offers_since(rotodinamic, coll, min_date, wayback=False)
 
     prod = []
     for p in actual:
-        rows = get_csv_rows(ensure_archived(p, True))
+        rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             try:
                 _id, name, category, brand, barcode, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, *_ = k
@@ -29,6 +35,7 @@ def fetch_rotodinamic_prices(rotodinamic: Store, min_date: date):
                 logger.exception(e)
                 continue
             # same pricelist for all those cash&carry locations
+            # TODO: ^ not anymore!
             for loc_id in 'D01 D28 D34 D18 D22 D13 D26 D11 D09'.split():
                 resolve_product(prod, barcode, rotodinamic, loc_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
 

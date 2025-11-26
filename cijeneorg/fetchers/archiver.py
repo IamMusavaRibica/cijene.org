@@ -30,11 +30,12 @@ class PriceList:
 
 class _WaybackArchiverImpl:
     options: dict = {
-        'capture_all': 'on',
+        'capture_all': '1',
         'capture_outlinks': '1',
         'skip_first_archive': '1',
         'if_not_archived_within': '6h',
         'delay_wb_availability': '1',
+        'js_behavior_timeout': '0'
     }
     _headers: dict
     _thread: Thread
@@ -57,7 +58,7 @@ class _WaybackArchiverImpl:
 
     def archive(self, url: str):
         self._ready and self._queue.put(url)
-        # logger.debug(f'Save Page Now queued {url}')
+        logger.debug(f'Save Page Now queued {url}')
         # if not self._ready:
         #     raise RuntimeError('WaybackArchiver.archive(url) called before initialize()')
         # self._queue.put(url)
@@ -80,7 +81,7 @@ class _WaybackArchiverImpl:
                 self._queue.task_done()
                 break
 
-            if self._stop and self._stop.wait(31):
+            if self._stop and self._stop.wait(81):
                 self._queue.task_done()
                 break
 
@@ -89,6 +90,8 @@ class _WaybackArchiverImpl:
                 data = {'url': url, **self.options}
                 if 'zabac' in url:  # zabac is weird, better archive everything for now
                     del data['if_not_archived_within']
+                if 'kaufland' in url or 'spar.hr/datoteke_cjenici/index' in url:  # they load price lists dynamically
+                    data['js_behavior_timeout'] = '20'
                 r = requests.post(
                     'https://web.archive.org/save',
                     headers=self._headers,

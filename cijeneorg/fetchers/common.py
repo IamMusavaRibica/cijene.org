@@ -62,7 +62,8 @@ def resolve_product(coll: list, barcode: str, store: Store, location_id: str, na
         nl = name.lower()
         for keyword in ('margarin', ):
             if keyword in nl:
-                logger.debug(f'Found new product! {store.id} {location_id}: {barcode}, {name}, {price=}, ')
+                pass
+                # logger.debug(f'Found new product! {store.id} {location_id}: {barcode}, {name}, {price=}, ')
 
 
         return False
@@ -91,6 +92,7 @@ def extract_offers_since(store: Store, pricelists: list[PriceList], min_date: da
         logger.warning(f'no {store.id} price lists found')
         return []
     logger.info(f'found {len(pricelists)} {store.id} price lists')
+    # logger.debug(f'wayback preference for {store.id}: {wayback = }, {wayback_past = }')
     pricelists.sort(key=lambda x: x.dt, reverse=True)
     selected = []
     for p in pricelists:

@@ -10,6 +10,7 @@ from cijeneorg.models import Store
 
 
 def fetch_vrutak_prices(vrutak: Store, min_date: date):
+    WaybackArchiver.archive('https://www.vrutak.hr/images/Docs/Cjenik/Knjiga3.html')
     WaybackArchiver.archive(index_url := 'https://www.vrutak.hr/cjenik-svih-artikala')
     coll = []
     for href in xpath(index_url, '//a[contains(@href, ".xml")]/@href'):
@@ -24,12 +25,12 @@ def fetch_vrutak_prices(vrutak: Store, min_date: date):
         dt = datetime.strptime(date_str, '%Y%m%d-%H%M%S.xml')
         coll.append(PriceList(href, address, 'Zagreb', vrutak.id, location_id, dt, filename))
 
-    actual = extract_offers_since(vrutak, coll, min_date, wayback=True, wayback_past=False)
+    actual = extract_offers_since(vrutak, coll, min_date)
 
     prod = []
     for p in actual:
         try:
-            xml_data = ensure_archived(p, True)
+            xml_data = ensure_archived(p, True, wayback=False)
         except requests.exceptions.HTTPError as e:
             logger.warning(f'failed to fetch vrutak pricelist {p.url}: {e!r}')
             continue

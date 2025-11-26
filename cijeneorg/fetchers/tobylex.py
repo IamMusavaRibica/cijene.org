@@ -13,14 +13,14 @@ def fetch_tobylex_prices(tobylex: Store, min_date: date):
     for xml_href in xpath(index_url, '//a[contains(@href, ".xml")]/@href'):
         filename = xml_href.rsplit('/', 1)[-1]
         dt = datetime.strptime(filename, 'cjenik_%Y%m%d_%H%M%S.xml')
-        ensure_archived(PriceList(xml_href, '(internet trgovina)', '', tobylex.id, 'WEBSHOP', dt, filename))
+        ensure_archived(PriceList(xml_href, '(internet trgovina)', '', tobylex.id, 'WEBSHOP', dt, filename), wayback=False)
 
     for csv_href in xpath(index_url, '//a[contains(@href, ".csv")]/@href'):
         filename = csv_href.rsplit('/', 1)[-1]
         dt = datetime.strptime(filename, 'cjenik_%Y%m%d_%H%M%S.csv')
         coll.append(PriceList(csv_href, '(internet trgovina)', '', tobylex.id, 'WEBSHOP', dt, filename))
 
-    actual = extract_offers_since(tobylex, coll, min_date)
+    actual = extract_offers_since(tobylex, coll, min_date, wayback=False)
 
     prod = []
     for p in actual:

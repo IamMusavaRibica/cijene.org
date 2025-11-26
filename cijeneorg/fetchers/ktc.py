@@ -20,14 +20,15 @@ def fetch_ktc_prices(ktc: Store, min_date: date):
         if location_id is None:
             logger.warning(f'failed to extract location id from {href0}')
             continue
-        for href1 in xpath(HOST + href0.removeprefix('/'), '//a[contains(@href, ".csv")]/@href'):
+
+        # for KTC it's enough to archive only individual location pages, price list outlinks are captured automatically
+        WaybackArchiver.archive(loc_href := HOST + href0.removeprefix('/'))
+
+        for href1 in xpath(loc_href, '//a[contains(@href, ".csv")]/@href'):
             full_url = HOST + href1.removeprefix('/')
             filename = href1.rsplit('/', 1)[-1]
             market_type, _addr_city, _, file_id, datestr = filename.split('-', 4)
             dt = datetime.strptime(datestr, '%Y%m%d-%H%M%S.csv')
-
-            if dt.date() >= yesterday:
-                WaybackArchiver.archive(full_url)
 
             # cities with two word names
             for t in {'GRUBISNO POLJE', 'MURSKO SREDISCE', 'VELIKA GORICA', 'DUGO SELO'}:
