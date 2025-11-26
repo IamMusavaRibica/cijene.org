@@ -81,7 +81,7 @@ class _WaybackArchiverImpl:
                 self._queue.task_done()
                 break
 
-            if self._stop and self._stop.wait(81):
+            if self._stop and self._stop.wait(181):
                 self._queue.task_done()
                 break
 
