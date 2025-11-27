@@ -15,6 +15,7 @@ from cijeneorg.stores import ALL_STORES, ALL_STORES_BY_ID
 
 # noinspection SqlNoDataSourceInspection
 class ProductApi:
+    # TODO: use asyncpg instead of this sqlite
     def __init__(self, stores, days_back: int = 0):
         self._stores: list[Store] = stores
         self._products: dict[str, Product] = {}
@@ -297,5 +298,5 @@ class ProductApi:
 
 def get_provider(cfg: Config) -> ProductApi:
     provider = ProductApi(stores=[s for s in ALL_STORES if cfg.should_fetch(s.id)], days_back=cfg.days_back)
-    provider.update_prices()
+    # provider.update_prices()  <-  Commented out, the fetcher should do this!
     return provider

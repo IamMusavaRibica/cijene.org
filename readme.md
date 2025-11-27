@@ -1,51 +1,77 @@
 # https://cijene.org/
 
+<!--
 Projekt za arhiviranje, pretraživanje i prikaz cijena prema [Odluci NN 75/2025](https://narodne-novine.nn.hr/clanci/sluzbeni/2025_05_75_979.html). **WORK IN PROGRESS!**  
 
 Nadam se da će kod nekome biti koristan za svoje istraživanje. Ovaj repository objavljen je pod AGPL-3.0 licencom. Molim vas da date adekvatan credit (npr. [poveznica](https://github.com/IamMusavaRibica/cijene.org/)) tamo gdje je potrebno. Ako imate neke komentare ili prijedloge, otvorite prvo issue pa ćemo diskutirati
 
 **Također pogledajte: https://github.com/senko/cijene-api**
+-->
 
-## Obična instalacija
-- (neobavezno) definirajte environment varijable [`WAYBACK_ACCESS_KEY`, `WAYBACK_SECRET_KEY`](https://archive.org/account/s3.php) i `LOGLEVEL`
-- po želji kreirajte `.venv` naredbom `py -m venv .venv` pa ga aktivirajte s `.\.venv\Scripts\activate` (na Windows treba `".venv/scripts/activate"`)
-- instalacija svega potrebnog: `py -m pip install -r requirements.txt`
-- uredite `cijene.toml`
-- pokrenite server: `uvicorn main:app --host 0.0.0.0 --port 80` (ovo je na http, za https posebno generirajte certifikate i dodajte potrebne parametre za uvicorn)
+## ~ Development branch ~
+- korištenje PostgreSQL baze podataka umjesto SQLite
+- razdvajanje webservera i fetchera (scrapera) u zasebne procese u docker composeu
 
-## Docker instalacija
-ove upute su pisane za Linux, na drugim OS-evima treba koristiti ekvivalentne naredbe  
-1. [instalirajte docker](https://docs.docker.com/engine/install/)
-2. git clone ovaj repositorij, uđite u njega (`cd`)
-3. odlučite koji user će pokretati server pa pokrenite `sudo usermod -aG docker <user>` i restartajte ssh sesiju
-4. `id -u <user>` i `id -g <user>` da dobijete UID i GID pa promijenite u `docker-compose.yml` ako nisu 1000
-5. uredite `cijene.toml`, upute se nalaze u njemu
-6. (opcionalno) napravite `.env` datoteku:
-```
-WAYBACK_ACCESS_KEY=AbCd
-WAYBACK_SECRET_KEY=AbCd
-LOGLEVEL=DEBUG
-```
-- prekopirajte wayback machine api ključeve odavde: https://archive.org/account/s3.php  
-loglevel može biti DEBUG, INFO, ...
-6. `sudo chmod +x launch_server.sh`
-7. `./launch_server.sh`
+Upute za običnu instalaciju za development:
+1. Install PostgreSQL
+2. Dodaj `C:\Program Files\PostgreSQL\18\bin` na PATH
+3. Spojiti se u postgres `psql -U postgres` pa zalijepit ovo:
+```sql
+CREATE ROLE cijene_admin   WITH LOGIN PASSWORD 'secure-pw-changeme' NOSUPERUSER CREATEDB CREATEROLE;
+CREATE ROLE cijene_fetcher WITH LOGIN PASSWORD 'secure-pw-changeme' NOSUPERUSER NOCREATEDB NOCREATEROLE;
+CREATE ROLE cijene_web     WITH LOGIN PASSWORD 'secure-pw-changeme' NOSUPERUSER NOCREATEDB NOCREATEROLE;
 
-server je sada dostupan na internom portu 16163, dodajte to u nginx (ili ekvivalentan program)
+CREATE DATABASE cijene;
+       
+``` 
+4. Prebacite se na novu bazu naredbom `\c cijene` ili `quit` iz sesije kao postgres pa se spojiti ovako: `psql -U cijene_admin -d cijene`
+5. Pokrenut ovo:
+```sql
+CREATE TABLE IF NOT EXISTS map_product_id (
+    id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    product_key TEXT NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS map_barcode (
+    id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    barcode_key TEXT NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS map_store_id (
+    id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    store_key   TEXT NOT NULL UNIQUE
+);
 
-za gledanje logova:
-```
-docker logs -f cijeneorg
+CREATE TABLE IF NOT EXISTS product_offers (
+    id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    product_id          INTEGER NOT NULL    REFERENCES map_product_id(id) ON DELETE RESTRICT,
+    barcode_id          INTEGER             REFERENCES map_barcode(id) ON DELETE SET NULL,
+    store_id            INTEGER NOT NULL    REFERENCES map_store_id(id) ON DELETE RESTRICT,
+    product_name        TEXT NOT NULL,       -- store's name for this product
+    price               INTEGER NOT NULL,    -- price in cents
+    store_location_id   TEXT NOT NULL,       -- not mapped
+    price_25            INTEGER,             -- price on 2.5.2025. optional
+    yyyymmdd            INTEGER NOT NULL,    -- date as integer e.g. 20251127
+    quantity            DOUBLE PRECISION NOT NULL,  -- quantity (float)
+    fetched_at          TIMESTAMPTZ DEFAULT now()   -- when this row was fetched
+);
+
+CREATE INDEX IF NOT EXISTS idx_product_offers_product_id ON product_offers (product_id);
+CREATE INDEX IF NOT EXISTS idx_product_offers_barcode_id ON product_offers (barcode_id);
+CREATE INDEX IF NOT EXISTS idx_product_offers_store_id ON product_offers (store_id);
+CREATE INDEX IF NOT EXISTS idx_product_offers_yyyymmdd ON product_offers (yyyymmdd);
+CREATE INDEX IF NOT EXISTS idx_product_offers_product_yyyymmdd ON product_offers (product_id, yyyymmdd DESC);
+
+
+
+
+GRANT CONNECT ON DATABASE cijene TO cijene_fetcher, cijene_web;
+GRANT USAGE   ON SCHEMA public   TO cijene_fetcher, cijene_web;
+
+GRANT INSERT, SELECT ON TABLE product_offers, map_product_id, map_barcode, map_store_id TO cijene_fetcher;
+GRANT INSERT, SELECT ON TABLE product_offers, map_product_id, map_barcode, map_store_id TO cijene_web;
+
 ```
 
-za cronjob:
-1. `crontab -e`  (i dalje kao isti user!)
-2. dodajte liniju:
-```
-5 8,20 * * * /usr/bin/flock -n /tmp/cijeneorg.lock /REPOSITORY/launch_server.sh >> /REPOSITORY/cron.log 2>&1
-```
-ovo će restartati server svaki dan u 8:05 i 20:05. **sve trgovine ažuriraju cjenike do 8:00**. promijenite ovo vrijeme u cronjobu po želji, **pripazite na vremenske zone** ovisno o tome gdje se vaš server nalazi    
-naravno `/REPOSITORY/` zamijenite putanjem do direktorija gdje ste klonirali repo
+
 
 
 ## AI disclaimer
