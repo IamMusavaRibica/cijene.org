@@ -93,14 +93,3 @@ class ProductOffer(BaseModel):
     #     elif math.isclose(self.price, self.may2_price, rel_tol=0.00001):
     #         return ' equal'
     #     return ' better' if self.price < self.may2_price else ' worse'
-
-
-# Deprecated!
-class ProductOfferParsed(ProductOffer):
-    store_ids: list
-    store_location_datas: list[list] = Field(default_factory=list)
-    tooltip_up: bool = False
-
-    @property
-    def locations_count(self) -> int:
-        return len(self.store_location_datas)
