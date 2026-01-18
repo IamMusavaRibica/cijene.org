@@ -17,14 +17,20 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
                   .removeprefix('Cijene')
                   .removesuffix('2024.')
                   .lstrip())
-        if dt_str == '.2025.': continue
-        if dt_str == '30.09':
-            dt_str += '.2025.'
-        if dt_str.endswith('2025'):
+
+        __replacements = {
+            '08.01.2025.': '08.01.2026.',  # bruh.
+            '10.07.': '10.07.2025.',
+            '30.09': '30.09.2025.',
+        }
+        dt_str = __replacements.get(dt_str, dt_str)
+
+        if dt_str == '.2025.':
+            continue
+        elif dt_str.endswith('2025') or dt_str.endswith('2026'):
             dt_str += '.'
-        if not dt_str.endswith('2025.'):
-            dt_str += '2025.'
-        dt = datetime.strptime(dt_str.rstrip('.'), '%d.%m.%Y')
+
+        dt = datetime.strptime(dt_str.removesuffix('.'), '%d.%m.%Y')
         coll.append(PriceList(href, None, None, lorenco.id, 'X', dt, filename))
 
     actual = extract_offers_since(lorenco, coll, min_date)
