@@ -31,6 +31,8 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
             dt_str += '.'
 
         dt = datetime.strptime(dt_str.removesuffix('.'), '%d.%m.%Y')
+        if dt.year == 2025 and dt.month < 5:
+            dt = dt.replace(year=2026)
         coll.append(PriceList(href, None, None, lorenco.id, 'X', dt, filename))
 
     actual = extract_offers_since(lorenco, coll, min_date)
