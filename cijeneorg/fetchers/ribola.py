@@ -15,6 +15,7 @@ BASE_URL = 'https://ribola.hr/ribola-cjenici/'
 
 def fetch_ribola_prices(ribola: Store, min_date: date):
     WaybackArchiver.archive(BASE_URL)
+    WaybackArchiver.archive('https://ribola.hr/cjenici/')
     coll = []
 
     hrefs = set()
@@ -35,6 +36,10 @@ def fetch_ribola_prices(ribola: Store, min_date: date):
                     dt = m and datetime.strptime(m.group(2), '%Y%m%d%H%M%S')
                 else:
                     dt = datetime.strptime(m.group(2), '%Y-%m-%d-%H-%M-%S')
+
+                _now = datetime.now()
+                if _now.month <= 2 and _now.year == 2026 and dt.month == 12 and dt.year == 2026 and dt.day in {28, 29}:
+                    dt = dt.replace(year=2025)
 
                 if m:
                     location_id = m.group(1)
