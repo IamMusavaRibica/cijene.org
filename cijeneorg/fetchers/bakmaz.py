@@ -42,7 +42,7 @@ def fetch_bakmaz_prices(bakmaz: Store, min_date: date):
             logger.exception(e)
             continue
 
-    actual = extract_offers_since(bakmaz, coll, min_date, wayback=False)
+    actual = extract_offers_since(bakmaz, coll, min_date, wayback=True)
 
     prod = []
     for t in actual:
