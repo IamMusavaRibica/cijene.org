@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, date
 
 from loguru import logger
@@ -20,8 +21,22 @@ def fetch_bakmaz_prices(bakmaz: Store, min_date: date):
             market_type, address, city, location_id, file_id, dtstr = filename.split('_', 5)
             address = address.replace('-', ' ')
             city = fix_city(city)
-            dt = datetime.strptime(dtstr.replace('_', ''), '%d%m%Y%H%M%S.csv')
-            coll.append(PriceList(url, address, city, bakmaz.id, location_id, dt, filename))
+            dtstr = dtstr.replace('_', '')
+            idx = 0
+            if m := re.search(r'-(\d+)\.csv', dtstr):
+                idx = int(m.group(1))  # multiple files have (1).csv which is -1.csv in the url
+
+            # TODO: this results in duplicate entries per product and store_id
+            files = 0
+            while idx >= 0:
+                files += 1
+                new_url = re.sub(r'-(\d+)\.csv', '.csv' if idx == 0 else f'-{idx}.csv', url)
+                if files > 1:
+                    logger.info(f'extra bakmaz url: {new_url}')
+                dt = datetime.strptime(dtstr.replace('_', '').removesuffix('.csv').split('-')[0], '%d%m%Y%H%M%S')
+                coll.append(PriceList(url, address, city, bakmaz.id, location_id, dt, filename))
+                idx -= 1
+
         except Exception as e:
             logger.warning(f'error {e!r} while bakmaz pricelist {filename = }')
             logger.exception(e)
