@@ -18,6 +18,9 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
                   .removesuffix('2024.')
                   .lstrip())
 
+        if filename == 'Cijenik-13.01.2026.csv':  # 404 not found
+            continue
+
         __replacements = {
             '08.01.2025.': '08.01.2026.',  # bruh.
             '10.07.': '10.07.2025.',
