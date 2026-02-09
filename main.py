@@ -75,8 +75,8 @@ async def api_stores(request: Request):
 
 @app.get('/{page}')
 async def read_page(request: Request, page: str):
-    if page == 'robots.txt':
-        return Response('User-agent: *\nDisallow: ', media_type='text/plain')
+    # if page == 'robots.txt':
+    #     return Response('User-agent: *\nDisallow: ', media_type='text/plain')
     if page in {'blog', 'contact', 'products', 'location', 'sources'}:
         if Path(f'templates/{page}.html').is_file():
             return TemplateResponse(f'{page}.html', {'request': request, 'products': provider.products_by_id.values()})
