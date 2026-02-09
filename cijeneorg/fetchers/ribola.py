@@ -28,11 +28,12 @@ def fetch_ribola_prices(ribola: Store, min_date: date):
             WaybackArchiver.archive(full_url)
         for href in xpath(full_url, '//a[@download]/@href'):
             if href not in hrefs:  # avoid duplicates
+                # logger.debug(f'found ribola href: {href}')
                 hrefs.add(href)
-                # market_type, full_addr, location_id, _ = href.split('-', 3)
-                m = re.search(r'-(\d\d\d)-\d+-(20\d\d-[01]\d-[0123]\d-[012]\d-\d\d-\d\d)-', href)
+                # \d? because of 09.02.2026/HIPERMARKET-Ulica_Svetog_Nikole16A_Solin-0019-271-2026-02-09-06-53-29-588766.xml
+                m = re.search(r'-(\d?\d\d\d)-\d+-(20\d\d-[01]\d-[0123]\d-[012]\d-\d\d-\d\d)-', href)
                 if not m:
-                    m = re.search(r'-(\d\d\d)-\d+-(20\d\d[01]\d[0123]\d[012]\d\d\d\d\d)', href)
+                    m = re.search(r'-(\d?\d\d\d)-\d+-(20\d\d[01]\d[0123]\d[012]\d\d\d\d\d)', href)
                     dt = m and datetime.strptime(m.group(2), '%Y%m%d%H%M%S')
                 else:
                     dt = datetime.strptime(m.group(2), '%Y-%m-%d-%H-%M-%S')
