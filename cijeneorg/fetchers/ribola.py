@@ -51,7 +51,9 @@ def fetch_ribola_prices(ribola: Store, min_date: date):
                         continue
                     else:
                         logger.warning(f'unknown ribola location id: {location_id} from {href}')
+                        coll.append(PriceList(BASE_URL + href, "???", "???", ribola.id, location_id, dt, filename))
                 logger.warning(f'failed to parse ribola href: {href}')
+
 
     actual = extract_offers_since(ribola, coll, min_date)
 
