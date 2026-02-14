@@ -25,6 +25,10 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
     coll = []
     WaybackArchiver.archive('https://zabacfoodoutlet.hr/cjenik/')  # just in case
     for url in xpath('https://zabacfoodoutlet.hr/cjenik/', '//a[contains(@href, ".csv")]/@href'):
+
+        if url.endswith('4.2.2026-7.00h-C180-1.csv'):
+            url = 'https://zabacfoodoutlet.hr/wp-content/uploads/2026/02/SupermarketDubrava-256L-Zagreb-10000-4.2.2026-7.00h-C180.csv'
+
         try:
             filename = url.rsplit('/', 1)[-1]
             m = date_pattern.search(filename) or date_pattern2.search(filename)
@@ -63,15 +67,32 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
             qty = None
             may2_price = None
             brand = None
-            if header == 'Artikl Šifra;Barcode;Pdv %;Naziv artikla / usluge;MPC':
+            HEADER_TYPE_1 = {'Artikl Šifra;Barcode;Pdv %;Naziv artikla / usluge;MPC'}
+            HEADER_TYPE_2 = {'Artikl;Pdv %;Naziv grupe artikla;Barcode;Naziv artikla / usluge;Mpc'}
+            HEADER_TYPE_3 = {
+                'Artikl;Naziv grupe artikla;Pdv %;Barcode;Naziv artikla / usluge;Mpc;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025',
+                'Artikl;Naziv grupe artikla;Pdv %;Barcode;Naziv artikla;MPC;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025',
+                'Artikl;Naziv grupe artikala;Pdv %;Barcode;Naziv artikla;MPC;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025',
+                'Šifra artikla;Naziv grupe artikala;PDV;Barcode;Naziv artikla;MPC;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025'
+            }
+            if header in HEADER_TYPE_1:
                 _id, barcode, vat, name, mpc = k
-            elif header == 'Artikl;Pdv %;Naziv grupe artikla;Barcode;Naziv artikla / usluge;Mpc':
+            elif header in HEADER_TYPE_2:
                 _id, vat, category, barcode, name, mpc = k
-            elif header == 'Artikl;Naziv grupe artikla;Pdv %;Barcode;Naziv artikla / usluge;Mpc;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025':
-                _id, category, var, barcode, name, mpc, brand, qty, last_30d_mpc, may2_price = k
+            elif header in HEADER_TYPE_3:
+                if len(k) == 10:
+                    _id, category, vat, barcode, name, mpc, brand, qty, last_30d_mpc, may2_price = k
+                # elif k[:1] == k[-1:] == '"':
+                    # see https://zabacfoodoutlet.hr/wp-content/uploads/2026/02/SupermarketDubrava-256L-Zagreb-10000-4.2.2026-7.00h-C180-1.csv
+                    # import ast
+                    # k2 = ast.literal_eval(f'[{k[1:-1]}]')
+                    # _id, category, vat, barcode, name, mpc, brand, qty, last_30d_mpc, may2_price = k2
+                else:
+                    logger.warning(f'unexpected row format in zabac pricelist {t.filename}: {k}')
+                    continue
             else:
                 if not warned:
-                    logger.warning('zabac unknown header: ' + header)
+                    logger.warning('\nZABAC UNKNOWN HEADER: {}\n', header)
                     warned = True
                 continue
             if '+' in barcode:  # scientific notation for barcode, really ?
