@@ -1057,5 +1057,8 @@ StoreLocations = {
         '900': ['Zagreb', None, 'Samoborska cesta 161a', 45.812704458534114, 15.856789100828808, 'https://maps.app.goo.gl/qfaEnmXPp2ouVroh7'],
         '200': ['Zagreb', None, 'Rabarova ulica 1a', 45.801437003954454, 15.941072871116438, 'https://maps.app.goo.gl/RjUij6BqxBTo56Wt6'],
         '600': ['Zagreb', None, 'Ul. Slavoljuba Bulvana 20', 45.81639773957512, 16.02832721189111, 'https://maps.app.goo.gl/cdCfhtcfW1eKGx899']
+    },
+    'zabac': {
+        'PJ-?': ['Zagreb', None, 'Dubrava 256L', 45.826623168540806, 16.076948502913933, 'https://maps.app.goo.gl/KpaEjumTPhnqFPXW9']
     }
 }
