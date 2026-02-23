@@ -52,6 +52,11 @@ def fix_price(price: str | float | None) -> float | None:
     if price is None or price == '':  # avoid catching 0.0 here
         return None
     if isinstance(price, str):
+        if ',' in price and '.' in price:
+            if price.rfind('.') > price.rfind(','):
+                price = price.replace(',', '')  # 88,616.00
+            else:
+                price = price.replace('.', '')  # 88.616,00
         price = float('0' + price.replace(',', '.').replace('€', ''))
     return price
 

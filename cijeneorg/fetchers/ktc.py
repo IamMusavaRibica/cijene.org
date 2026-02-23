@@ -6,7 +6,7 @@ from loguru import logger
 from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
-from cijeneorg.utils import fix_address, fix_city, ONE_DAY
+from cijeneorg.utils import fix_address, fix_city, ONE_DAY, fix_price
 
 
 def fetch_ktc_prices(ktc: Store, min_date: date):
@@ -52,6 +52,6 @@ def fetch_ktc_prices(ktc: Store, min_date: date):
             # KTC does not have 2.5.2025. price
             name, _id, brand, _qty, units, mpc, ppu, barcode, category, last_30d_mpc, discount_mpc = k
             barcode = barcode.strip("'")
-            price = float(discount_mpc) or float(mpc)
+            price = fix_price(discount_mpc) or fix_price(mpc)
             resolve_product(prod, barcode, ktc, p.location_id, name, brand, price, _qty, None, p.date)
     return prod
