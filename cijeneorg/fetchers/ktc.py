@@ -37,8 +37,12 @@ def fetch_ktc_prices(ktc: Store, min_date: date):
                     city = t
                     break
             else:
-                *a, city = _addr_city.rsplit(maxsplit=1)
-                addr = ' '.join(a)
+                if not _addr_city.strip():
+                    addr = '???'
+                    city = '???'
+                else:
+                    *a, city = _addr_city.rsplit(maxsplit=1)
+                    addr = ' '.join(a)
             addr = fix_address(addr)
             city = fix_city(city)
             coll.append(PriceList(full_url, addr, city, ktc.id, location_id, dt, filename))
