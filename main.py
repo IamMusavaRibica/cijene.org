@@ -33,7 +33,7 @@ logger.add(
 )
 
 async def _404handler(request: Request, exc: HTTPException):
-    return TemplateResponse('_base.html', {'request': request}, status_code=404)
+    return TemplateResponse(request, '_base.html', status_code=404)
 
 
 @asynccontextmanager
@@ -62,7 +62,7 @@ provider = get_provider(cfg)
 
 @app.api_route('/', methods=['GET', 'HEAD'])
 async def read_root(request: Request):
-    return TemplateResponse('index.html', {'request': request})
+    return TemplateResponse(request, 'index.html')
 
 
 @app.get('/api/stores')
@@ -79,7 +79,7 @@ async def read_page(request: Request, page: str):
     #     return Response('User-agent: *\nDisallow: ', media_type='text/plain')
     if page in {'blog', 'contact', 'products', 'location', 'sources'}:
         if Path(f'templates/{page}.html').is_file():
-            return TemplateResponse(f'{page}.html', {'request': request, 'products': provider.products_by_id.values()})
+            return TemplateResponse(request, f'{page}.html', {'products': provider.products_by_id.values()})
     raise HTTPException(status_code=404)
 
 
@@ -93,7 +93,7 @@ async def read_product_page(request: Request, proizvod_id: str):
         # offers = provider.get_offers_by_product(product, on_date=the_date)
         offers = provider.get_offers_by_product_grouped(product, on_date=the_date, predicate=predicate)
         logger.info(f'Database query took {time.perf_counter() - _start:.3f} seconds. Returned {len(offers)} offers.')
-        return TemplateResponse('product_page.html', {
-            'request': request, 'product': product, 'offers': offers
+        return TemplateResponse(request, 'product_page.html', {
+            'product': product, 'offers': offers
         })
     raise HTTPException(status_code=404)
