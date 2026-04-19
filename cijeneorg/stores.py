@@ -1,13 +1,16 @@
 from cijeneorg.fetchers import (
     fetch_bakmaz_prices,
     fetch_boso_prices,
+    fetch_branka_prices,
     fetch_brodokomerc_prices,
     fetch_bure_prices,
     fetch_croma_prices,
     fetch_djelo_prices,
     fetch_djelo_vodice_prices,
     fetch_dm_prices,
+    fetch_emmezeta_prices,
     fetch_eurospin_prices,
+    fetch_gavranovic_prices,
     fetch_jadranka_prices,
     fetch_jedinstvo_labin_prices,
     fetch_kaufland_prices,
@@ -32,9 +35,6 @@ from cijeneorg.fetchers import (
     fetch_vrutak_prices,
     fetch_zabac_prices,
 )
-from cijeneorg.fetchers.branka import fetch_branka_prices
-from cijeneorg.fetchers.emmezeta import fetch_emmezeta_prices
-from cijeneorg.fetchers.gavranovic import fetch_gavranovic_prices
 from cijeneorg.models import Store
 from cijeneorg.store_locations import StoreLocations
 
