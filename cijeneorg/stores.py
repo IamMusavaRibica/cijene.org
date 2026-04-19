@@ -8,6 +8,7 @@ from cijeneorg.fetchers import (
     fetch_djelo_prices,
     fetch_djelo_vodice_prices,
     fetch_dm_prices,
+    fetch_dukat_prices,
     fetch_emmezeta_prices,
     fetch_eurospin_prices,
     fetch_gavranovic_prices,
@@ -73,11 +74,12 @@ Stridon     = Store(name='Stridon',         url='https://www.stridon.hr/',      
 Gavranovic  = Store(name='Gavranović',      url='https://gavranovic.hr/',           fetch_prices=fetch_gavranovic_prices, id='gavranovic')
 Emmezeta    = Store(name='Emmezeta',        url='https://www.emmezeta.hr/',         fetch_prices=fetch_emmezeta_prices)
 Branka      = Store(name='Branka',          url='https://branka.hr/',               fetch_prices=fetch_branka_prices)
+Dukat       = Store(name='Dukat Diskont',   url='https://dukat.hr/',                fetch_prices=fetch_dukat_prices, id='dukat')
 
 ALL_STORES = [Tommy, Konzum, Spar, Studenac, Ribola, Lidl, Plodine, Eurospin, Kaufland, Metro, Boso, NTL, KTC,
               TrgovinaKrk, Bakmaz, DjeloVodice, Djelo, Zabac, Vrutak, Bure, Jadranka, Trgocentar, Lorenco, Rotodinamic,
               Brodokomerc, Radenska, JedinstvoLabin, Croma, Travelfree, Tobylex, DM, Stridon, Gavranovic, Emmezeta,
-              Branka]
+              Branka, Dukat]
 
 ALL_STORES_BY_ID = {s.id: s for s in ALL_STORES}
 

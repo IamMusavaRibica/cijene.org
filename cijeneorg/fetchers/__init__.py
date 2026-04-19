@@ -7,6 +7,7 @@ from .croma import fetch_croma_prices
 from .djelo import fetch_djelo_prices
 from .djelo_vodice import fetch_djelo_vodice_prices
 from .dm import fetch_dm_prices
+from .dukat import fetch_dukat_prices
 from .emmezeta import fetch_emmezeta_prices
 from .eurospin import fetch_eurospin_prices
 from .gavranovic import fetch_gavranovic_prices
