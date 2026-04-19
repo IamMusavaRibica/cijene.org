@@ -7,7 +7,7 @@ from loguru import logger
 from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
-from cijeneorg.utils import DDMMYYYY_dots, fix_city
+from cijeneorg.utils import DDMMYYYY_dots, fix_city, DDMMYYYY_underscores_or_dots
 
 
 def fetch_lidl_prices(lidl: Store, min_date: date):
@@ -17,12 +17,14 @@ def fetch_lidl_prices(lidl: Store, min_date: date):
     # /content/download up until 12.11.2025. /file/download after that
     for p in xpath(index_url, '//a[starts-with(@href, "https://tvrtka.lidl.hr/content/download/")]/..') \
             + xpath(index_url, '//a[starts-with(@href, "https://tvrtka.lidl.hr/file/download/")]/..'):
-        if m := DDMMYYYY_dots.findall(p.text):
+        if m := DDMMYYYY_underscores_or_dots.findall(p.text):
             day, month, year = map(int, *m)
             dt = datetime(year, month, day)
             href, = p.xpath('a/@href')
             filename = href.rsplit('/', 1)[-1]
             coll.append(PriceList(href, None, None, lidl.id, None, dt, filename))
+        else:
+            logger.critical(f'failed to extract date from {p.text} !!')
 
     actual = extract_offers_since(lidl, coll, min_date, wayback=True, wayback_past=False)
 

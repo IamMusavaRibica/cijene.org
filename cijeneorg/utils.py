@@ -13,6 +13,8 @@ from cijeneorg.models import ProductOffer, StoreLocationPredicate
 UA_HEADER = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36'}
 DDMMYYYY_dots = re.compile(r'(\d{1,2})\.(\d{1,2})\.(\d{4})')
+DDMMYYYY_underscores_or_dots = re.compile(r'(\d{1,2})[._](\d{1,2})[._](\d{4})')
+
 ONE_DAY = timedelta(days=1)
 _ppu = operator.attrgetter('price_per_unit')
 sublocations = {
