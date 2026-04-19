@@ -24,6 +24,9 @@ def fetch_kaufland_prices(kaufland: Store, min_date: date):
     for f in files:
         filename = f['label']
         url = HOST + f['path']
+        if filename == 'SupermarketS.Ivicevica66_4130_20260130730.csv':
+            continue
+
         match_ = list(re.finditer(r'(\d{1,2})_(\d{1,2})_(20\d{2})', filename)) \
                  or list(re.finditer(r'([0123]\d)([01]\d)(20\d\d)', filename))
         if match_:
