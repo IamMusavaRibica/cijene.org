@@ -1,5 +1,7 @@
 from datetime import datetime, date
 
+from loguru import logger
+
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, resolve_product, get_csv_rows, extract_offers_since
 from cijeneorg.models import Store
@@ -19,6 +21,7 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
                   .lstrip())
 
         if filename == 'Cijenik-13.01.2026.csv':  # 404 not found
+            logger.warning(f'skipping known broken lorenco price list {filename}')
             continue
 
         __replacements = {
@@ -29,6 +32,7 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
         dt_str = __replacements.get(dt_str, dt_str)
 
         if dt_str == '.2025.':
+            logger.warning(f'failed to extract date from lorenco price list link: filename={filename!r} text={a.text!r}')
             continue
         elif dt_str.endswith('2025') or dt_str.endswith('2026'):
             dt_str += '.'

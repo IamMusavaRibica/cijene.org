@@ -1,6 +1,7 @@
 from datetime import datetime, date
 
 import requests
+from loguru import logger
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import extract_offers_since, ensure_archived
@@ -28,7 +29,8 @@ def fetch_dm_prices(dm: Store, min_date: date):
 
     prod = []
     for p in actual:
-        raw_xlsx = ensure_archived(p, True, wayback=False)
+        ensure_archived(p, True, wayback=False)
+        logger.warning(f'skipping dm price list {p.filename}: xlsx parsing is not implemented')
         # TODO: implement parsing xlsx files!
 
     return prod

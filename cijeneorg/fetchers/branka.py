@@ -19,6 +19,7 @@ def fetch_branka_prices(branka: Store, min_date: date):
         full_url = 'https://branka.hr/' + href.removeprefix('/')
         orig_filename = href.rsplit('/', 1)[-1]
         if orig_filename == 'Supermarket040426.csv':  # 404
+            logger.warning(f'skipping known broken branka price list {orig_filename}')
             continue
         try:
             f = orig_filename

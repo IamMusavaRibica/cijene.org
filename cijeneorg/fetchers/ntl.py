@@ -1,5 +1,7 @@
 from datetime import datetime, date
 
+from loguru import logger
+
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
@@ -29,7 +31,7 @@ def fetch_ntl_prices(ntl: Store, min_date: date):
         filename = href.rsplit('/', 1)[-1]
         market_type, address, city, location_id, file_id, rest = filename.split('_', 5)
         if not (location_id.isdigit() and len(location_id) == 5):
-            print(f'failed to parse {filename}')
+            logger.warning(f'failed to parse ntl price list filename: {filename}')
             continue
         dt = datetime.strptime(rest, '%d%m%Y_%H_%M_%S.csv')
         city = fix_city(city)

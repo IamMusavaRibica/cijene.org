@@ -25,6 +25,7 @@ def fetch_kaufland_prices(kaufland: Store, min_date: date):
         filename = f['label']
         url = HOST + f['path']
         if filename == 'SupermarketS.Ivicevica66_4130_20260130730.csv':
+            logger.warning(f'skipping known broken kaufland price list {filename}')
             continue
 
         match_ = list(re.finditer(r'(\d{1,2})_(\d{1,2})_(20\d{2})', filename)) \

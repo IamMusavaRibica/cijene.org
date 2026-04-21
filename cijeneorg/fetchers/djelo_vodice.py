@@ -31,7 +31,8 @@ def fetch_djelo_vodice_prices(djelo_vodice: Store, min_date: date):
 
     prod = []
     for t in actual:
-        raw_xlsx = ensure_archived(t, True, wayback=False)
+        ensure_archived(t, True, wayback=False)
+        logger.warning(f'skipping djelo_vodice price list {t.filename}: xlsx parsing is not implemented')
         # TODO: implement parsing xlsx files!
 
     return prod

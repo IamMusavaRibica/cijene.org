@@ -18,6 +18,8 @@ def fetch_eurospin_prices(eurospin: Store, min_date: date):
             day, month, year = map(int, *m)
             dd = datetime(year, month, day)
             coll.append(PriceList(option.get('value'), None, None, eurospin.id, None, dd, filename))
+        else:
+            logger.warning(f'failed to extract date from eurospin price list option: {option.text!r}')
 
     actual = extract_offers_since(eurospin, coll, min_date)
 

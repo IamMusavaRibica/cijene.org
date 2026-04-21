@@ -2,6 +2,7 @@ import io
 import zipfile
 from datetime import datetime, date
 
+from loguru import logger
 from lxml.etree import tostring
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
@@ -22,6 +23,8 @@ def fetch_croma_prices(croma: Store, min_date: date):
             href = a.get('href')
             filename = href.rsplit('/', 1)[-1]
             coll.append(PriceList(href, 'Ulica Vilima Cecelja 6', 'Sveti Ilija', croma.id, 'MP', dt, filename))
+        else:
+            logger.warning(f'failed to extract date from croma price list link: href={a.get("href")!r} text={a.text_content().strip()!r}')
 
     actual = extract_offers_since(croma, coll, min_date)
     prod = []
