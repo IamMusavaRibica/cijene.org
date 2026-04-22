@@ -10,7 +10,7 @@ from cijeneorg.models import Store
 
 
 def fetch_vrutak_prices(vrutak: Store, min_date: date):
-    WaybackArchiver.archive('https://www.vrutak.hr/images/Docs/Cjenik/Knjiga3.html')
+    # WaybackArchiver.archive('https://www.vrutak.hr/images/Docs/Cjenik/Knjiga3.html')
     WaybackArchiver.archive(index_url := 'https://www.vrutak.hr/cjenik-svih-artikala')
     coll = []
     for href in xpath(index_url, '//a[contains(@href, ".xml")]/@href'):
