@@ -18,8 +18,8 @@ def fetch_rotodinamic_prices(rotodinamic: Store, min_date: date):
             WaybackArchiver.archive(date_url)
         for href in xpath(date_url, '//a[contains(@href, ".csv")]/@href'):
             filename = href.rsplit('/', 1)[-1]
-            *_, date_str, time_str = href.rsplit(', ')
-            dt = datetime.strptime(f'{date_str} {time_str}', '%d.%m.%Y %H.%M.csv')
+            *_, date_str, time_str = href.rsplit(',')
+            dt = datetime.strptime(f'{date_str} {time_str}'.strip(), '%d.%m.%Y %H.%M.csv')
             coll.append(PriceList(href, '(sve poslovnice)', None, rotodinamic.id, None, dt, filename))
 
     actual = extract_offers_since(rotodinamic, coll, min_date, wayback=False)

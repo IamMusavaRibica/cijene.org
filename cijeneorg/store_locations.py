@@ -823,7 +823,7 @@ StoreLocations = {
                 'https://maps.app.goo.gl/jfyX8ErEQrmrGgfq9'],
         '099': ['Dubrovnik', None, 'Žuljanska ul. 1', 42.652280679763486, 18.087658565662863, 'https://maps.app.goo.gl/QehwyyDRKW7ukCoW7']
     },
-    'rotodinamic': {
+    'roto_dinamic': {
         'D01': ['Zagreb', None, 'Kovinska ulica 1', 45.80596092907959, 15.857694049733212, 'https://maps.app.goo.gl/WCt8sYPQJBg2oGyP9'],
         'D28': ['Varaždin', None, 'Optujska ulica 157', 46.31762530004934, 16.314230374029723, 'https://maps.app.goo.gl/pckvAYpTKm73g62v7'],
         'D22': ['Osijek', None, 'Jablanova ulica 27', 45.5397316830623, 18.651330022584048, 'https://maps.app.goo.gl/geHhh5uTJYxaxXrM7'],
