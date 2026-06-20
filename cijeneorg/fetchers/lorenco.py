@@ -10,6 +10,10 @@ from cijeneorg.models import Store
 def fetch_lorenco_prices(lorenco: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://lorenco.hr/dnevne-cijene/')
     coll = []
+
+    # i'm so tired of this...
+    coll.append(PriceList('https://lorenco.hr/wp-content/uploads/2026/05/Cijenik-28.05.2025.csv', None, None, lorenco.id, 'X', datetime(2026, 5, 28), 'Cijenik-28.05.2025.csv'))
+
     for a in xpath(index_url, '//a[contains(@href, ".csv")]'):
         href = a.get('href')
         filename = href.split('/')[-1]
@@ -37,7 +41,11 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
         elif dt_str.endswith('2025') or dt_str.endswith('2026'):
             dt_str += '.'
 
-        dt = datetime.strptime(dt_str.removesuffix('.'), '%d.%m.%Y')
+        try:
+            dt = datetime.strptime(dt_str.removesuffix('.'), '%d.%m.%Y')
+        except ValueError:
+            logger.error(f'failed to parse date from lorenco price list link: filename={filename!r} text={a.text!r}')
+            continue
         if dt.year == 2025 and dt.month < 5:
             dt = dt.replace(year=2026)
         coll.append(PriceList(href, None, None, lorenco.id, 'X', dt, filename))
