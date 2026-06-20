@@ -30,9 +30,15 @@ def fetch_dukat_prices(dukat: Store, min_date: date):
             if dd1 is None and dd2 is None:
                 raise RuntimeError('no date info found')
             # check for mismatch
+            bad = False
             for t1, t2 in ((dd1, dd2), (mm1, mm2), (yyyy1, yyyy2)):
                 if t1 and t2 and t1 != t2:
-                    raise ValueError(f'inconsistent date info in filename and anchor text: {filename} {a_text}')
+                    bad = True
+                    logger.error(f'inconsistent date info in filename and anchor text: {filename} {a_text}')
+                    # raise ValueError(f'inconsistent date info in filename and anchor text: {filename} {a_text}')
+            # always prefer filename over a_text
+            if bad and dd1 is None:
+                logger.critical('using anchor text for date info because filename is messed up!')
             dd = dd1 or dd2
             mm = mm1 or mm2
             yyyy = yyyy1 or yyyy2
