@@ -48,11 +48,11 @@ def fetch_ribola_prices(ribola: Store, min_date: date):
                         loc = ribola.locations[location_id]
                         filename = href.rsplit('/')[-1]
                         coll.append(PriceList(BASE_URL + href, loc.address, loc.city, ribola.id, location_id, dt, filename))
-                        continue
                     else:
                         logger.warning(f'unknown ribola location id: {location_id} from {href}')
                         filename = href.rsplit('/')[-1]  # NOTE: Ulica_Svetog_Nikole16A had incorrect filename up until 22.4.2026. !!
                         coll.append(PriceList(BASE_URL + href, "???", "???", ribola.id, location_id, dt, filename))
+                    continue
                 logger.warning(f'failed to parse ribola href: {href}')
 
 

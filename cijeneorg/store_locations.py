@@ -821,7 +821,8 @@ StoreLocations = {
                 'https://maps.app.goo.gl/jmoVifVjb4bzH5qn6'],
         '092': ['Zadar', None, 'Ul. Miroslava Krleže 1a', 44.120548999243475, 15.228312191633433,
                 'https://maps.app.goo.gl/jfyX8ErEQrmrGgfq9'],
-        '099': ['Dubrovnik', None, 'Žuljanska ul. 1', 42.652280679763486, 18.087658565662863, 'https://maps.app.goo.gl/QehwyyDRKW7ukCoW7']
+        '099': ['Dubrovnik', None, 'Žuljanska ul. 1', 42.652280679763486, 18.087658565662863, 'https://maps.app.goo.gl/QehwyyDRKW7ukCoW7'],
+        '0019': ['Solin', None, 'Ul. svetog Nikole 16a', 43.54224812743197, 16.474163509037567, 'https://maps.app.goo.gl/NrbMfmfXFupmCWS47']
     },
     'roto_dinamic': {
         'D01': ['Zagreb', None, 'Kovinska ulica 1', 45.80596092907959, 15.857694049733212, 'https://maps.app.goo.gl/WCt8sYPQJBg2oGyP9'],
