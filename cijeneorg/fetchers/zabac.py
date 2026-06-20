@@ -3,54 +3,51 @@ from collections import defaultdict
 from datetime import datetime, date
 
 from loguru import logger
+from lxml.etree import tostring
 
 from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, get_csv_rows, resolve_product
 from cijeneorg.models import Store
 
-extra_urls = '''
-https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-2-Tratinska-80A.csv
-https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-4-Nemciceva-1.csv
-https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-5-Bozidara-Magovca.csv
-https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-6-Dolac-2.csv
-https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-7-DUbrava-256L.csv
-https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-9-Ilica-231.csv
-https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-10-Zagrebacka-Cesta-205.csv
-https://zabacfoodoutlet.hr/wp-content/uploads/2025/05/Cjenik-Zabac-Food-Outlet-PJ-11-Savska-Cesta-206.csv
-'''
-date_pattern = re.compile(r'Cjenik-(\d{1,2}\.?\d{1,2}\.?\d{4})')
-date_pattern2 = re.compile(r'(?:10000|10410)-(\d{1,2}\.?\d{1,2}\.?\d{4})')
-
+# date_pattern = re.compile(r'Cjenik-(\d{1,2}\.?\d{1,2}\.?\d{4})')
+# date_pattern2 = re.compile(r'(?:10000|10410)-(\d{1,2}\.?\d{1,2}\.?\d{4})')
+date_pattern3 = re.compile(r'(\d{2}\.\d{2}\.\d{4}),\s*(\d{1,2}\.\d{2})h')
 
 def fetch_zabac_prices(zabac: Store, min_date: date):
     coll = []
-
     urls = []
 
-    # maybe todo: url collection from select > option elements
     pages = [
-        'https://zabacfoodoutlet.hr/cjenik/',
-        'https://zabacfoodoutlet.hr/cjenik/?lokacija=dubrava-256l',
-        'https://zabacfoodoutlet.hr/cjenik/?lokacija=velika-gorica'
+        'https://zabacfoodoutlet.hr/cjenik?store=Dubec%2C%20Dubrava',
+        'https://zabacfoodoutlet.hr/cjenik?store=Velika%20Gorica'
     ]
+    pricelist_row_xpath = "//article[contains(concat(' ', normalize-space(@class), ' '), ' idk_pricelist_row ')]"
     for page in pages:
         WaybackArchiver.archive(page)
-        for url in xpath(page, '//a[contains(@href, ".csv")]/@href'):
+        for row in xpath(page, pricelist_row_xpath):
+            h3_text = row.xpath(".//h3/text()")
+            csv_url = row.xpath(".//a[contains(@class, 'idk_pricelist_row_download')]/@href")
 
-            # fix some urls
-            if url.endswith('4.2.2026-7.00h-C180-1.csv'):
-                url = 'https://zabacfoodoutlet.hr/wp-content/uploads/2026/02/SupermarketDubrava-256L-Zagreb-10000-4.2.2026-7.00h-C180.csv'
+            h3_text = h3_text[0].strip() if h3_text else None
+            csv_url = csv_url[0].strip() if csv_url else None
 
-            urls.append(url)
+            key = (h3_text, csv_url)
+            if None in key:
+                logger.warning(f'skipping zabac pricelist row with missing h3 text or csv url: {tostring(row)}')
 
-    for url in urls:
+            urls.append(key)
+
+    for storeinfo, url in urls:
         try:
             filename = url.rsplit('/', 1)[-1]
-            m = date_pattern.search(filename) or date_pattern2.search(filename)
+            m = date_pattern3.search(storeinfo)
             if not m:
                 logger.warning(f'failed to parse zabac pricelist date from filename: {filename}')
                 continue
             datestr = m.group(1)
+            timestr = m.group(2)
+            dt = datetime.strptime(f'{datestr} {timestr}', '%d.%m.%Y %H.%M')
+
             address, city, location_id = '???', '???', 'PJ-?'
             fl = filename.lower()
             if 'dubrava' in fl and '256l' in fl:
@@ -62,12 +59,11 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
                 city = 'Velika Gorica'
                 location_id = 'PJ-9'
 
-            if datestr.count('.') == 2:
-                dt = datetime.strptime(datestr, '%d.%m.%Y')
-            else:
-                dt = datetime.strptime(datestr, '%d%m%Y')
-            if dt.date() >= min_date:
-                coll.append(PriceList(url, address, city, zabac.id, location_id, dt, filename))
+            # if datestr.count('.') == 2:
+            #     dt = datetime.strptime(datestr, '%d.%m.%Y')
+            # else:
+            #     dt = datetime.strptime(datestr, '%d%m%Y')
+            coll.append(PriceList(url, address, city, zabac.id, location_id, dt, filename))
         except Exception as e:
             logger.warning(f'failed to parse zabac pricelists: {url}')
             logger.exception(e)
@@ -96,7 +92,9 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
                 'Artikl;Naziv grupe artikla;Pdv %;Barcode;Naziv artikla;MPC;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025',
                 'Artikl;Naziv grupe artikala;Pdv %;Barcode;Naziv artikla;MPC;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025',
                 'Šifra artikla;Naziv grupe artikala;PDV;Barcode;Naziv artikla;MPC;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025',
-                'Šifra;Naziv grupe artikala;PDV;Barcode;Naziv artikla;MPC;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025'
+                'Šifra;Naziv grupe artikala;PDV;Barcode;Naziv artikla;MPC;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025',
+                'ŠIFRA ARTIKLA,NAZIV GRUPE ARTIKALA,PDV,BARCODE,NAZIV ARTIKLA,MPC,Marka,Gramaža,Najniža cijena u posljednjih 30 dana,Sidrena cijena na 2.5.2025',
+                'ŠIFRA ARTIKLA;NAZIV GRUPE ARTIKALA;PDV;BARCODE;NAZIV ARTIKLA;MPC;Marka;Gramaža;Najniža cijena u posljednjih 30 dana;Sidrena cijena na 2.5.2025',
             }
             if header in HEADER_TYPE_1:
                 _id, barcode, vat, name, mpc = k
@@ -115,7 +113,7 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
                     continue
             else:
                 if not warned[header]:
-                    logger.warning('\nZABAC UNKNOWN HEADER: {}\n', header)
+                    logger.warning('\nZABAC UNKNOWN HEADER: {}', header)
                     warned[header] = True
                 continue
             if '+' in barcode:  # scientific notation for barcode, really ?
