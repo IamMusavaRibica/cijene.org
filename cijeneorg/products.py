@@ -4,12 +4,16 @@ CocaCola = Product(id='cocacola', name='Coca Cola', unit='l')
 CocaColaZero = Product(id='cocacolazero', name='Coca Cola Zero', unit='l')
 Majoneza = Product(id='majoneza', name='Majoneza', unit='kg')
 
+RmzAutic = Product(id='rmzautic', name='RMZ Autić', unit='kom')
+
 Margarin = Product(id='margarin', name='Margarin', unit='kg')
 
 GaziranaVoda = Product(id='gaziranavoda', name='Gazirana voda', unit='l')
 GaziranoPice = Product(id='gaziranopice', name='Gazirana pića', unit='l')
 
 AllProducts = {
+    '4895065044894': [RmzAutic, 1],
+
     # '3830065022566': [CocaCola, 0.33], # pepsi cola 0.33 l
     '5449000000286': [CocaCola, 2.0],  # classic 2 l
     '54491472': [CocaCola, 0.5],  # classic 0.5 l

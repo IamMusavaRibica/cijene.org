@@ -19,14 +19,14 @@ def fetch_ribola_prices(ribola: Store, min_date: date):
     coll = []
 
     hrefs = set()
-    for date_url in xpath(BASE_URL, '//a[starts-with(@href, "?date=")]/@href'):
+    for date_url in xpath(BASE_URL, '//a[starts-with(@href, "?date=")]/@href', timeout=60):
         full_url = BASE_URL + date_url
 
         day, month, year = map(int, date_url.rsplit('?date=')[-1].split('.'))
         date_ = date(year, month, day)
         if date_ >= min_date:
             WaybackArchiver.archive(full_url)
-        for href in xpath(full_url, '//a[@download]/@href'):
+        for href in xpath(full_url, '//a[@download]/@href', timeout=60):
             if href not in hrefs:  # avoid duplicates
                 # logger.debug(f'found ribola href: {href}')
                 hrefs.add(href)

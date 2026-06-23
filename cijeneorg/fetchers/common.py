@@ -20,10 +20,10 @@ NotGiven = object()
 
 
 def xpath(w: str | bytes, query: str, extra_headers=None, return_root: bool = False,
-          verify: bool | str = True) -> list | tuple[list, HTML]:
+          verify: bool | str = True, timeout: float | tuple = 20) -> list | tuple[list, HTML]:
     # NOTE: validators.url() is wrong for "https://www.ktc.hr/cjenici?poslovnica=SAMOPOSLUGA KOPRIVNICA PJ-88"
     if isinstance(w, str) and w.startswith('http'):
-        w = session.get(w, headers=extra_headers or {}, verify=verify).text
+        w = session.get(w, headers=extra_headers or {}, verify=verify, timeout=timeout).text
     root = HTML(w)
     res = root.xpath(query)
     if return_root:
