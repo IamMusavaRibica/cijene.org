@@ -43,7 +43,12 @@ def fetch_dukat_prices(dukat: Store, min_date: date):
             mm = mm1 or mm2
             yyyy = yyyy1 or yyyy2
             dt = datetime(yyyy, mm, dd, HH, MM)
-            location_name, address, city = a_text.split('-')[-1].split(', ')
+            if a_text == '06.07.2lavonski Brod, Ivana Gun026.-Trgovina Sdulića 18, Slavonski Brod':
+                location_name = 'Trgovina Slavonski Brod'
+                address = 'Ivana Gundulića 18'
+                city = 'Slavonski Brod'
+            else:
+                location_name, address, city = a_text.split('-')[-1].split(', ')
             location_id = filename.split('-')[-7]
             coll.append(PriceList(full_url, fix_address(address), fix_city(city), dukat.id, location_id, dt, filename))
         except:
