@@ -1,3 +1,4 @@
+import base64
 import re
 from collections import defaultdict
 from datetime import datetime, date
@@ -80,7 +81,7 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
     warned = defaultdict(bool)
     for t in coll:
         rows = get_csv_rows(ensure_archived(t, True, wayback=False))
-        header = ';'.join(rows[0])
+        header = ';'.join(rows[0]).strip().strip('\ufeff')
         for k in rows[1:]:
             qty = None
             may2_price = None
@@ -114,6 +115,7 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
             else:
                 if not warned[header]:
                     logger.warning('\nZABAC UNKNOWN HEADER: {}', header)
+                    logger.debug(base64.b64encode(header.encode()).decode())
                     warned[header] = True
                 continue
             if '+' in barcode:  # scientific notation for barcode, really ?
