@@ -37,7 +37,7 @@ def fetch_bure_prices(bure: Store, min_date: date):
         zip_href = tr.xpath('.//a[contains(@href, "preuzmi-zip")]/@href')[0]
         dt = datetime.strptime(tr.get('data-date'), '%d.%m.%Y')
         filename = f'bure_price_file_{dt:%Y-%m-%d}.zip'
-        p = PriceList(zip_href, None, None, bure.id, None, dt, filename)
+        p = PriceList(zip_href, None, None, bure.id, '???', dt, filename)
         p.request_kwargs = {'headers': UA_HEADER}
         coll.append(p)
 
