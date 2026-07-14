@@ -198,19 +198,29 @@ class ProductApi:
             self,
             product: Product,
             on_date: date | None = None,
-            predicate: StoreLocationPredicate = lambda s: True
+            predicate: StoreLocationPredicate = lambda s: True,
+            max_age_days: int = 0,
     ) -> list[ProductOffer]:
         """
-        Return offers only for 'today' defined as the latest day present in SQLite
-        for this product_id. No in-memory dictionaries involved.
+        Return each location's newest offers in the requested date window.
+
+        With the default ``max_age_days=0`` this preserves exact-date behavior.
+        A positive value allows callers to include a location's newest slightly
+        older price list without returning more than one day per location.
         """
+        if max_age_days < 0:
+            raise ValueError('max_age_days must not be negative')
+
         date_int = on_date and self._yyyymmdd(on_date)
         if date_int is None:
             date_int = self._latest_date_for_product(product.id)
         if date_int is None:
             return []
 
-        logger.debug(f'latest date is: {date_int}')
+        min_date = self._from_yyyymmdd(date_int) - timedelta(days=max_age_days)
+        min_date_int = self._yyyymmdd(min_date)
+
+        logger.debug(f'offer date window is: {min_date_int} - {date_int}')
 
         # map store_id -> Store so templates keep working
         # store_map: dict[str, Store] = {s.id: s for s in self._stores}   <-- this is a mayhem
@@ -218,12 +228,22 @@ class ProductApi:
 
         with self._connect(True) as conn:
             cur = conn.execute(
-                "SELECT product_name, price_cents, store_id, store_location_id, "
-                "       may2_price_cents, quantity, date_yyyymmdd, product_barcode "
-                "FROM product_offers "
-                "WHERE product_id=? AND date_yyyymmdd=? "
-                "ORDER BY (price_cents * 1.0) ASC",
-                (product.id, date_int),
+                "WITH latest_location_dates AS ("
+                "  SELECT store_id, store_location_id, MAX(date_yyyymmdd) AS date_yyyymmdd "
+                "  FROM product_offers "
+                "  WHERE product_id=? AND date_yyyymmdd BETWEEN ? AND ? "
+                "  GROUP BY store_id, store_location_id"
+                ") "
+                "SELECT o.product_name, o.price_cents, o.store_id, o.store_location_id, "
+                "       o.may2_price_cents, o.quantity, o.date_yyyymmdd, o.product_barcode "
+                "FROM product_offers AS o "
+                "JOIN latest_location_dates AS latest "
+                "  ON latest.store_id=o.store_id "
+                " AND latest.store_location_id=o.store_location_id "
+                " AND latest.date_yyyymmdd=o.date_yyyymmdd "
+                "WHERE o.product_id=? "
+                "ORDER BY (o.price_cents * 1.0) ASC",
+                (product.id, min_date_int, date_int, product.id),
             )
             rows = cur.fetchall()
 
@@ -261,9 +281,12 @@ class ProductApi:
             self,
             product: Product,
             on_date: date | None = None,
-            predicate: StoreLocationPredicate = lambda s: True
+            predicate: StoreLocationPredicate = lambda s: True,
+            max_age_days: int = 0,
     ) -> list[ProductOffer]:
-        raw_offers = self.get_offers_by_product(product, on_date, predicate)
+        raw_offers = self.get_offers_by_product(
+            product, on_date, predicate, max_age_days=max_age_days
+        )
         GroupKey = tuple[str, str, int]  # (store_id, barcode, price_cents)
         # TODO: offer_name or barcode?
         grouped: dict[GroupKey, dict] = {}
