@@ -104,6 +104,7 @@
                             <div>
                                 <h3>{{ offer.store.name }}</h3>
                                 <p>{{ store_location.address }}, {{ store_location.city }}</p>
+                                <p>Cijena na dan: {{ offer.date.strftime('%d.%m.%Y.') }}</p>
                             </div>
                             <div class="link">
                                 <a href="{{ store_location.google_maps_url }}" target="_blank">Google Maps ></a>
