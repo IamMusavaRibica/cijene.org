@@ -25,7 +25,17 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
     pricelist_row_xpath = "//article[contains(concat(' ', normalize-space(@class), ' '), ' idk_pricelist_row ')]"
     for page in pages:
         WaybackArchiver.archive(page)
-        for row in xpath(page, pricelist_row_xpath):
+        rows, root = xpath(page, pricelist_row_xpath, return_root=True)
+        # today date price list is in a separate element
+
+        try:
+            today = root.xpath('//div[@class="idk_pricelist_featured"]')[0]
+            store0 = today.xpath('.//h3/text()')[0]
+            download0 = today.xpath('.//a[@class="idk_pricelist_download_btn"]/@href')[0]
+            urls.append((store0, download0))
+        except Exception as e:
+            logger.exception('failed to parse today\'s zabac pricelist')
+        for row in rows:
             h3_text = row.xpath(".//h3/text()")
             csv_url = row.xpath(".//a[contains(@class, 'idk_pricelist_row_download')]/@href")
 
@@ -75,8 +85,7 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
         return []
 
     logger.info(f'found {len(coll)} zabac pricelists')
-    # TODO: filter by date
-    # will be updated when zabac price lists get less weird
+
     prod = []
     warned = defaultdict(bool)
     for t in coll:
