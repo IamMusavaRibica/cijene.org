@@ -1,5 +1,6 @@
 from datetime import datetime, date
 
+import requests.exceptions
 from loguru import logger
 
 from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
@@ -50,7 +51,11 @@ def fetch_branka_prices(branka: Store, min_date: date):
 
     prod = []
     for p in actual:
-        rows = get_csv_rows(ensure_archived(p, True, wayback=False))
+        try:
+            rows = get_csv_rows(ensure_archived(p, True, wayback=False))
+        except requests.exceptions.HTTPError as e:
+            logger.error(f'failed to fetch branka price list {p.url}: {e!r}')
+            continue
         for k in rows[1:]:
             # brand is often empty in Branka price lists
             _id, name, units, mpc, _qty, barcode, _brand, category, may2_price = k
