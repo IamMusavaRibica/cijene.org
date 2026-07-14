@@ -93,12 +93,15 @@ def fetch_konzum_prices(konzum: Store, min_date: date):
         for p in actual:
             futures.append(executor.submit(process_single, konzum, p))
 
+        num_errors = 0
         for future in concurrent.futures.as_completed(futures):
             try:
                 all_products.extend(future.result())
             except Exception as e:
-                logger.error(f'error processing a price list')
-                logger.exception(e)
+                logger.error(f'error processing a price list: {e!r}')
+                if num_errors < 3:
+                    logger.exception(e)
+                    num_errors += 1
 
     return all_products
 
