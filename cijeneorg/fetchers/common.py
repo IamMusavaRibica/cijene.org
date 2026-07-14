@@ -10,7 +10,7 @@ from lxml.etree import HTML
 
 from cijeneorg.fetchers.archiver import LocalArchiver, WaybackArchiver, PriceList
 from cijeneorg.models import Product, Store
-from cijeneorg.products import AllProducts
+from cijeneorg.products import AllProducts, ProductQuantityOverrides
 from cijeneorg.utils import most_occuring, remove_extra_spaces, fix_price
 
 session = requests.Session()
@@ -67,8 +67,13 @@ def resolve_product(coll: list, barcode: str, store: Store, location_id: str, na
 
 
         return False
-    price = fix_price(price)
-    may2_price = fix_price(may2_price)
+
+    try:
+        price = fix_price(price)
+        may2_price = fix_price(may2_price)
+    except:
+        logger.warning(f'[{store.name}] product with {barcode = } has invalid price {price = }, {may2_price = }')
+        return False
     if not price and price != 0:
         return False
     name = (remove_extra_spaces(name)
@@ -80,6 +85,7 @@ def resolve_product(coll: list, barcode: str, store: Store, location_id: str, na
         return False
     product: Product
     product, qty = AllProducts[barcode]
+    qty = ProductQuantityOverrides.get((barcode, store.id), qty)
     p = product.instance(barcode=barcode, date=offer_date, store=store, store_location_id=location_id, offer_name=name,
                          price=price, quantity=qty, may2_price=may2_price)
     coll.append(p)
