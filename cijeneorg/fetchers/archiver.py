@@ -57,6 +57,7 @@ class _WaybackArchiverImpl:
         logger.info(f'WaybackArchiver initialized, worker thread id: {self._thread.native_id}')
 
     def archive(self, url: str):
+        return  # no-op for now
         self._ready and self._queue.put(url)
         logger.debug(f'Save Page Now queued {url}')
         # if not self._ready:
