@@ -8,4 +8,4 @@ git reset --hard origin/main
 mkdir -p data
 
 docker compose pull
-docker compose up -d --build --remove-orphans
+docker compose up -d --build --remove-orphans --force-recreate
