@@ -6,6 +6,7 @@ from datetime import datetime, date
 import requests
 from loguru import logger
 from lxml.etree import HTML
+from requests import HTTPError
 
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, DDMMYYYY_dots, fix_city, ONE_DAY
@@ -107,7 +108,15 @@ def fetch_konzum_prices(konzum: Store, min_date: date):
 
 
 def process_single(konzum: Store, p: PriceList):
-    rows = get_csv_rows(ensure_archived(p, True, wayback=False))
+    try:
+        data = ensure_archived(p, True, wayback=False)
+    except HTTPError as e:
+        if e.response.status_code == 404:
+            return []
+        raise
+    except:
+        raise
+    rows = get_csv_rows(data)
     coll = []
     for k in rows[1:]:
         # za konzum, unit == 'ko' za pakirane proizvode, 'kg' za proizvode u rinfuzi
