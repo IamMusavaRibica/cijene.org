@@ -72,7 +72,11 @@ def fetch_boso_prices(boso: Store, min_date: date):
             if not barcode:
                 continue
 
-            price = float(discount_mpc or mpc)
+            _price = discount_mpc or mpc
+            if _price == '':
+                logger.warning(f'[boso] failed to parse discount mpc {mpc!r} from {t}\nrow: {k}')
+                continue
+            price = float(_price)
             may2_price = float('0' + may2_price) or None  # po defaultu je nula
 
             name = ' '.join(name).strip().replace('Æ', 'ć')
