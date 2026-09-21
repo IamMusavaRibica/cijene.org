@@ -4,21 +4,36 @@ from cijeneorg.fetchers.archiver import WaybackArchiver, PriceList
 from cijeneorg.fetchers.common import xpath, ensure_archived, extract_offers_since, get_csv_rows, resolve_product
 from cijeneorg.models import Store
 
+from loguru import logger
+
 
 def fetch_tobylex_prices(tobylex: Store, min_date: date):
     # https://tobylex.net/testna-stranica/
     # adresa je Froudeova 34, 10020 Zagreb, ali je virtualna trgovina
     WaybackArchiver.archive(index_url := 'https://tobylex.net/cjenik/')
     coll = []
+
+    formats = ['cjenik_%Y%m%d_%H%M%S', 'cjenik-%Y-%m-%d']
+
+    def get_dt_format(filename, suffix):
+        for fmt in formats:
+            try:
+                return datetime.strptime(filename, fmt + suffix)
+            except ValueError:
+                pass
+        logger.error('Could not parse filename %s', filename)
+
     for xml_href in xpath(index_url, '//a[contains(@href, ".xml")]/@href'):
         filename = xml_href.rsplit('/', 1)[-1]
-        dt = datetime.strptime(filename, 'cjenik_%Y%m%d_%H%M%S.xml')
-        ensure_archived(PriceList(xml_href, '(internet trgovina)', '', tobylex.id, 'WEBSHOP', dt, filename), wayback=False)
+        dt = get_dt_format(filename, '.xml')
+        if dt is not None:
+            ensure_archived(PriceList(xml_href, '(internet trgovina)', '', tobylex.id, 'WEBSHOP', dt, filename), wayback=False)
 
     for csv_href in xpath(index_url, '//a[contains(@href, ".csv")]/@href'):
         filename = csv_href.rsplit('/', 1)[-1]
-        dt = datetime.strptime(filename, 'cjenik_%Y%m%d_%H%M%S.csv')
-        coll.append(PriceList(csv_href, '(internet trgovina)', '', tobylex.id, 'WEBSHOP', dt, filename))
+        dt = get_dt_format(filename, '.csv')
+        if dt is not None:
+            coll.append(PriceList(csv_href, '(internet trgovina)', '', tobylex.id, 'WEBSHOP', dt, filename))
 
     actual = extract_offers_since(tobylex, coll, min_date, wayback=False)
 
