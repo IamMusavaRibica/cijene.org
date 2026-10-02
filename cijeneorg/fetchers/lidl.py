@@ -11,18 +11,26 @@ from cijeneorg.utils import DDMMYYYY_dots, fix_city, DDMMYYYY_underscores_or_dot
 
 
 def fetch_lidl_prices(lidl: Store, min_date: date):
-    WaybackArchiver.archive(index_url := 'https://tvrtka.lidl.hr/cijene')
+    WaybackArchiver.archive(index_url := 'https://www.lidl.hr/c/cijene/s10073252')
     coll = []
     # TODO: a single request instead of two
     # /content/download up until 12.11.2025. /file/download after that
-    for p in xpath(index_url, '//a[starts-with(@href, "https://tvrtka.lidl.hr/content/download/")]/..') \
-            + xpath(index_url, '//a[starts-with(@href, "https://tvrtka.lidl.hr/file/download/")]/..'):
-        if m := DDMMYYYY_underscores_or_dots.findall(p.text):
-            day, month, year = map(int, *m)
-            dt = datetime(year, month, day)
-            href, = p.xpath('a/@href')
+    for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href'):
+        href = str(href)
+        if href.startswith('/'):
+            href = 'https://www.lidl.hr' + href
+
+        if m := DDMMYYYY_dots.findall(href):
             filename = href.rsplit('/', 1)[-1]
-            coll.append(PriceList(href, None, None, lidl.id, None, dt, filename))
+            try:
+                day, month, year = map(int, *m)
+                dt = datetime(year, month, day)
+                location_type_and_id, rest = filename.split('_', maxsplit=1)
+                location_id = location_type_and_id.split()[1]
+                # for Address and City please take them from store_locations using location_id
+                coll.append(PriceList(href, None, None, lidl.id, location_id, dt, filename))
+            except Exception as e:
+                logger.exception('cannot parse lidl filename `{}`', filename)
         else:
             logger.critical(f'failed to extract date from {p.text} !!')
 
@@ -30,28 +38,14 @@ def fetch_lidl_prices(lidl: Store, min_date: date):
 
     prod = []
     for p in actual:
-        zip_data = ensure_archived(p, True)
-        with zipfile.ZipFile(io.BytesIO(zip_data)) as zf:
-            for filename in zf.namelist():
-                if not filename.endswith('.csv'):
-                    logger.warning(f'unexpected file in lidl zip: {filename}')
-                    continue
-
-                if filename.startswith('Supermarket '):
-                    market_type = 'Supermarket'
-                    location_id, *full_addr, postal_code, city, file_id, _date, _ = filename.removeprefix('Supermarket ').split('_')
-                else:
-                    market_type, location_id, *full_addr, city, postal_code, file_id, _date, _ = filename.split('_')
-                city = fix_city(city.replace('_', ' '))
-                address = ' '.join(full_addr).replace('_', ' ')
-
-                with zf.open(filename) as f:
-                    rows = get_csv_rows(f.read())
-                    for k in rows[1:]:
-                        # index 3: neto kolicina, but it is weird
-                        name, _id, _qty, _, brand, mpc, discount_mpc, last_30d_mpc, ppu, barcode, category, may2_price = k
-                        if not may2_price or 'Nije_bilo' in may2_price:
-                            may2_price = None
-                        resolve_product(prod, barcode, lidl, location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
+        rows = get_csv_rows(ensure_archived(p, True, wayback=False))
+        for k in rows[1:]:
+            try:
+                name, _id, _qty, units, brand, mpc, discount_mpc, last_30d_mpc, ppu, barcode, category, may2_price = k
+            except ValueError:
+                continue
+            if not may2_price or 'Nije_bilo' in may2_price:
+                may2_price = None
+            resolve_product(prod, barcode, lidl, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod
