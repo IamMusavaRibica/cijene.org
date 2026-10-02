@@ -54,17 +54,28 @@ def fetch_kaufland_prices(kaufland: Store, min_date: date):
     actual = extract_offers_since(kaufland, coll, min_date, wayback=False)
 
     prod = []
+    num_warns = 0
     for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             try:
-                name, _id, brand, _qty, units, mpc, is_sale, u, units, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-            except ValueError:
-                logger.warning(f'error in kaufland row: {k}')
+                if len(k) == 15:
+                    name, _id, brand, _qty, units, mpc, is_sale, u, units, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
+                elif len(k) == 16:
+                    name, _id, brand, _qty, units, mpc, is_sale, u, units, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, availability = k
+                else:
+                    raise ValueError('unknown row format')
+            except ValueError as exc:
+                if num_warns < 3:
+                    num_warns += 1
+                    logger.warning(f'error {exc!r} in kaufland row: {k}')
                 continue
             # may2_price = may2_price.removeprefix('MPC 2.5.2025=').removesuffix('€')
             # TODO: kaufland has `MPC 21.5.2025=3,89` somewhere
             may2_price = may2_price.rsplit('=')[-1].removesuffix('€')
+            if may2_price == 'my happy colors':
+                # ['Nila my happy colors, 900 ml', '00119346', 'Nila', '0.923', 'KOM', '       3,99', '', '1', 'L', '4,433', '', '', 'my happy colors', '3850105169518', 'SREDSTVA ZA ČIŠĆENJE', 'dostupno']
+                may2_price = None
             resolve_product(prod, barcode, kaufland, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod
