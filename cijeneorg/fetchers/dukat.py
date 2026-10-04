@@ -57,10 +57,22 @@ def fetch_dukat_prices(dukat: Store, min_date: date):
     actual = extract_offers_since(dukat, coll, min_date)
 
     prod = []
+    num_warns = 0
     for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
-            name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
+            try:
+                if len(k) == 12:
+                    name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
+                elif len(k) == 13:
+                    name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, availability = k
+                else:
+                    raise ValueError('unknown row format')
+            except ValueError as exc:
+                if num_warns < 3:
+                    num_warns += 1
+                    logger.warning(f'error {exc!r} in dukat row: {k}')
+                continue
             resolve_product(prod, barcode, dukat, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price,
                             p.date)
 

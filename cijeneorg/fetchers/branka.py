@@ -22,25 +22,22 @@ def fetch_branka_prices(branka: Store, min_date: date):
         if orig_filename == 'Supermarket040426.csv':  # 404
             logger.warning(f'skipping known broken branka price list {orig_filename}')
             continue
+        # date_text = a.text.strip()
+
         try:
-            f = orig_filename
-            if f.startswith('Supermarke') and f[10] != 't':  # Supermarke010426.csv
-                f = 'Supermarket' + f[10:]
-            location_id = f[:11]
-            if 'Supermarket' != location_id != 'Hipermarket':
-                raise ValueError(f'unexpected location id {location_id} in filename {orig_filename}')
-            try:
-                dd = int(f[11:13])
-                mm = int(f[13:15])
-                yyyy = 2000 + int(f[15:17])
-            except ValueError:
-                # fallback: extract from anchor text, not url
-                if m := DDMMYYYY_dots.findall(a.text):
-                    logger.debug(f'branka - extracted date from {a.text = } instead of {orig_filename = }')
-                    dd, mm, yyyy = map(int, m[0])
-                else:
-                    raise RuntimeError(f'failed to extract date from filename {orig_filename}')
+
+            if m := DDMMYYYY_dots.findall(a.text.strip()):
+                dd, mm, yyyy = map(int, m[0])
+            else:
+                raise RuntimeError(f'failed to extract date from filename {orig_filename}')
             dt = datetime(yyyy, mm, dd)
+
+
+            location_id = 'Supermarket' if 'super' in orig_filename.lower() else ('Hipermarket' if 'hiper' in orig_filename.lower() else None)
+            if location_id is None:
+                coll.append(PriceList(full_url, '???', '???', branka.id, '???', dt, orig_filename))
+                raise ValueError(f'not found location id in filename {orig_filename}')
+
             address, city = address_idx[location_id]
             coll.append(PriceList(full_url, address, city, branka.id, location_id, dt, orig_filename))
         except:

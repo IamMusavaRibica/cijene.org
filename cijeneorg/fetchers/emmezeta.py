@@ -5,6 +5,7 @@ from loguru import logger
 from cijeneorg.fetchers.archiver import PriceList, WaybackArchiver
 from cijeneorg.fetchers.common import get_csv_rows, resolve_product, xpath, ensure_archived, extract_offers_since
 from cijeneorg.models import Store
+from cijeneorg.utils import DDMMYYYY_dots
 
 
 def fetch_emmezeta_prices(emmezeta: Store, min_date: date):
@@ -15,13 +16,21 @@ def fetch_emmezeta_prices(emmezeta: Store, min_date: date):
         try:
             date_str = (filename.removeprefix('Emmezeta_')
                         .removesuffix('.csv')
-                        .replace('.', '')
-                        [:8])
-            dd = int(date_str[:2])
-            mm = int(date_str[2:4])
-            yyyy = int(date_str[4:8])
+                        )
+            if not date_str[0].isdigit():
+                location_id, ser, date_str = date_str.split('_', maxsplit=2)
+            else:
+                location_id = '???'
+
+            if m := DDMMYYYY_dots.findall(date_str):
+                dd, mm, yyyy = map(int, m[0])
+            elif '25072025' in filename:
+                dd, mm, yyyy = 25, 7, 2025
+            else:
+                raise RuntimeError(f'failed to extract date from filename {date_str}')
+
             dt = datetime(yyyy, mm, dd)
-            coll.append(PriceList(full_url, '???', '???', emmezeta.id, '(sve trgovine)', dt, filename))
+            coll.append(PriceList(full_url, '???', '???', emmezeta.id, location_id, dt, filename))
         except:
             logger.exception(f'failed to parse filename {filename} for emmezeta')
             continue
@@ -32,7 +41,13 @@ def fetch_emmezeta_prices(emmezeta: Store, min_date: date):
     for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
-            name, _id, brand, category, units, _qty, mpc, _mass, _3d, _h, _w, barcode, last_30d_mpc, may2_price = k
+            if len(k) == 14:
+                name, _id, brand, category, units, _qty, mpc, _mass, _3d, _h, _w, barcode, last_30d_mpc, may2_price = k
+            elif len(k) == 15:
+                name, _id, mpc, brand, category, _qty, _mass, _3d, _h, _w, barcode, units, last_30d_mpc, may2_price, sep10_price = k
+            else:
+                logger.warning('cannot parse emmezeta row {}', k)
+                break
             resolve_product(prod, barcode, emmezeta, p.location_id, name, brand, mpc, _qty, may2_price, p.date)
 
     return prod

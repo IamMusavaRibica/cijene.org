@@ -38,7 +38,22 @@ def fetch_croma_prices(croma: Store, min_date: date):
                 with zf.open(filename) as f:
                     rows = get_csv_rows(f.read())
                     for k in rows:  # no header here
-                        name, _id, _, unit, mpc, null, barcode, category = k
-                        resolve_product(prod, barcode, croma, p.location_id, name, None, mpc, None, None, p.date)
+                        if len(k) == 8:
+                            name, _id, _, unit, mpc, null, barcode, category = k
+                        elif len(k) == 10:
+                            name, _id, _, unit, mpc, null, barcode, category, anchored_price, anchored_price_date = k
+                        else:
+                            logger.warning('cannot parse croma row {}', k)
+                            continue
+                        if anchored_price_date == '2025-05-02':
+                            may2_price = anchored_price
+                            sep10_price = None
+                        elif anchored_price_date == '2026-09-10':
+                            may2_price = None
+                            sep10_price = anchored_price
+                        else:
+                            may2_price = sep10_price = None
+                        barcode = barcode.strip('\x00')
+                        resolve_product(prod, barcode, croma, p.location_id, name, None, mpc, None, may2_price, p.date)
 
     return prod
