@@ -15,9 +15,15 @@ def fetch_trgovina_krk_prices(trgovina_krk: Store, min_date: date):
     # returns 403 forbidden if we don't use a user-agent. is this legal?
     for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href', extra_headers=UA_HEADER):
         filename = unquote(href).removeprefix('https://trgovina-krk.hr/csv/').removesuffix('.csv')
-        fixed = filename.replace('11_A', '11A')
+        fixed = (filename.replace('11_A', '11A').replace('20_A', '20A').replace('82_A', '82A').replace('e 1_A', 'e 1A')
+                 .replace('2 _ Vla', '2 Vla').replace('Jaz 1_2', 'Jaz 1-2').replace('ta 82_9', 'ta 82-9')
+                 .replace(' 5_B', ' 5B').replace('40_A', '40A').replace('ca 3_1', 'ca 3-1'))
         market_type, address, city, location_id, file_id, datestr = fixed.split('_', 5)
-        dt = datetime.strptime(datestr, '%d%m%Y_%H_%M_%S')
+        try:
+            dt = datetime.strptime(datestr, '%d%m%Y_%H_%M_%S')
+        except ValueError:
+            logger.critical('unable to parse trgovina_krk datetime: {}: {}', filename, [market_type, address, city, location_id, file_id, datestr])
+            continue
         address = fix_address(address)
         city = fix_city(city)
         coll.append(p := PriceList(href, address, city, trgovina_krk.id, location_id, dt, filename))
