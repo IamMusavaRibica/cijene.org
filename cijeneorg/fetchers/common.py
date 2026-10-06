@@ -40,6 +40,8 @@ def ensure_archived(pricelist: PriceList, return_it: bool = False, wayback: bool
 
 
 def get_csv_rows(raw: bytes) -> list[list[str]]:
+    if raw is None:
+        return []
     for enc in ('utf-8', 'cp1250'):
         try:
             raw_str = raw.decode(enc)

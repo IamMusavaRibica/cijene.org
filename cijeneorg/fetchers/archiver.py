@@ -169,7 +169,7 @@ class _LocalArchiverImpl:
     def safe_filename(self, filename: str) -> str:
         return ''.join(c for c in filename if c.isalnum() or c in ' -_,.#&').rstrip()
 
-    def _download_file(self, url: str, **kwargs) -> bytes:
+    def _download_file(self, url: str, **kwargs) -> bytes | None:
         # logger.debug(f'downloading {url} with {kwargs = }')
         try:
             response = self.session.get(url, timeout=60, **kwargs)
@@ -182,6 +182,10 @@ class _LocalArchiverImpl:
             logger.error(f'Retrying in 30 seconds!')
             return self._download_file(url, **kwargs)
             # raise e
+        if response.status_code == 404:
+            logger.warning('404 not found {}', url)
+            return None
+
         response.raise_for_status()
         return response.content
 
@@ -276,7 +280,8 @@ class _LocalArchiverImpl:
                 cursor.execute('DELETE FROM pricelists WHERE id = ?;', (row[3],))
                 conn.commit()
         raw_data = self._download_file(pricelist.url, **pricelist.request_kwargs)
-        self._save_new_file(pricelist, raw_data)
+        if raw_data is not None:
+            self._save_new_file(pricelist, raw_data)
         return raw_data
 
     def shutdown(self):
