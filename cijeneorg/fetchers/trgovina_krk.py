@@ -35,11 +35,16 @@ def fetch_trgovina_krk_prices(trgovina_krk: Store, min_date: date):
     for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         parsed_barcodes = set()
+        num_warns = 0
         for row in rows[1:]:
-            try:
+            if len(row) == 12:
                 name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = row
-            except ValueError:
-                logger.warning(f'unable to unpack row {row} in {p.url}')
+            elif len(row) == 13:
+                name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, availability = row
+            else:
+                num_warns += 1
+                if num_warns <= 3:
+                    logger.warning(f'unable to unpack row in trgovina_krk {p.dt}: {row}')
                 continue
             if barcode in parsed_barcodes or not barcode:
                 continue
