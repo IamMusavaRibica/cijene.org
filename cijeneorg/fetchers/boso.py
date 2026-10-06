@@ -67,7 +67,19 @@ def fetch_boso_prices(boso: Store, min_date: date):
     for t in actual:
         rows = get_csv_rows(ensure_archived(t, True, wayback=False))
         for k in rows[1:]:
-            *name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
+            # logger.warning('boso row: {}', k)
+            # continue
+
+            if len(k) == 12:
+                name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
+            elif len(k) == 13:
+                name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, availability = k
+            elif len(k) == 14:
+                name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, availability, is_akcija = k
+            else:
+                logger.warning('unexpected row: {}, len={}', k, len(k))
+                break
+
             barcode = barcode.lstrip('0')
             if not barcode:
                 continue
@@ -79,7 +91,7 @@ def fetch_boso_prices(boso: Store, min_date: date):
             price = float(_price)
             may2_price = float('0' + may2_price) or None  # po defaultu je nula
 
-            name = ' '.join(name).strip().replace('Æ', 'ć')
+            name = ' '.join(name.split()).strip().replace('Æ', 'ć')
             while '  ' in name:
                 name = name.replace('  ', ' ')
 
