@@ -17,7 +17,14 @@ def fetch_bure_prices(bure: Store, min_date: date):
     # TODO: bure has pages now: ?page=2
     WaybackArchiver.archive(index_url := 'https://www.bure.hr/cjenici-arhiva')
     coll = []
-    hrefs, root = xpath(index_url, '//a[contains(@href, ".xml")]/@href', extra_headers=UA_HEADER, return_root=True)
+    hrefs = []
+    roots = []
+    for page in (1, 2):
+        href_list, root = xpath(f'{index_url}?page={page}', '//a[contains(@href, ".xml")]/@href', extra_headers=UA_HEADER, return_root=True)
+        logger.debug(f'extending with {len(href_list)} hrefs on page {page}')
+        hrefs.extend(href_list)
+        roots.append(root)
+    logger.debug(f'{len(hrefs)},\n{"\n".join(hrefs)}')
     for href in hrefs:
         filename = unquote(href.rsplit('/', 1)[-1])
         market_type, address, location_id, file_id, rest = filename.split('-', 4)
@@ -26,21 +33,22 @@ def fetch_bure_prices(bure: Store, min_date: date):
         address = fix_address(address.replace('_', ' '))
         city = fix_city(' '.join(city))
         dt = datetime.strptime(rest.replace('-', '')[:14], '%Y%m%d%H%M%S')
-
         p = PriceList(href, address, city, bure.id, location_id, dt, filename)
         p.request_kwargs = {'headers': UA_HEADER}
         ensure_archived(p, wayback=False)
         # coll.append(p)
     # just archive the xmls  ^^
     # but fetch the zip because sometimes xml is 404 because of weird filename
-    for tr in root.xpath('//tr[@class="pricelist-row"]'):
-        zip_href = tr.xpath('.//a[contains(@href, "preuzmi-zip")]/@href')[0]
-        dt = datetime.strptime(tr.get('data-date'), '%d.%m.%Y')
-        filename = f'bure_price_file_{dt:%Y-%m-%d}.zip'
-        p = PriceList(zip_href, None, None, bure.id, '???', dt, filename)
-        p.request_kwargs = {'headers': UA_HEADER}
-        coll.append(p)
+    for root in roots:
+        for tr in root.xpath('//tr[@class="pricelist-row"]'):
+            zip_href = tr.xpath('.//a[contains(@href, "preuzmi-zip")]/@href')[0]
+            dt = datetime.strptime(tr.get('data-date'), '%d.%m.%Y')
+            filename = f'bure_price_file_{dt:%Y-%m-%d}.zip'
+            p = PriceList(zip_href, None, None, bure.id, '???', dt, filename)
+            p.request_kwargs = {'headers': UA_HEADER}
+            coll.append(p)
 
+    logger.debug(f'coll len: {len(coll)}')
     actual = extract_offers_since(bure, coll, min_date)
 
     prod = []

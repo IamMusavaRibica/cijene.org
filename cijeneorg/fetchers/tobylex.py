@@ -13,15 +13,17 @@ def fetch_tobylex_prices(tobylex: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://tobylex.net/cjenik/')
     coll = []
 
-    formats = ['cjenik_%Y%m%d_%H%M%S', 'cjenik-%Y-%m-%d']
+    # novi format: webshop_tobylex.net_POS1_000085_06.11.2026_07-30-02.csv
+    formats = ['cjenik_%Y%m%d_%H%M%S', 'cjenik-%Y-%m-%d', '%d.%m.%Y_%H-%M-%S']
 
     def get_dt_format(filename, suffix):
-        for fmt in formats:
-            try:
-                return datetime.strptime(filename, fmt + suffix)
-            except ValueError:
-                pass
-        logger.error('Could not parse filename %s', filename)
+        for candidate in (filename, '_'.join(filename.split('_')[-2:])):
+            for fmt in formats:
+                try:
+                    return datetime.strptime(candidate, fmt + suffix)
+                except ValueError:
+                    pass
+        logger.error(f'Could not parse filename {filename}')
 
     for xml_href in xpath(index_url, '//a[contains(@href, ".xml")]/@href'):
         filename = xml_href.rsplit('/', 1)[-1]
@@ -40,9 +42,15 @@ def fetch_tobylex_prices(tobylex: Store, min_date: date):
     prod = []
     for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
+        header = ';'.join(rows[0]).strip('﻿')  # zero-width non-breaking space
+        # logger.debug(f'header: {header}')
         for k in rows[1:]:
-            val1, val2, name, mpc = k
-            barcode = val1 or val2
+            if header == '"Naziv firme";Prodajno mjesto;Oblik objekta;Adresa objekta;Oznaka objekta;Broj pohrane;Datum i vrijeme generiranja;Naziv;Šifra;Marka;Barkod (EAN/GTIN);Jedinica mjere;Cijena za jedinicu mjere;Maloprodajna cijena s PDV-om;Valuta;Poseban oblik prodaje;Naziv posebnog oblika prodaje;Sidrena cijena;Datum sidrene cijene;Dostupnost':
+                brand, _, _, _, _, _, _, name, _id, brand, barcode, units, ppu, mpc, currency, is_discount, discount_name, anchor_price, anchor_price_date, availability = k
+            else:
+                val1, val2, name, mpc = k
+                barcode = val1 or val2
+
             if barcode:
                 resolve_product(prod, barcode, tobylex, 'WEBSHOP', name, None, mpc, None, None, p.date)
 

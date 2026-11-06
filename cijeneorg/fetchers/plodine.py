@@ -64,6 +64,9 @@ def fetch_plodine_prices(plodine: Store, min_date: date):
                                     name, _id, brand, units, ppu, mpc, is_discount, discount_name, anchor_price, barcode, availability, _ = k
                                     discount_mpc = None
                                     _qty = None
+                                elif header == 'Naziv proizvoda;Sifra proizvoda;Marka proizvoda;Neto kolicina;Jedinica mjere;Cijena po JM;MPC;Poseban oblik prodaje;Naziv posebnog oblika prodaje;Sidrena cijena;Barkod;Dostupno nedostupno;':
+                                    name, _id, brand, _qty, units, ppu, mpc, is_discount, discount_name, anchor_price, barcode, availability, _ = k
+                                    discount_mpc = None
                                 else:
                                     name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, _ = k
                             except:
