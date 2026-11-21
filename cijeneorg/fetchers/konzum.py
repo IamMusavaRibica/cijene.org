@@ -10,7 +10,7 @@ from requests import HTTPError
 
 from cijeneorg.models import Store
 from cijeneorg.utils import fix_address, DDMMYYYY_dots, fix_city, ONE_DAY
-from .archiver import PriceList, WaybackArchiver
+from .archiver import PriceList, WaybackArchiver, LocalArchiver
 from .common import get_csv_rows, resolve_product, ensure_archived, extract_offers_since
 
 
@@ -32,7 +32,7 @@ def fetch_konzum_prices(konzum: Store, min_date: date):
     _start = time.perf_counter()
     pages = [root0]
     yesterday = date.today() - ONE_DAY
-    with concurrent.futures.ThreadPoolExecutor(max_workers=16, thread_name_prefix='Konzum_Pages') as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2, thread_name_prefix='Konzum_Pages') as executor:
         futures = []
         for d in available_dates_urls:
             for i in range(2, max_page + 1):
@@ -41,7 +41,7 @@ def fetch_konzum_prices(konzum: Store, min_date: date):
                 if d_date >= yesterday:
                     WaybackArchiver.archive(page_url)
                 if d_date >= min_date:
-                    futures.append(executor.submit(lambda _url: HTML(requests.get(_url).content), page_url))
+                    futures.append(executor.submit(lambda _url: time.sleep(1) or HTML(requests.get(_url).content), page_url))
 
         for future in concurrent.futures.as_completed(futures):
             pages.append(future.result())
@@ -89,7 +89,7 @@ def fetch_konzum_prices(konzum: Store, min_date: date):
 
     all_products = []
     # TODO: different threads will access the sqlite database, is it safe?
-    with concurrent.futures.ThreadPoolExecutor(max_workers=32, thread_name_prefix='Konzum') as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2, thread_name_prefix='Konzum') as executor:
         futures = []
         for p in actual:
             futures.append(executor.submit(process_single, konzum, p))
@@ -99,15 +99,19 @@ def fetch_konzum_prices(konzum: Store, min_date: date):
             try:
                 all_products.extend(future.result())
             except Exception as e:
-                logger.error(f'error processing a price list: {e!r}')
                 if num_errors < 3:
+                    logger.error(f'error processing a price list: {e!r}')
                     logger.exception(e)
-                    num_errors += 1
+                num_errors += 1
+        if num_errors > 3:
+            logger.error(f'{num_errors} konzum price lists failed in total')
 
     return all_products
 
 
 def process_single(konzum: Store, p: PriceList):
+    if not LocalArchiver._fetch_local_file(p.url):  # not downloaded yet, slow down to avoid 403 (rate limit)
+        time.sleep(1)
     try:
         data = ensure_archived(p, True, wayback=False)
     except HTTPError as e:

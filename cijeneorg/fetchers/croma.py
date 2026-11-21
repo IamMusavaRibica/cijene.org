@@ -28,6 +28,7 @@ def fetch_croma_prices(croma: Store, min_date: date):
 
     actual = extract_offers_since(croma, coll, min_date)
     prod = []
+    num_warns = 0
     for p in actual:
         zip_data = ensure_archived(p, True, wayback=False)
         with zipfile.ZipFile(io.BytesIO(zip_data)) as zf:
@@ -43,7 +44,9 @@ def fetch_croma_prices(croma: Store, min_date: date):
                         elif len(k) == 10:
                             name, _id, _, unit, mpc, null, barcode, category, anchored_price, anchored_price_date = k
                         else:
-                            logger.warning('cannot parse croma row {}', k)
+                            num_warns += 1
+                            if num_warns <= 3:
+                                logger.warning('cannot parse croma row {}', k)
                             continue
                         if anchored_price_date == '2025-05-02':
                             may2_price = anchored_price

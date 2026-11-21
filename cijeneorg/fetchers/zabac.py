@@ -88,6 +88,7 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
 
     prod = []
     warned = defaultdict(bool)
+    num_warns = 0
     for t in coll:
         rows = get_csv_rows(ensure_archived(t, True, wayback=False))
         header = ';'.join(rows[0]).strip().strip('\ufeff')
@@ -119,7 +120,9 @@ def fetch_zabac_prices(zabac: Store, min_date: date):
                     # k2 = ast.literal_eval(f'[{k[1:-1]}]')
                     # _id, category, vat, barcode, name, mpc, brand, qty, last_30d_mpc, may2_price = k2
                 else:
-                    logger.warning(f'unexpected row format in zabac pricelist {t.filename}: {k}')
+                    num_warns += 1
+                    if num_warns <= 3:
+                        logger.warning(f'unexpected row format in zabac pricelist {t.filename}: {k}')
                     continue
             else:
                 if not warned[header]:

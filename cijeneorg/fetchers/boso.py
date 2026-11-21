@@ -67,6 +67,7 @@ def fetch_boso_prices(boso: Store, min_date: date):
     actual = extract_offers_since(boso, coll, min_date, wayback=False)
 
     prod = []
+    num_warns = 0
     for t in actual:
         rows = get_csv_rows(ensure_archived(t, True, wayback=False))
         for k in rows[1:]:
@@ -94,7 +95,9 @@ def fetch_boso_prices(boso: Store, min_date: date):
 
             _price = discount_mpc or mpc
             if _price == '':
-                logger.warning(f'[boso] failed to parse discount mpc {mpc!r} from {t}\nrow: {k}')
+                num_warns += 1
+                if num_warns <= 3:
+                    logger.warning(f'[boso] failed to parse discount mpc {mpc!r} from {t}\nrow: {k}')
                 continue
             price = float(_price)
             may2_price = float('0' + may2_price) or None  # po defaultu je nula

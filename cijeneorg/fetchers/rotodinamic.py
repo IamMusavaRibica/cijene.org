@@ -25,14 +25,17 @@ def fetch_rotodinamic_prices(rotodinamic: Store, min_date: date):
     actual = extract_offers_since(rotodinamic, coll, min_date, wayback=False)
 
     prod = []
+    num_warns = 0
     for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             try:
                 _id, name, category, brand, barcode, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, *_ = k
             except ValueError as e:
-                logger.error(f'Error parsing row in {p.url}: {k}')
-                logger.exception(e)
+                num_warns += 1
+                if num_warns <= 3:
+                    logger.error(f'Error parsing row in {p.url}: {k}')
+                    logger.exception(e)
                 continue
             # same pricelist for all those cash&carry locations
             # TODO: ^ not anymore!

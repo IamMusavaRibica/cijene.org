@@ -10,11 +10,14 @@ from cijeneorg.models import Store
 def fetch_jadranka_prices(jadranka: Store, min_date: date):
     WaybackArchiver.archive(index_url := 'https://jadranka-trgovina.com/cjenici/')
     coll = []
+    num_warns = 0
     pr = 'MARKET_MAXI_DRAZICA5_MALILOSINJ_607_'
     for href in xpath(index_url, '//a[contains(@href, ".csv")]/@href'):
         filename = href.rsplit('/')[-1]
         if not filename.removeprefix('02198337590_').startswith(pr):  # OIB prefix since 20.11.2026.
-            logger.warning(f'unexpected filename: {filename}')
+            num_warns += 1
+            if num_warns <= 3:  # other Jadranka stores are not supported
+                logger.warning(f'unexpected filename: {filename}')
             continue
         # since 17.11.2026. there is a file id (and since 20.11.2026. also 'ROBA_') before the date
         dt = datetime.strptime('_'.join(filename.rsplit('_', 2)[-2:]), '%d%m%Y_%H%M.csv')
@@ -23,6 +26,7 @@ def fetch_jadranka_prices(jadranka: Store, min_date: date):
     actual = extract_offers_since(jadranka, coll, min_date)
 
     prod = []
+    num_warns = 0
     for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         if rows and rows[0][0] == 'NAZIV ROBE':  # since 20.11.2026. MPC;POSEBAN OBLIK PRODAJE;CIJENA ZA JM;BAR KOD;EAN KOD;BAZNA CIJENA;
@@ -40,6 +44,8 @@ def fetch_jadranka_prices(jadranka: Store, min_date: date):
                 resolve_product(prod, barcode, jadranka, p.location_id, name, None, discount_mpc or mpc, _qty, may2_price,
                                 p.date)
             elif barcode != '':
-                logger.warning(f'failed to parse jadranka row {row}')
+                num_warns += 1
+                if num_warns <= 3:
+                    logger.warning(f'failed to parse jadranka row {row}')
 
     return prod

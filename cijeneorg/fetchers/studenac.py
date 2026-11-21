@@ -31,6 +31,7 @@ def fetch_studenac_prices(studenac: Store, min_date: date):
     orig_code, new_code = monkeypatch_zipfile_open()
 
     prod = []
+    num_warns = 0
     for p in actual:
         zip_data = ensure_archived(p, True)
         with zipfile.ZipFile(io.BytesIO(zip_data)) as zf0:
@@ -47,7 +48,9 @@ def fetch_studenac_prices(studenac: Store, min_date: date):
                         for prodajni_objekt in root.findall('ProdajniObjekt'):
                             location_id = prodajni_objekt.findtext('Oznaka')
                             if location_id not in studenac.locations:
-                                logger.warning(f'studenac {location_id} unknown store! {tostring(prodajni_objekt)[:300]}')
+                                num_warns += 1
+                                if num_warns <= 3:
+                                    logger.warning(f'studenac {location_id} unknown store! {tostring(prodajni_objekt)[:300]}')
                             for k in prodajni_objekt.find('Proizvodi').findall('Proizvod'):
                                 # findtext returns '' if it does not exist
                                 name: str = k.findtext('NazivProizvoda')

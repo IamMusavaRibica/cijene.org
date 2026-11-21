@@ -16,6 +16,7 @@ BASE_URL = 'https://ribola.hr/ribola-cjenici/'
 def fetch_ribola_prices(ribola: Store, min_date: date):
     WaybackArchiver.archive(BASE_URL)
     WaybackArchiver.archive('https://ribola.hr/cjenici/')
+    num_warns = 0
     coll = []
 
     hrefs = set()
@@ -49,7 +50,9 @@ def fetch_ribola_prices(ribola: Store, min_date: date):
                         filename = href.rsplit('/')[-1]
                         coll.append(PriceList(BASE_URL + href, loc.address, loc.city, ribola.id, location_id, dt, filename))
                     else:
-                        logger.warning(f'unknown ribola location id: {location_id} from {href}')
+                        num_warns += 1
+                        if num_warns <= 3:
+                            logger.warning(f'unknown ribola location id: {location_id} from {href}')
                         filename = href.rsplit('/')[-1]  # NOTE: Ulica_Svetog_Nikole16A had incorrect filename up until 22.4.2026. !!
                         coll.append(PriceList(BASE_URL + href, "???", "???", ribola.id, location_id, dt, filename))
                     continue
@@ -59,11 +62,16 @@ def fetch_ribola_prices(ribola: Store, min_date: date):
     actual = extract_offers_since(ribola, coll, min_date)
 
     prod = []
+    num_errors = 0
     for p in actual:
         try:
             prod.extend(process_single(p, ribola))
         except Exception as e:
-            logger.error(f'error processing ribola pricelist {p.url}: {e!r}')
+            num_errors += 1
+            if num_errors <= 3:
+                logger.error(f'error processing ribola pricelist {p.url}: {e!r}')
+    if num_errors > 3:
+        logger.error(f'{num_errors} ribola price lists failed in total')
     return prod
 
 

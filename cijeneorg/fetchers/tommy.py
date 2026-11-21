@@ -49,14 +49,19 @@ def fetch_tommy_prices(tommy: Store, min_date: date):
     actual = extract_offers_since(tommy, coll, min_date)
 
     prod = []
+    num_errors = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=12, thread_name_prefix='Tommy') as executor:
         futures = [executor.submit(fetch_single, p, tommy) for p in actual]
         for future in concurrent.futures.as_completed(futures):
             try:
                 prod.extend(future.result())
             except Exception as e:
-                logger.error(f'error fetching or parsing Tommy prices {e!r}')
+                num_errors += 1
+                if num_errors <= 3:
+                    logger.error(f'error fetching or parsing Tommy prices {e!r}')
                 continue
+    if num_errors > 3:
+        logger.error(f'{num_errors} Tommy price lists failed in total')
 
     return prod
 

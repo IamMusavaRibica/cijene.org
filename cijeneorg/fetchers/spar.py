@@ -64,6 +64,7 @@ def fetch_spar_prices(spar: Store, min_date: date) -> list[ProductOffer]:
     actual = extract_offers_since(spar, coll, min_date)
 
     results = []
+    num_errors = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=10, thread_name_prefix='Spar') as executor:
         futures = [executor.submit(fetch_single, p, spar) for p in actual]
         for fut in concurrent.futures.as_completed(futures):
@@ -71,8 +72,12 @@ def fetch_spar_prices(spar: Store, min_date: date) -> list[ProductOffer]:
                 if res := fut.result():
                     results.extend(res)
             except Exception as e:
-                logger.error(f'error fetching spar prices: {e!r}')
+                num_errors += 1
+                if num_errors <= 3:
+                    logger.error(f'error fetching spar prices: {e!r}')
                 continue
+    if num_errors > 3:
+        logger.error(f'{num_errors} spar price lists failed in total')
 
     return results
 
