@@ -14,7 +14,8 @@ def fetch_tobylex_prices(tobylex: Store, min_date: date):
     coll = []
 
     # novi format: webshop_tobylex.net_POS1_000085_06.11.2026_07-30-02.csv
-    formats = ['cjenik_%Y%m%d_%H%M%S', 'cjenik-%Y-%m-%d', '%d.%m.%Y_%H-%M-%S']
+    # since 17.11.2026.: 07865926420_webshop_tobylex.net_POS1_ROBA_000111_20261117_2256.csv
+    formats = ['cjenik_%Y%m%d_%H%M%S', 'cjenik-%Y-%m-%d', '%d.%m.%Y_%H-%M-%S', '%Y%m%d_%H%M']
 
     def get_dt_format(filename, suffix):
         for candidate in (filename, '_'.join(filename.split('_')[-2:])):
@@ -47,6 +48,9 @@ def fetch_tobylex_prices(tobylex: Store, min_date: date):
         for k in rows[1:]:
             if header == '"Naziv firme";Prodajno mjesto;Oblik objekta;Adresa objekta;Oznaka objekta;Broj pohrane;Datum i vrijeme generiranja;Naziv;Šifra;Marka;Barkod (EAN/GTIN);Jedinica mjere;Cijena za jedinicu mjere;Maloprodajna cijena s PDV-om;Valuta;Poseban oblik prodaje;Naziv posebnog oblika prodaje;Sidrena cijena;Datum sidrene cijene;Dostupnost':
                 brand, _, _, _, _, _, _, name, _id, brand, barcode, units, ppu, mpc, currency, is_discount, discount_name, anchor_price, anchor_price_date, availability = k
+            elif len(k) == 11:  # since 17.11.2026. 'Bazna cijena' is not the price on 2.5.2025.
+                name, _id, brand, _qty, units, mpc, is_discount, ppu, val1, val2, base_price = k
+                barcode = val1 or val2
             else:
                 val1, val2, name, mpc = k
                 barcode = val1 or val2

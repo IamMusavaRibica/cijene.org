@@ -37,7 +37,10 @@ def fetch_trgovina_krk_prices(trgovina_krk: Store, min_date: date):
         parsed_barcodes = set()
         num_warns = 0
         for row in rows[1:]:
-            if len(row) == 12:
+            if len(row) == 12 and rows[0][6] == 'Naziv posebnog oblika prodaje':  # since 24.9.2026., no discount column, 'Sidrena cijena' without date
+                name, _id, brand, _qty, units, mpc, akcija_name, ppu, anchor_price, barcode, category, availability = row
+                discount_mpc, may2_price = '', None
+            elif len(row) == 12:
                 name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = row
             elif len(row) == 13:
                 name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, availability = row

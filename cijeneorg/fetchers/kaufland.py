@@ -28,13 +28,15 @@ def fetch_kaufland_prices(kaufland: Store, min_date: date):
             logger.warning(f'skipping known broken kaufland price list {filename}')
             continue
 
-        match_ = list(re.finditer(r'(\d{1,2})_(\d{1,2})_(20\d{2})', filename)) \
-                 or list(re.finditer(r'([0123]\d)([01]\d)(20\d\d)', filename))
+        # since 17.11.2026.: 47432874968_Hipermarket_114__Brigade_6_Split_1630_cjenik robe_1_20261119_0730.csv
+        parse_name = re.sub(r'^\d{11}_(.*)_cjenik robe_\d+_(20\d\d)(\d\d)(\d\d)_', r'\1_\4\3\2_', filename)
+        match_ = list(re.finditer(r'(\d{1,2})_(\d{1,2})_(20\d{2})', parse_name)) \
+                 or list(re.finditer(r'([0123]\d)([01]\d)(20\d\d)', parse_name))
         if match_:
             m = match_[0]
             day, month, year = map(int, m.groups())
             dt = datetime(year, month, day)
-            p1, _ = split_by_lengths(filename, m.start() - 1)
+            p1, _ = split_by_lengths(parse_name, m.start() - 1)
             market_type, *full_addr, location_id = p1.split('_')
             full_addr = ' '.join(full_addr).replace('  ', ' ').strip()
             for t in {'Slavonski Brod', 'Nova Gradiska', 'Nova Gradiška', 'Velika Gorica', 'Dugo Selo'}:

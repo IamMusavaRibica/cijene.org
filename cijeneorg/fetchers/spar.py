@@ -81,6 +81,9 @@ def fetch_single(p: PriceList, spar: Store) -> list[ProductOffer]:
     rows = get_csv_rows(ensure_archived(p, True, wayback=False))
     prod = []
     for k in rows[1:]:
-        name, _id, brand, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
+        if len(k) == 13:  # since 17.11.2026. there is 'Naziv posebnog oblika prodaje'
+            name, _id, brand, _qty, unit, mpc, ppu, discount_mpc, discount_name, last_30d_mpc, may2_price, barcode, category = k
+        else:
+            name, _id, brand, _qty, unit, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
         resolve_product(prod, barcode, spar, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
     return prod

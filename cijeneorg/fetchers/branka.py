@@ -55,7 +55,11 @@ def fetch_branka_prices(branka: Store, min_date: date):
             continue
         for k in rows[1:]:
             # brand is often empty in Branka price lists
-            _id, name, units, mpc, _qty, barcode, _brand, category, may2_price = k
+            if len(k) == 11:  # since 14.11.2026. 'BAZNA_CIJENA' is the price on 'DATUM_BAZNE_CIJENE'
+                _id, name, units, mpc, _qty, barcode, _brand, category, base_price_date, base_price, sale_type = k
+                may2_price = base_price if base_price_date.startswith('02.05.2025') else None
+            else:
+                _id, name, units, mpc, _qty, barcode, _brand, category, may2_price = k
             resolve_product(prod, barcode, branka, p.location_id, name, None, mpc, _qty, may2_price, p.date)
 
     return prod

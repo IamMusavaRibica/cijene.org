@@ -1,4 +1,5 @@
 import io
+import re
 import zipfile
 from datetime import datetime, date
 
@@ -41,11 +42,17 @@ def fetch_lidl_prices(lidl: Store, min_date: date):
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             try:
-                name, _id, _qty, units, brand, mpc, discount_mpc, last_30d_mpc, ppu, barcode, category, may2_price = k
+                if len(k) == 11:  # 17.11.2026. and 19.11.2026. without category
+                    name, _id, _qty, units, brand, mpc, discount_mpc, last_30d_mpc, ppu, barcode, may2_price = k
+                else:
+                    name, _id, _qty, units, brand, mpc, discount_mpc, last_30d_mpc, ppu, barcode, category, may2_price = k
             except ValueError:
                 continue
             if not may2_price or 'Nije_bilo' in may2_price:
                 may2_price = None
+            elif 'MPC' in may2_price:  # since 17.11.2026. 'MPC na 2.5.2025: 1,99€', but the date can be different
+                m = re.search(r'\b0?2\.0?5\.2025\D*?(\d[\d.]*,\d+)', may2_price)
+                may2_price = m and m.group(1)
             resolve_product(prod, barcode, lidl, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

@@ -111,7 +111,7 @@ def process_single(konzum: Store, p: PriceList):
     try:
         data = ensure_archived(p, True, wayback=False)
     except HTTPError as e:
-        if e.response.status_code == 404:
+        if e.response.status_code in (403, 404):  # 403 when rate-limited (too many requests)
             return []
         raise
     except:
@@ -120,7 +120,11 @@ def process_single(konzum: Store, p: PriceList):
     coll = []
     for k in rows[1:]:
         # za konzum, unit == 'ko' za pakirane proizvode, 'kg' za proizvode u rinfuzi
-        name, _id, brand, total_qty, _, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
-        quantity, unit = total_qty.split()
+        if len(k) == 11:  # since 17.11.2026. mpc already includes the discount, there is no anchor price
+            name, _id, brand, total_qty, _, mpc, is_discount, discount_name, ppu, barcode, base_price = k
+            discount_mpc = may2_price = None
+        else:
+            name, _id, brand, total_qty, _, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
+        quantity, unit = total_qty.split() or (None, None)  # can be empty since 17.11.2026.
         resolve_product(coll, barcode, konzum, p.location_id, name, brand, discount_mpc or mpc, quantity, may2_price, p.date)
     return coll

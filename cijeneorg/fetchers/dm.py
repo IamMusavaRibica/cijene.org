@@ -22,7 +22,10 @@ def fetch_dm_prices(dm: Store, min_date: date):
 
             # 11.6.2025_05.07.36
             _, date_str, time_str = item['data']['headline'].rsplit('_', 2)
-            dt = datetime.strptime(date_str + '_' + time_str, '%d.%m.%Y_%H.%M.%S')
+            if len(time_str) == 4:  # since 17.11.2026. 94124811986_ZA_SVA_PRODAJNA_MJESTA_ROBA_4_20261120_0505
+                dt = datetime.strptime(date_str + '_' + time_str, '%Y%m%d_%H%M')
+            else:
+                dt = datetime.strptime(date_str + '_' + time_str, '%d.%m.%Y_%H.%M.%S')
             coll.append(PriceList(full_url, '(sve prodavaonice)', None, dm.id, 'X', dt, filename))
 
     actual = extract_offers_since(dm, coll, min_date)

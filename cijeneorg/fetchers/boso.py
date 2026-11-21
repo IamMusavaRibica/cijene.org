@@ -36,9 +36,12 @@ def fetch_boso_prices(boso: Store, min_date: date):
             for tr in xpath(r.json()['data']['html'], '//tbody/tr'):
                 # <tr><td>...</td><td>filename</td><td>dd.mm.yyyy</td><td><a href="file.csv" download="" class="download-button">Preuzmi</a></td></tr>
                 _, td_filename, _, td_anchor = tr.getchildren()
-                sep = most_occuring(td_filename.text, ', ', '-')
+                # since 18.11.2026.: 91958721295_minimarket_A. STEPINCA 67_Sikirevci_2720_CJENIK_ROBE_325_20261121_0740.csv
+                fname = re.sub(r'^\d{11}_(.+?)_(.+)_(.+?)_(\d{4})_CJENIK_ROBE_(\d+)_(\d{4})(\d\d)(\d\d)_(\d\d)(\d\d)\.csv$',
+                               r'\1, \2, \3, \4,\5,\8.\7.\6,\9_\10.csv', td_filename.text)
+                sep = most_occuring(fname, ', ', '-')
                 pattern = r'(.+?){0}(.+){0}(.+?){0}(.+)'.format(sep)
-                market_type, address, city, _rest = re.match(pattern, td_filename.text).groups()
+                market_type, address, city, _rest = re.match(pattern, fname).groups()
 
                 if sep == ', ':  # supermarket, K. P. KREŠIMIRA IV 15 a, Vukovar, 2524,137,17.05.2025,07_30.csv
                     market_id, file_id, datetime0 = _rest.split(',', 2)
@@ -70,7 +73,12 @@ def fetch_boso_prices(boso: Store, min_date: date):
             # logger.warning('boso row: {}', k)
             # continue
 
-            if len(k) == 12:
+            if len(k) == 11 and rows[0][3] == 'neto količina':  # since 18.11.2026., no discount column, 'bazna cijena' is not the 2.5.2025. price
+                name, _id, brand, _qty, units, mpc, is_akcija, ppu, barcode, ean_barcode, base_price = k
+                discount_mpc = may2_price = ''
+            elif len(k) == 11:  # 17.11.2026.
+                name, _id, brand, units, mpc, ppu, discount_mpc, may2_price, barcode, availability, akcija_name = k
+            elif len(k) == 12:
                 name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
             elif len(k) == 13:
                 name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category, availability = k

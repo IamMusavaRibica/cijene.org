@@ -33,41 +33,44 @@ def fetch_studenac_prices(studenac: Store, min_date: date):
     prod = []
     for p in actual:
         zip_data = ensure_archived(p, True)
-        with zipfile.ZipFile(io.BytesIO(zip_data)) as zf:
-            for filename in zf.namelist():
-                if not filename.endswith('.xml'):
-                    logger.warning(f'unexpected file in studenac zip: {filename}')
-                    continue
+        with zipfile.ZipFile(io.BytesIO(zip_data)) as zf0:
+            # since 17.11.2026. the zip contains more zips with the xml files
+            inner = [n for n in zf0.namelist() if n.endswith('.zip')]
+            for zf in (zipfile.ZipFile(io.BytesIO(zf0.read(n))) for n in inner) if inner else [zf0]:
+                for filename in zf.namelist():
+                    if not filename.endswith('.xml'):
+                        logger.warning(f'unexpected file in studenac zip: {filename}')
+                        continue
 
-                with zf.open(filename) as f:
-                    root = XML(f.read())
-                    for prodajni_objekt in root.findall('ProdajniObjekt'):
-                        location_id = prodajni_objekt.findtext('Oznaka')
-                        if location_id not in studenac.locations:
-                            logger.warning(f'studenac {location_id} unknown store! {tostring(prodajni_objekt)[:300]}')
-                        for k in prodajni_objekt.find('Proizvodi').findall('Proizvod'):
-                            # findtext returns '' if it does not exist
-                            name: str = k.findtext('NazivProizvoda')
-                            _id = k.findtext('SifraProizvoda')
-                            brand = k.findtext('MarkaProizvoda')
-                            _qty = k.findtext('NetoKolicina')
-                            unit = k.findtext('JedinicaMjere')
-                            mpc = k.findtext('MaloprodajnaCijena')
-                            ppu = k.findtext('CijenaZaJedinicuMjere')
-                            discount_mpc = k.findtext('MaloprodajnaCijenaAkcija')
-                            last_30d_mpc = k.findtext('NajnizaCijena')
-                            may2_price = k.findtext('SidrenaCijena')
-                            barcode = k.findtext('Barkod')
-                            category = k.findtext('KategorijeProizvoda')
+                    with zf.open(filename) as f:
+                        root = XML(f.read())
+                        for prodajni_objekt in root.findall('ProdajniObjekt'):
+                            location_id = prodajni_objekt.findtext('Oznaka')
+                            if location_id not in studenac.locations:
+                                logger.warning(f'studenac {location_id} unknown store! {tostring(prodajni_objekt)[:300]}')
+                            for k in prodajni_objekt.find('Proizvodi').findall('Proizvod'):
+                                # findtext returns '' if it does not exist
+                                name: str = k.findtext('NazivProizvoda')
+                                _id = k.findtext('SifraProizvoda')
+                                brand = k.findtext('MarkaProizvoda')
+                                _qty = k.findtext('NetoKolicina')
+                                unit = k.findtext('JedinicaMjere')
+                                mpc = k.findtext('MaloprodajnaCijena')
+                                ppu = k.findtext('CijenaZaJedinicuMjere')
+                                discount_mpc = k.findtext('MaloprodajnaCijenaAkcija')
+                                last_30d_mpc = k.findtext('NajnizaCijena')
+                                may2_price = k.findtext('SidrenaCijena')
+                                barcode = k.findtext('Barkod')
+                                category = k.findtext('KategorijeProizvoda')
 
-                            name = (remove_extra_spaces(name)
-                                    .replace(' 6*0,15 l', ' 0,9 l')
-                                    .replace(' 0,15l x12 LIM NO SUGAR', ' 1,8 l')
-                                    .replace(' 2*2L', ' 4 l')
-                                    .replace(' 150 ML 12/1', ' 1,8 l'))
+                                name = (remove_extra_spaces(name)
+                                        .replace(' 6*0,15 l', ' 0,9 l')
+                                        .replace(' 0,15l x12 LIM NO SUGAR', ' 1,8 l')
+                                        .replace(' 2*2L', ' 4 l')
+                                        .replace(' 150 ML 12/1', ' 1,8 l'))
 
-                            resolve_product(prod, barcode, studenac, location_id, name, brand, discount_mpc or mpc, _qty,
-                                            may2_price, p.date)
+                                resolve_product(prod, barcode, studenac, location_id, name, brand, discount_mpc or mpc, _qty,
+                                                may2_price, p.date)
 
     # restore the original method
     zipfile.ZipFile.open.__code__ = orig_code

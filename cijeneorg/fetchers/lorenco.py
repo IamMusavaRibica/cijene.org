@@ -23,8 +23,10 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
                   .removeprefix('Cijene')
                   .removesuffix('2024.')
                   .lstrip())
+        if filename.startswith('Prodavaonica_'):  # since 17.11.2026. e.g. Prodavaonica_ZAGREBACKA_12_PAG_PJ01_5_17.11.2026_13_11.csv
+            dt_str = filename.split('_')[-3]
 
-        if filename == 'Cijenik-13.01.2026.csv':  # 404 not found
+        if filename =='Cijenik-13.01.2026.csv':  # 404 not found
             logger.warning(f'skipping known broken lorenco price list {filename}')
             continue
 
@@ -56,6 +58,10 @@ def fetch_lorenco_prices(lorenco: Store, min_date: date):
     for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
-            barcode, name, unit, mpc, _datum, _tekst, ppu, _stajeovo, _valuta, may2_price, *_konst = k
+            if len(k) < 11:  # since 17.11.2026. there are 4 lines (company, OIB, store, empty) before the header
+                continue
+            barcode, name, unit, mpc, _datum, _tekst, ppu, _stajeovo, _valuta, may2_price, may2_price_date, *_konst = k
+            if may2_price_date != '02.05.2025':  # 'CijenaSid' is not always the price on 2.5.2025, see 'DatumSid'
+                may2_price = None
             resolve_product(prod, barcode, lorenco, p.location_id, name, None, mpc, None, may2_price, p.date)
     return prod

@@ -40,7 +40,11 @@ def fetch_gavranovic_prices(gavranovic: Store, min_date: date):
     for p in actual:
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
-            name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
+            if rows[0][6] == 'Naziv posebnog oblika prodaje':  # since 17.11.2026. no discount column (MPC is the current price), anchor price is on 10.09.2026.
+                name, _id, brand, _qty, units, mpc, discount_name, ppu, sep10_price, barcode, category, availability = k
+                discount_mpc = may2_price = None
+            else:
+                name, _id, brand, _qty, units, mpc, ppu, discount_mpc, last_30d_mpc, may2_price, barcode, category = k
             resolve_product(prod, barcode, gavranovic, p.location_id, name, brand, discount_mpc or mpc, _qty, may2_price, p.date)
 
     return prod

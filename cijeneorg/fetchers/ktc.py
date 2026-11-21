@@ -54,7 +54,10 @@ def fetch_ktc_prices(ktc: Store, min_date: date):
         rows = get_csv_rows(ensure_archived(p, True, wayback=False))
         for k in rows[1:]:
             # KTC does not have 2.5.2025. price
-            name, _id, brand, _qty, units, mpc, ppu, barcode, category, last_30d_mpc, discount_mpc = k
+            if len(k) == 12:  # since 17.11.2026. (or earlier), 'Dodatna cijena na referentni datum sidrenja' has no date
+                name, _id, brand, _qty, units, mpc, ppu, anchor_price, barcode, category, last_30d_mpc, discount_mpc = k
+            else:
+                name, _id, brand, _qty, units, mpc, ppu, barcode, category, last_30d_mpc, discount_mpc = k
             barcode = barcode.strip("'")
             price = fix_price(discount_mpc) or fix_price(mpc)
             resolve_product(prod, barcode, ktc, p.location_id, name, brand, price, _qty, None, p.date)

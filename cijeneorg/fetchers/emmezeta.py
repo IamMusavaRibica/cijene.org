@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, date
 
 from loguru import logger
@@ -13,8 +14,12 @@ def fetch_emmezeta_prices(emmezeta: Store, min_date: date):
     coll = []
     for full_url in xpath(BASE_URL, '//a[contains(@href, ".csv")]/@href'):
         filename = full_url.rsplit('/', 1)[-1]
+        if '_USLUGE_' in filename:  # since 17.11.2026. services (USLUGE) are published separately from goods (ROBA)
+            continue
         try:
-            date_str = (filename.removeprefix('Emmezeta_')
+            # since 17.11.2026.: Emmezeta__30777726033_Specijalizirana-prodavaonica-neprehrambenih-proizvoda_Svilajska-36_OS_ROBA_7_20261121_0012.csv
+            parse_name = re.sub(r'^Emmezeta__?\d{11}_.*_([^_]+)_ROBA_\d+_(20\d\d)(\d\d)(\d\d)_(\d\d)\d\d', r'Emmezeta_\1_ROBA_\4.\3.\2_\5', filename)
+            date_str = (parse_name.removeprefix('Emmezeta_')
                         .removesuffix('.csv')
                         )
             if not date_str[0].isdigit():
@@ -45,6 +50,9 @@ def fetch_emmezeta_prices(emmezeta: Store, min_date: date):
                 name, _id, brand, category, units, _qty, mpc, _mass, _3d, _h, _w, barcode, last_30d_mpc, may2_price = k
             elif len(k) == 15:
                 name, _id, mpc, brand, category, _qty, _mass, _3d, _h, _w, barcode, units, last_30d_mpc, may2_price, sep10_price = k
+            elif len(k) == 13:  # since 17.11.2026. no separate discount price, MPC is the current price
+                name, _id, brand, _qty, units, mpc, is_discount, ppu, val1, val2, base_price, may2_price, sep10_price = k
+                barcode = val1 or val2
             else:
                 logger.warning('cannot parse emmezeta row {}', k)
                 break
