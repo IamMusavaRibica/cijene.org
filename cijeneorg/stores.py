@@ -1,10 +1,13 @@
 from cijeneorg.fetchers import (
     fetch_bakmaz_prices,
+    fetch_biobio_prices,
+    fetch_boskovic_prices,
     fetch_boso_prices,
     fetch_branka_prices,
     fetch_brodokomerc_prices,
     fetch_bure_prices,
     fetch_croma_prices,
+    fetch_dergez_prices,
     fetch_djelo_prices,
     fetch_djelo_vodice_prices,
     fetch_dm_prices,
@@ -25,6 +28,7 @@ from cijeneorg.fetchers import (
     fetch_radenska_prices,
     fetch_ribola_prices,
     fetch_rotodinamic_prices,
+    fetch_shome_prices,
     fetch_spar_prices,
     fetch_stridon_prices,
     fetch_studenac_prices,
@@ -75,11 +79,15 @@ Gavranovic  = Store(name='Gavranović',      url='https://gavranovic.hr/',      
 Emmezeta    = Store(name='Emmezeta',        url='https://www.emmezeta.hr/',         fetch_prices=fetch_emmezeta_prices)
 Branka      = Store(name='Branka',          url='https://branka.hr/',               fetch_prices=fetch_branka_prices)
 Dukat       = Store(name='Dukat Diskont',   url='https://dukat.hr/',                fetch_prices=fetch_dukat_prices, id='dukat')
+SHome       = Store(name='S Home',          url='https://www.shome.hr/',            fetch_prices=fetch_shome_prices, id='shome')
+BioBio      = Store(name='BioBio',          url='https://www.biobio.hr/',           fetch_prices=fetch_biobio_prices)
+Dergez      = Store(name='Dergez',          url='https://cs-nv.ddns.net/cjenici/index.php?oib=10948162678', fetch_prices=fetch_dergez_prices)
+Boskovic    = Store(name='Bošković',        url='https://slavonija-boskovic.hr/',   fetch_prices=fetch_boskovic_prices, id='boskovic')
 
 ALL_STORES = [Tommy, Konzum, Spar, Studenac, Ribola, Lidl, Plodine, Eurospin, Kaufland, Metro, Boso, NTL, KTC,
               TrgovinaKrk, Bakmaz, DjeloVodice, Djelo, Zabac, Vrutak, Bure, Jadranka, Trgocentar, Lorenco, Rotodinamic,
               Brodokomerc, Radenska, JedinstvoLabin, Croma, Travelfree, Tobylex, DM, Stridon, Gavranovic, Emmezeta,
-              Branka, Dukat]
+              Branka, Dukat, SHome, BioBio, Dergez, Boskovic]
 
 ALL_STORES_BY_ID = {s.id: s for s in ALL_STORES}
 
